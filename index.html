@@ -591,13 +591,27 @@
   .group{margin-bottom:14px;}
   .group:last-child{margin-bottom:0;}
 
-  /* 底部预订条：跟随内容滚动，不做悬浮固定（避免遮挡菜单卡） */
+  /* 底部预订条：
+     · .bookbar--fixed 默认置顶（入口 / 宴席 / 会议），划到红色「拨打」按钮时自动收起
+     · .bookbar--flow  跟随内容滚动（菜单详情 / 全房型优惠价，避免遮挡菜品卡） */
   .bookbar{
-    display:flex;align-items:center;gap:12px;
-    margin:14px 14px calc(10px + env(safe-area-inset-bottom));padding:12px 14px;
+    display:flex;align-items:center;gap:12px;padding:12px 14px;
     background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:14px;
     box-shadow:0 4px 16px rgba(94,15,15,.06);
   }
+  .bookbar--flow{margin:14px 14px calc(10px + env(safe-area-inset-bottom));}
+
+  .bookbar--fixed{
+    position:fixed;left:0;right:0;bottom:0;z-index:38;
+    margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none;
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    box-shadow:0 -6px 20px rgba(94,15,15,.10);
+    transition:transform .26s cubic-bezier(.4,.9,.3,1), opacity .22s ease;
+  }
+  .bookbar--fixed.is-hidden{transform:translateY(118%);opacity:0;pointer-events:none;}
+  .bookbar--off{display:none;}
+  /* 有置顶条的页面：底部留出让位，内容不被压住 */
+  .page.has-bookbar{padding-bottom:calc(88px + env(safe-area-inset-bottom));}
   .bookbar-info{flex:1;min-width:0;}
   .bookbar-addr{font-size:11.5px;color:var(--ink-2);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .bookbar-tel{font-size:11.5px;color:var(--ink-3);margin-top:2px;}
@@ -1657,6 +1671,7 @@
     $('backBtn').style.visibility = 'hidden';
     $('topTitle').innerHTML = '山水S酒店';
     window.scrollTo(0,0);
+    scheduleBookbar();
   }
 
   function activePageId(){
@@ -1675,7 +1690,7 @@
     for(var i=0;i<pages.length;i++) pages[i].classList.toggle('is-active', pages[i].id === id);
     var y = pageScroll[id] || 0;
     // 等新页面布局生效后再还原（否则会被旧高度夹掉）
-    requestAnimationFrame(function(){ window.scrollTo(0, y); });
+    requestAnimationFrame(function(){ window.scrollTo(0, y); scheduleBookbar(); });
   }
 
   function pushPage(id, title){
@@ -1721,6 +1736,7 @@
 
     if(board === 'banquet') renderBanquet();
     else renderMeeting();
+    scheduleBookbar();
     navPush();
   }
 
@@ -2468,6 +2484,7 @@
       '</div></div>';
 
     box.innerHTML = html;
+    scheduleBookbar();   // 结果渲染后 CTA 位置变了，同步置顶条
   }
 
   /* ── 场地卡通用小件 ── */
@@ -2881,7 +2898,8 @@
     var mq = (m.mealNums && typeof m.mealNums === 'object') ? m.mealNums : {};
     var rSimple = mealRate('simple'), rTable = mealRate('yearend');
 
-    slots.forEach(function(sl){
+    // 只有勾了「用餐」才算餐费：取消勾选后即使餐次还留着，也不能计入合计
+    if(m.needMeal) slots.forEach(function(sl){
       var v = m.meals[sl.key];
       if(v === 'simple'){
         var n = num(mq[sl.key]) || people;      // 未填 → 按参会人数
@@ -2893,7 +2911,8 @@
     });
 
     var roomTotal = 0, roomCount = 0, nightUsed = 0, kingCount = 0, twinCount = 0;
-    roomNights(m).forEach(function(n){
+    // 同理：没勾「住房」时房晚一律不计
+    if(m.needRoom) roomNights(m).forEach(function(n){
       var o = m.rooms[n.key] || {};
       var k = num(o.k), t = num(o.t);
       if(k + t > 0){
@@ -3144,6 +3163,7 @@
       '</div></div>';
 
     box.innerHTML = html;
+    scheduleBookbar();   // 结果渲染后 CTA 位置变了，同步置顶条
   }
 
   function costCard(m, people, durationText, topHall, sess){
@@ -3508,7 +3528,11 @@
       }
 
       var all = c.total + venueFee;
-      blocks2.push({ t:'total', k:'合计（场地 + 用餐 + 住房）', v: all ? '¥' + money(all) : '待确认' });
+      // 合计的括号说明跟着实际勾选项走（取消用餐/住房后不能还写「用餐」）
+      var sumParts = ['场地'];
+      if(mt.needMeal && c.mealTotal) sumParts.push('用餐');
+      if(mt.needRoom && c.roomTotal) sumParts.push('住房');
+      blocks2.push({ t:'total', k:'合计（' + sumParts.join(' + ') + '）', v: all ? '¥' + money(all) : '待确认' });
 
       var perks2 = [];
       MEETING_RIGHTS.forEach(function(g){
@@ -3695,7 +3719,9 @@
     // ── 菜单贴纸
     var menus = d.menus || [];
     var stickW = 440;
-    var stickX = M + perkW + 54;
+    var stickColW = 620;                   // 贴纸列基准宽（左栏正文按此折行）
+    var stickX = M + stickColW + 54;
+    if(!menus.length) perkW = innerW;      // 没有菜单贴纸 → 权益铺满整行，避免右侧空洞
     var stickTop = 52;
     var stickHeights = menus.map(function(mu){ return stickerHeight(mu, stickW); });
     var menusH = 52;
@@ -4291,7 +4317,37 @@
     if(activePageId() === 'page-menu') deckRelayout();
   });
 
-  // 底部预订条：跟随内容滚动（不悬浮），入口 / 全房型 / 菜单详情各挂一份
+  /* 底部预订条
+     ── 默认置顶（悬浮吸底）：入口 / 宴席 / 会议
+     ── 不置顶（跟随内容，滑到底才看到）：菜单详情 / 全房型优惠价（这两页下方本来就有电话，
+        置顶会压住菜品卡与房型卡） */
+  var BOOKBAR_FLOW_PAGES = ['page-rooms', 'page-menu'];
+  var BOOKBAR_FIXED_PAGES = ['page-entry', 'page-banquet', 'page-meeting'];
+  var bookbarFixed = null;
+  var bookbarTimer = 0;
+
+  // 「拨打 133 0262 7911」红色按钮第一行像素进入视口 → 收起置顶条，避免两个电话叠在一起
+  function syncBookbar(){
+    if(bookbarTimer){ clearTimeout(bookbarTimer); bookbarTimer = 0; }
+    if(!bookbarFixed) return;
+    var act = activePageId();
+    var isFixedPage = BOOKBAR_FIXED_PAGES.indexOf(act) > -1;
+    bookbarFixed.classList.toggle('bookbar--off', !isFixedPage);
+    if(!isFixedPage){ bookbarFixed.classList.add('is-hidden'); return; }
+
+    var cta = document.querySelector('#' + act + ' .cta .cta-btn[href^="tel:"]');
+    var hide = false;
+    if(cta){
+      var r = cta.getBoundingClientRect();
+      hide = r.top < (window.innerHeight || document.documentElement.clientHeight) - 1;
+    }
+    bookbarFixed.classList.toggle('is-hidden', hide);
+  }
+  function scheduleBookbar(){
+    if(bookbarTimer) return;
+    bookbarTimer = setTimeout(syncBookbar, 16);   // 节流；不用 rAF（无合成帧的环境不触发）
+  }
+
   (function mountBookbar(){
     var inner =
       '<div class="bookbar-info">' +
@@ -4299,14 +4355,32 @@
         '<div class="bookbar-tel">预订热线 <b>' + TEL_TEXT + '</b></div>' +
       '</div>' +
       '<a class="bookbar-btn" href="' + TEL_HREF + '">' + svgPhone() + '一键拨打</a>';
-    ['page-entry', 'page-rooms', 'page-menu'].forEach(function(id){
+
+    // 1) 跟随内容的两页：各自末尾挂一张静态卡片
+    BOOKBAR_FLOW_PAGES.forEach(function(id){
       var p = document.getElementById(id);
       if(!p) return;
       var f = document.createElement('footer');
-      f.className = 'bookbar';
+      f.className = 'bookbar bookbar--flow';
       f.innerHTML = inner;
       p.appendChild(f);
     });
+
+    // 2) 置顶条：全站一条，挂在 body 上（避免被 .page 的动画 transform 影响定位）
+    var fb = document.createElement('footer');
+    fb.className = 'bookbar bookbar--fixed';
+    fb.innerHTML = inner;
+    document.body.appendChild(fb);
+    bookbarFixed = fb;
+    BOOKBAR_FIXED_PAGES.forEach(function(id){
+      var p = document.getElementById(id);
+      if(p) p.classList.add('has-bookbar');
+    });
+
+    window.addEventListener('scroll', scheduleBookbar, { passive:true });
+    window.addEventListener('resize', scheduleBookbar);
+    document.addEventListener('input', function(){ setTimeout(scheduleBookbar, 60); });
+    syncBookbar();
   })();
 
   syncFormUI();
