@@ -29,10 +29,11 @@
     --radius:14px;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html{-webkit-text-size-adjust:100%;}
+  html{-webkit-text-size-adjust:100%;overscroll-behavior-y:contain;}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
     color:var(--ink);background:#F4E9E9;font-size:15px;line-height:1.5;
+    overscroll-behavior-y:contain;
   }
   #app{
     max-width:480px;margin:0 auto;min-height:100vh;
@@ -599,7 +600,7 @@
      · .bookbar--fixed 默认置顶（入口 / 宴席 / 会议），划到红色「拨打」按钮时自动收起
      · .bookbar--flow  跟随内容滚动（菜单详情 / 全房型优惠价，避免遮挡菜品卡） */
   .bookbar{
-    display:flex;align-items:center;gap:12px;padding:12px 14px;
+    display:flex;align-items:center;gap:8px;padding:12px 14px;
     background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:14px;
     box-shadow:0 4px 16px rgba(94,15,15,.06);
   }
@@ -608,7 +609,7 @@
   .bookbar--fixed{
     position:fixed;left:0;right:0;bottom:0;z-index:38;
     margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none;
-    padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
     box-shadow:0 -6px 20px rgba(94,15,15,.10);
     transition:transform .26s cubic-bezier(.4,.9,.3,1), opacity .22s ease;
   }
@@ -616,17 +617,28 @@
   .bookbar--off{display:none;}
   /* 有置顶条的页面：底部留出让位，内容不被压住 */
   .page.has-bookbar{padding-bottom:calc(88px + env(safe-area-inset-bottom));}
-  .bookbar-info{flex:1;min-width:0;}
-  .bookbar-addr{font-size:11.5px;color:var(--ink-2);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .bookbar-tel{font-size:11.5px;color:var(--ink-3);margin-top:2px;}
-  .bookbar-tel b{color:var(--wine);font-weight:600;letter-spacing:.03em;}
+  /* 一键导航：占整行左侧 1/4，只画定位符号 */
+  .bookbar-nav{
+    flex:0 0 25%;height:42px;min-width:46px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:12px;background:var(--wine-soft);border:1px solid var(--wine-line);
+    text-decoration:none;
+  }
+  .bookbar-nav svg{width:21px;height:21px;stroke:var(--wine);}
+  .bookbar-nav:active{background:#EFDBDB;}
+  .bookbar-info{flex:1 1 0;min-width:0;}
+  .bookbar-addr{font-size:11px;color:var(--ink-2);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bookbar-addr i{font-style:normal;color:var(--wine);font-weight:600;margin-right:4px;}
+  .bookbar-tel{font-size:11px;color:var(--ink-3);margin-top:3px;white-space:nowrap;overflow:hidden;}
+  .bookbar-tel b{color:var(--wine);font-weight:600;letter-spacing:.01em;font-size:11.5px;margin-left:3px;}
   .bookbar-btn{
-    flex:0 0 auto;display:flex;align-items:center;gap:6px;height:42px;padding:0 16px;border-radius:21px;
-    background:linear-gradient(135deg,#9A2222,#7A1616);color:#fff;font-size:14px;font-weight:600;letter-spacing:.05em;
-    text-decoration:none;box-shadow:0 4px 12px rgba(139,26,26,.22);
+    flex:0 0 auto;min-width:116px;max-width:172px;
+    display:flex;align-items:center;justify-content:center;gap:5px;height:42px;padding:0 14px;border-radius:21px;
+    background:linear-gradient(135deg,#9A2222,#7A1616);color:#fff;font-size:13.5px;font-weight:600;letter-spacing:.04em;
+    text-decoration:none;box-shadow:0 4px 12px rgba(139,26,26,.22);white-space:nowrap;
   }
   .bookbar-btn:active{opacity:.9;}
-  .bookbar-btn svg{width:15px;height:15px;stroke:#fff;}
+  .bookbar-btn svg{width:15px;height:15px;stroke:#fff;flex:0 0 auto;}
 
   .foot-note{text-align:center;font-size:10.5px;color:#BFAFAF;padding:22px 20px 8px;letter-spacing:.04em;line-height:1.7;}
   .reset-link{
@@ -1323,6 +1335,30 @@
   var TEL_TEXT = SALES.telText;
   var TEL_HREF = SALES.telHref;
 
+  /* ── 一键导航（底部置顶块的定位按钮用）
+     拿不到可靠的 POI 坐标，所以默认「按名称唤起导航 App」：
+       https://uri.amap.com/search?keyword=…&city=…&callnative=1
+     高德 / 百度 / 腾讯地图装在手机上时，callnative=1 会直接拉起本机地图 App。
+     以后拿到准确坐标，把 lat / lng 填上即可改用「打点直达」：
+       https://uri.amap.com/marker?position=lng,lat&name=…&coordinate=gaode&callnative=1 */
+  var HOTEL = {
+    name: '山水S酒店',
+    city: '惠州',
+    addr: '惠州市惠城区仲恺大道惠环段 175 号',
+    lat: '',
+    lng: ''
+  };
+
+  function hotelNavHref(){
+    var nm = encodeURIComponent(HOTEL.name);
+    if(HOTEL.lat && HOTEL.lng){
+      return 'https://uri.amap.com/marker?position=' + HOTEL.lng + ',' + HOTEL.lat +
+             '&name=' + nm + '&src=shanshui&coordinate=gaode&callnative=1';
+    }
+    return 'https://uri.amap.com/search?keyword=' + nm +
+           '&city=' + encodeURIComponent(HOTEL.city || '惠州') + '&callnative=1';
+  }
+
   // 摆桌形式（容量口径见《宴会中心2025价格体系》+《山水S酒店介绍》）
   var LAYOUTS = [
     { key:'classroom', label:'课桌式', short:'课桌', tip:'有桌有椅，适合培训、考试、需记录' },
@@ -1640,6 +1676,10 @@
   }
   function svgPhone(){
     return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.7a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.9 2z"/></svg>';
+  }
+  // 定位针（底部导航按钮：只放符号，不写文字）
+  function svgPin(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.4s7.2-6.5 7.2-11.7a7.2 7.2 0 1 0-14.4 0c0 5.2 7.2 11.7 7.2 11.7z"/><circle cx="12" cy="9.5" r="2.7"/></svg>';
   }
   function svgChev(){
     return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
@@ -3499,7 +3539,7 @@
         title: (b.type || '宴席') + '方案',
         sub: b.tables + ' 席 · ' + b.period + (b.budget ? ' · 人均预算 ¥' + money(b.budget) : ''),
         blocks: blocks, perks: perks, perkTitle:'礼遇与权益',
-        menus: menus, qr:true, note:'以上为参考报价，菜单为意向参考，最终以正式合同为准'
+        menus: menus, qr:true
       };
     }
 
@@ -3602,7 +3642,7 @@
         title:'会议方案',
         sub: sub2.join(' · '),
         blocks: blocks2, perks: perks2, perkTitle:'会议权益',
-        menus: menus2, qr:true, note:'以上为参考报价，菜单为意向参考，最终以正式合同为准'
+        menus: menus2, qr:true
       };
     }
     return null;
@@ -3948,7 +3988,9 @@
         var qs = panel - pad * 2 - 16;
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(QR_IMG, fx + (panel - qs) / 2, fy0 + (panel - qs) / 2, qs, qs);
-      }else{
+      }else if(!SALES.qrImage){
+        // 内置矩阵只给「没有配图」的那一版用；配了图但没加载好就留白，
+        // 绝不回退到别的销售二维码（画错人比没画更糟）
         drawQR(ctx, fx + pad, fy0 + pad, panel - pad * 2, '#2B0B0B');
       }
       tx(ctx, '扫码加微信 · ' + (SALES.name || '专属销售'), fx + panel / 2, fy0 + panel + 22, 16, '400', '#8C7676', 'center');
@@ -3968,7 +4010,6 @@
     tx(ctx, '酒店地址', c2x, rTop, 19, '400', '#9C8585');
     fitTx(ctx, '惠州市惠城区仲恺大道惠环段 175 号', c2x, rTop + 42, 19, '400', '#4A3A3A', 'left', W - M - c2x);
     fitTx(ctx, '城轨惠环站 D 口步行 20 米 · 200+ 免费停车位', c2x, rTop + 74, 19, '400', '#4A3A3A', 'left', W - M - c2x);
-    fitTx(ctx, d.note, c2x, rTop + 116, 16, '400', '#B9A5A5', 'left', W - M - c2x);
 
     return cv;
   }
@@ -4403,10 +4444,13 @@
 
   (function mountBookbar(){
     var inner =
+      '<a class="bookbar-nav" href="' + hotelNavHref() + '" target="_blank" rel="noopener" ' +
+        'aria-label="一键导航到' + esc(HOTEL.name) + '">' + svgPin() + '</a>' +
       '<div class="bookbar-info">' +
-        '<div class="bookbar-addr">仲恺大道惠环段 175 号 · 惠环站 D 口</div>' +
-        '<div class="bookbar-tel">预订热线 <b>' + TEL_TEXT + '</b>' +
-          (SALES.name ? ' · ' + SALES.name : '') + '</div>' +
+        '<div class="bookbar-addr">' +
+          (SALES.name ? '<i>' + esc(SALES.name) + '</i>' : '') +
+          '仲恺大道惠环段 175 号</div>' +
+        '<div class="bookbar-tel">预订<b>' + TEL_TEXT + '</b></div>' +
       '</div>' +
       '<a class="bookbar-btn" href="' + TEL_HREF + '">' + svgPhone() + '一键拨打</a>';
 
@@ -4437,9 +4481,187 @@
     syncBookbar();
   })();
 
+  /* ═══════════════════════════════════════════════
+     九、刷新不丢进度 / 下拉防误触
+     ── 1) 每次改动都把「当前页面 + 已填内容」存进 sessionStorage
+     ── 2) 真刷新（浏览器下拉、切后台被杀、断网重连）后自动恢复原页面，不回到首页
+     ── 3) 页面内下拉两次才重置表单；重置后停在原来的板块页，不跳回首页
+     ═══════════════════════════════════════════════ */
+
+  var SS_KEY = 'shanshui_h5_v21';
+  var persistTimer = 0;
+
+  function boardPageOf(board){
+    return board === 'meeting' ? 'page-meeting' : 'page-banquet';
+  }
+  function boardTitleOf(board){
+    return board === 'meeting'
+      ? '我要订会议<span class="sub">会议室匹配</span>'
+      : '我要办宴席<span class="sub">宴席场地匹配</span>';
+  }
+
+  function snapshot(){
+    var st = [];
+    for(var i=0;i<pageStack.length;i++) st.push({ id:pageStack[i].id, title:pageStack[i].title });
+    return {
+      v: 21,
+      board: state.board,
+      banquet: state.banquet,
+      meeting: state.meeting,
+      page: activePageId(),
+      title: $('topTitle').innerHTML,
+      stack: st,
+      menu: { id: menuCtx.id, type: menuCtx.type },
+      y: window.pageYOffset || document.documentElement.scrollTop || 0
+    };
+  }
+  function persistNow(){
+    try{ sessionStorage.setItem(SS_KEY, JSON.stringify(snapshot())); }catch(e){}
+  }
+  function schedulePersist(){
+    if(persistTimer) clearTimeout(persistTimer);
+    persistTimer = setTimeout(function(){ persistTimer = 0; persistNow(); }, 260);
+  }
+  function clearPersist(){
+    try{ sessionStorage.removeItem(SS_KEY); }catch(e){}
+  }
+
+  // 旧数据可能缺字段：以默认值为底，逐键覆盖，嵌套对象再兜一层
+  function mergeObj(src, def){
+    var out = {}, k;
+    for(k in def) out[k] = def[k];
+    if(src && typeof src === 'object'){
+      for(k in src){ if(Object.prototype.hasOwnProperty.call(out, k)) out[k] = src[k]; }
+    }
+    if(def.meals){
+      if(!out.meals || typeof out.meals !== 'object') out.meals = {};
+      if(!out.mealNums || typeof out.mealNums !== 'object') out.mealNums = {};
+      if(!out.rooms || typeof out.rooms !== 'object') out.rooms = {};
+      if(!out.menuIds || typeof out.menuIds !== 'object') out.menuIds = { simple:'', yearend:'' };
+    }
+    return out;
+  }
+
+  function restoreSession(){
+    var raw = '';
+    try{ raw = sessionStorage.getItem(SS_KEY) || ''; }catch(e){ raw = ''; }
+    if(!raw) return false;
+    var o = null;
+    try{ o = JSON.parse(raw); }catch(e){ o = null; }
+    if(!o || o.v !== 21 || !o.board) return false;
+
+    state.board = o.board;
+    state.banquet = mergeObj(o.banquet, defaultBanquet());
+    state.meeting = mergeObj(o.meeting, defaultMeeting());
+
+    syncFormUI();
+    buildMeetingRows();
+    if(state.board === 'banquet') renderBanquet();
+    else renderMeeting();
+
+    var mapPage = boardPageOf(state.board);
+    var page = o.page || mapPage;
+    if(['page-banquet','page-meeting','page-rooms','page-menu'].indexOf(page) < 0) page = mapPage;
+    if(page !== 'page-rooms' && page !== 'page-menu') page = mapPage;
+
+    if(page === 'page-rooms'){
+      renderRoomsPage();
+    }else if(page === 'page-menu'){
+      var mid = (o.menu && o.menu.id) || '';
+      if(mid && menuById(mid)){
+        menuCtx = { id: mid, type: (o.menu && o.menu.type) || '婚宴' };
+        renderMenuPage(menuCtx.id, menuCtx.type);
+      }else{
+        page = mapPage;
+      }
+    }
+
+    pageStack.length = 0;
+    var st = o.stack || [];
+    for(var i=0;i<st.length;i++){
+      if(st[i] && st[i].id) pageStack.push({ id:st[i].id, title:st[i].title || '' });
+    }
+    if(!pageStack.length) pageStack.push({ id:'page-entry', title:'山水S酒店' });
+
+    $('topTitle').innerHTML = o.title || boardTitleOf(state.board);
+    $('backBtn').style.visibility = 'visible';
+    pageScroll[page] = o.y || 0;
+    showOnly(page);
+    return true;
+  }
+
+  // 下拉两次 → 清空表单，但停在当前板块（不回到首页）
+  function softReset(){
+    var board = state.board;
+    if(!board) return;
+    state.banquet = defaultBanquet();
+    state.meeting = defaultMeeting();
+    syncFormUI();
+    buildMeetingRows();
+    if(board === 'banquet') renderBanquet();
+    else renderMeeting();
+
+    pageStack.length = 0;
+    pageStack.push({ id:'page-entry', title:'山水S酒店' });
+    pageScroll = {};
+    $('topTitle').innerHTML = boardTitleOf(board);
+    $('backBtn').style.visibility = 'visible';
+    showOnly(boardPageOf(board));
+    window.scrollTo(0, 0);
+    persistNow();
+    toast('已重新开始，可重新填写', 2400);
+  }
+
+  (function pullGuard(){
+    var PULL = 76;     // 拉过这个位移算「一次下拉」
+    var armed = false, armTimer = 0, tracking = false, startY = 0;
+
+    function atTop(){
+      return (window.pageYOffset || document.documentElement.scrollTop || 0) <= 0;
+    }
+    function disarm(){
+      armed = false;
+      if(armTimer){ clearTimeout(armTimer); armTimer = 0; }
+    }
+
+    document.addEventListener('touchstart', function(e){
+      if(e.touches.length !== 1){ tracking = false; return; }
+      tracking = atTop();
+      startY = e.touches[0].clientY;
+    }, { passive:true });
+
+    document.addEventListener('touchmove', function(e){
+      if(!tracking) return;
+      var dy = e.touches[0].clientY - startY;
+      if(dy <= 0 || !atTop()){ tracking = false; return; }
+      if(dy < PULL) return;
+      tracking = false;                        // 一次手势只算一次，必须松手再拉
+      if(!state.board){ disarm(); return; }     // 首页没有表单可重置
+      if(!armed){
+        armed = true;
+        toast('再下拉一次，可重新开始填写', 2600);
+        armTimer = setTimeout(disarm, 5000);    // 5 秒内不再拉就作废，避免误触
+        return;
+      }
+      disarm();
+      softReset();
+    }, { passive:true });
+
+    document.addEventListener('touchend', function(){ tracking = false; }, { passive:true });
+  })();
+
+  document.addEventListener('input', schedulePersist, true);
+  document.addEventListener('change', schedulePersist, true);
+  document.addEventListener('click', function(){ setTimeout(persistNow, 80); }, true);
+  window.addEventListener('pagehide', persistNow);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'hidden') persistNow();
+  });
+
   syncFormUI();
   buildMeetingRows();
   syncStage();
+  restoreSession();   // 刷新 / 误触下拉后用上次的进度接着填，不回到首页
 })();
 </script>
 </body>
