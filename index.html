@@ -123,8 +123,13 @@
   .field-label .idx{font-size:10px;color:var(--gold);font-weight:700;letter-spacing:.06em;}
   .field-label .tip{
     font-size:11px;color:var(--ink-3);font-weight:400;margin-left:auto;letter-spacing:0;
-    min-width:0;max-width:58%;flex:0 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    min-width:0;max-width:66%;flex:0 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     text-align:right;
+  }
+  .tip-link{
+    margin:0;padding:0;border:none;background:none;cursor:pointer;font-family:inherit;
+    font-size:inherit;font-weight:600;color:var(--wine);letter-spacing:inherit;
+    border-bottom:1px dashed var(--wine-line);
   }
 
   .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
@@ -180,8 +185,21 @@
 
   .numwrap{
     display:flex;align-items:center;border:1px solid var(--wine-line);border-radius:11px;
-    background:#fff;padding:0 14px;height:52px;transition:border-color .16s,box-shadow .16s;
+    background:#fff;padding:0 14px;height:52px;transition:border-color .16s,box-shadow .16s,background .16s;
   }
+  /* 首填项（席数 / 人数）高亮 */
+  .numwrap.is-primary{
+    border-color:var(--wine);background:#FFFCF9;
+    box-shadow:0 0 0 3px rgba(139,26,26,.10);
+  }
+  .numwrap.is-primary input{color:var(--wine);font-weight:700;}
+  .numwrap.is-primary input::placeholder{color:#C6A0A0;font-weight:500;}
+  .numwrap.is-primary.is-filled{background:#fff;box-shadow:0 0 0 2px rgba(139,26,26,.05);}
+  .field-label .req, .subblock-title .req{
+    font-size:9.5px;font-weight:700;letter-spacing:.08em;color:#fff;line-height:1;
+    background:var(--wine);border-radius:4px;padding:3px 5px 2px;
+  }
+  .subblock-title .req{margin-left:1px;}
   .numwrap:focus-within{border-color:var(--wine);box-shadow:0 0 0 3px rgba(139,26,26,.08);}
   .numwrap input{
     flex:1;min-width:0;border:none;outline:none;background:none;
@@ -199,6 +217,13 @@
   }
   .numwrap input[type="date"]::-webkit-date-and-time-value{text-align:left;}
   .numwrap input[type="date"]::-webkit-calendar-picker-indicator{opacity:.42;cursor:pointer;}
+  /* 必填日期：边框 + 光晕高亮；未选时占位文字用浅色，选了才回到正文色 */
+  .numwrap.is-primary.is-date{border-color:var(--wine);background:#FFFCF9;box-shadow:0 0 0 3px rgba(139,26,26,.10);}
+  .numwrap.is-primary.is-date input,
+  .numwrap.is-primary.is-date input[type="date"]{color:#BC9E9E;font-weight:500;}
+  .numwrap.is-primary.is-date.is-filled input,
+  .numwrap.is-primary.is-date.is-filled input[type="date"]{color:var(--ink);font-weight:600;}
+  .numwrap.is-primary.is-date.is-filled{background:#fff;box-shadow:0 0 0 2px rgba(139,26,26,.05);}
   .field-help{font-size:11px;color:var(--ink-3);margin-top:7px;letter-spacing:.02em;}
 
   /* 展开子区块 */
@@ -217,13 +242,56 @@
   }
   .mealrow:last-child{border-bottom:none;}
   .mealrow .mr-label{flex:0 0 84px;font-size:12px;color:var(--ink);font-weight:500;letter-spacing:.01em;}
-  .mealrow .mr-opts{display:flex;gap:5px;flex:1;justify-content:flex-end;}
+  .mealrow .mr-opts{display:flex;gap:5px;flex:1;justify-content:flex-end;align-items:center;}
   .seg{
     flex:0 1 auto;padding:6px 9px;border-radius:8px;border:1px solid var(--wine-line);
     background:#fff;font-family:inherit;font-size:11.5px;color:var(--ink-2);cursor:pointer;
     letter-spacing:0;white-space:nowrap;transition:all .15s;
   }
   .seg.is-on{background:var(--wine-tint);border-color:var(--wine);color:var(--wine);font-weight:600;}
+  .seg:focus{outline:none;}
+  .seg:active{transform:scale(.95);}
+  /* 选中时轻微回弹（重复点同一颗不重播） */
+  .seg.is-pop{animation:segPop .22s ease-out;}
+  @keyframes segPop{
+    0%{transform:scale(.94);}
+    55%{transform:scale(1.03);}
+    100%{transform:scale(1);}
+  }
+
+  /* 逐餐：点简餐 / 围餐后，份数（桌数）在按键左侧就地展开 */
+  .mr-fill{
+    flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;
+    width:0;height:26px;overflow:hidden;opacity:0;
+    transition:width .24s cubic-bezier(.22,.61,.36,1),opacity .16s ease,margin-right .24s ease;
+  }
+  .mr-fill.is-open{width:64px;opacity:1;margin-right:3px;}
+  .mr-fill input{
+    width:36px;border:none;outline:none;background:none;padding:0;font-family:inherit;
+    font-size:13.5px;font-weight:700;color:var(--wine);text-align:right;
+  }
+  .mr-fill input::placeholder{color:#D8C6C6;font-weight:400;font-size:12px;}
+  .mr-fill span{font-size:11px;color:var(--ink-3);padding-left:3px;}
+  /* 第1天 / 日期 切换 */
+  .viewtoggle{
+    margin-left:5px;padding:3px 7px 2px;border-radius:6px;cursor:pointer;white-space:nowrap;
+    border:1px solid var(--wine-line);background:var(--wine-tint);
+    font-family:inherit;font-size:10px;font-weight:600;color:var(--wine);letter-spacing:.02em;
+  }
+  .viewtoggle:active{opacity:.85;}
+  /* 餐次标签可点切换日期 / 天数，但不再画下划线暗示 */
+  .mr-label.is-tap{cursor:pointer;}
+  /* 菜单页底部：跳去看另一种用餐形式的菜单 */
+  .menu-xlink{
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    width:calc(100% - 24px);box-sizing:border-box;
+    margin:13px 12px 0;padding:13px 16px;border-radius:12px;cursor:pointer;
+    border:1px solid var(--wine-line);background:var(--wine-tint);
+    font-family:inherit;font-size:13px;font-weight:600;color:var(--wine);letter-spacing:.04em;
+    -webkit-tap-highlight-color:transparent;transition:transform .14s ease;
+  }
+  .menu-xlink:active{transform:scale(.985);}
+  .menu-xlink svg{width:12px;height:12px;stroke:var(--wine);}
 
   .roomrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F6EDED;}
   .roomrow:last-child{border-bottom:none;}
@@ -259,6 +327,9 @@
   .date-pair{display:flex;align-items:center;gap:7px;}
   .date-pair .numwrap{flex:1 1 0;min-width:0;}
   .date-sep{font-size:11px;color:var(--ink-3);flex:0 0 auto;letter-spacing:.02em;}
+  /* 多天：起止日期纵向堆叠，避免两个日期框被日历图标挤压 */
+  .date-pair.is-stack{flex-direction:column;align-items:stretch;gap:7px;}
+  .date-pair.is-stack .date-sep{display:block !important;text-align:center;line-height:1;font-size:10.5px;}
   .room-more .inline-link{font-size:11.5px;}
 
   /* ── 结果 ── */
@@ -541,6 +612,18 @@
     padding:13px 15px;font-size:11.5px;color:var(--ink-2);line-height:1.75;
   }
   .rate-note b{color:var(--wine-dark);font-weight:600;display:block;margin-bottom:5px;font-size:12px;letter-spacing:.04em;}
+  .rate-note .rn-tel{
+    color:var(--wine);font-weight:600;text-decoration:none;letter-spacing:.02em;
+    border-bottom:1px solid rgba(139,26,26,.32);padding-bottom:1px;
+  }
+  /* 房型分组：优惠房型 / 其他房型 */
+  .rate-group{
+    display:flex;align-items:center;gap:7px;margin:2px 0 9px;
+    font-size:11.5px;font-weight:600;letter-spacing:.1em;color:var(--wine);
+  }
+  .rate-group::before{content:"";width:3px;height:10px;border-radius:2px;background:#C08A3E;}
+  .rate-group i{margin-left:auto;font-style:normal;font-weight:400;font-size:10.5px;letter-spacing:.02em;color:var(--ink-3);}
+  .foldbody .rate-group{margin-top:4px;}
 
   /* ── 菜单详情（商品详情） ── */
   .menu-hero{
@@ -562,12 +645,12 @@
   .mh-price .cur{font-size:15px;font-weight:500;opacity:.85;}
   .mh-price .num{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1;}
   .mh-price .per{font-size:12px;opacity:.75;margin-left:4px;}
-  .mh-tagline{font-size:12px;color:rgba(255,255,255,.72);margin-top:9px;letter-spacing:.04em;line-height:1.6;}
-  .mh-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;position:relative;z-index:1;}
-  .mh-tag{
-    font-size:10.5px;padding:5px 9px;border-radius:6px;letter-spacing:.04em;
-    background:rgba(255,255,255,.14);color:#fff;
+  .mh-meta{
+    font-size:10.5px;color:rgba(255,255,255,.72);margin-top:7px;
+    letter-spacing:.04em;line-height:1.5;position:relative;z-index:1;
+    display:flex;flex-wrap:wrap;column-gap:8px;row-gap:1px;
   }
+  .mh-meta .mstat{white-space:nowrap;}
   /* 推荐徽章：从匹配结果点进来的那一款菜单 */
   .mh-rec{
     position:absolute;top:15px;right:15px;z-index:3;
@@ -576,13 +659,20 @@
     background:linear-gradient(135deg,#F2D8A2 0%,#C08A3E 100%);
     color:#4A0C0C;box-shadow:0 3px 10px rgba(0,0,0,.24);
   }
-  .dish-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;}
+
+  /* 卡内版式：分组标题 + 双列菜品（与上一版格局一致，仅压缩间距） */
+  .mgroup + .mgroup{margin-top:5px;padding-top:6px;border-top:1px dashed #F4E9E9;}
+  .mgroup-head{display:flex;align-items:baseline;gap:6px;margin-bottom:4px;}
+  .mgroup-bar{width:3px;height:10px;border-radius:2px;background:var(--wine);align-self:center;}
+  .mgroup-title{font-size:11.5px;font-weight:600;color:var(--wine-dark);letter-spacing:.06em;}
+  .mgroup-count{font-size:9.5px;color:var(--ink-3);margin-left:auto;letter-spacing:.02em;}
+  .dish-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;}
   .dish{
-    font-size:12.5px;color:var(--ink);line-height:1.5;letter-spacing:.01em;
-    padding-left:11px;position:relative;
+    font-size:12px;color:var(--ink);line-height:1.45;letter-spacing:.01em;
+    padding-left:9px;position:relative;
   }
   .dish::before{
-    content:"";position:absolute;left:0;top:7px;width:4px;height:4px;
+    content:"";position:absolute;left:0;top:6px;width:3px;height:3px;
     border-radius:50%;background:var(--wine-line);
   }
   .dish.wide{grid-column:1 / -1;}
@@ -594,44 +684,51 @@
   }
   .menu-deck.no-anim,
   .menu-deck.no-anim .mdeck-card{transition:none !important;}
+  /* 卡片高度随菜单内容自适应（不做卡内滚动，竖向滚动交给整页） */
   .mdeck-card{
     position:absolute;left:0;top:0;width:100%;overflow:hidden;
+    display:flex;flex-direction:column;
     background:#fff;border:1px solid var(--line);border-radius:18px;
     box-shadow:0 8px 24px rgba(94,15,15,.10);
     transform-origin:50% 0%;
     transition:transform .4s cubic-bezier(.22,.61,.36,1),opacity .32s ease;
     will-change:transform;backface-visibility:hidden;
   }
-  .mdeck-card .menu-hero{border-radius:0;box-shadow:none;}
-  .mdeck-body{padding:15px 16px 17px;}
-  .mgroup + .mgroup{margin-top:15px;padding-top:13px;border-top:1px dashed #F1E4E4;}
-  .mgroup-head{display:flex;align-items:center;gap:7px;margin-bottom:9px;}
-  .mgroup-bar{width:3px;height:12px;border-radius:2px;background:var(--wine);}
-  .mgroup-title{font-size:12.5px;font-weight:600;color:var(--wine-dark);letter-spacing:.08em;}
-  .mgroup-count{font-size:10px;color:var(--ink-3);margin-left:auto;letter-spacing:.03em;}
-  .deck-meta{display:flex;align-items:center;gap:10px;margin:13px 12px 0;}
-  .deck-dots{display:flex;align-items:center;gap:5px;flex:1;}
+  .mdeck-card, .mdeck-body{touch-action:pan-y;}   /* 整卡可横向拖动，竖向交给整页滚动 */
+  .mdeck-card .menu-hero{flex:0 0 auto;border-radius:0;box-shadow:none;padding:13px 18px 12px;}
+  .mdeck-card .mh-name{font-size:22px;margin-top:5px;}
+  .mdeck-card .mh-price{margin-top:7px;}
+  .mdeck-card .mh-price .num{font-size:28px;}
+  .mdeck-body{
+    flex:1 1 auto;overflow:visible;padding:10px 15px 11px;
+  }
+  .mgroup + .mgroup{margin-top:13px;padding-top:11px;border-top:1px dashed #F1E4E4;}
+  /* 底部：虚线分隔 + 圆形半透明左右键 */
+  .deck-meta{
+    display:flex;align-items:center;gap:12px;margin:11px 12px 0;
+    padding-top:9px;border-top:1px dashed #F1E4E4;
+  }
+  .deck-mid{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:7px;}
+  .deck-dots{display:flex;align-items:center;gap:5px;}
   .deck-dot{
     width:6px;height:6px;border-radius:50%;background:#E6D2D2;
     transition:all .24s cubic-bezier(.22,.61,.36,1);cursor:pointer;
   }
   .deck-dot.is-on{width:16px;border-radius:3px;background:var(--wine);}
   .deck-count{font-size:10.5px;color:var(--ink-3);letter-spacing:.06em;}
+  .deck-arrow{
+    flex:0 0 auto;width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;padding:0;
+    background:rgba(139,26,26,.07);border:1px solid rgba(139,26,26,.15);
+    color:var(--wine);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .16s cubic-bezier(.22,.61,.36,1),background .18s ease;
+  }
+  .deck-arrow:active{transform:scale(.92);background:rgba(139,26,26,.14);}
+  .deck-arrow svg{display:block;}
   .deck-hint{
-    text-align:center;font-size:10.5px;color:var(--ink-3);letter-spacing:.08em;margin:9px 12px 0;
+    text-align:center;font-size:10.5px;color:var(--ink-3);letter-spacing:.08em;margin:8px 12px 0;
   }
-  .menu-cta{
-    margin-top:14px;background:linear-gradient(150deg,#FBF2F2 0%,#F6E7E7 100%);
-    border:1px solid var(--wine-line);border-radius:14px;padding:16px;
-  }
-  .menu-cta-line{font-size:12px;color:var(--ink-2);line-height:1.65;letter-spacing:.02em;}
-  .menu-cta-line b{color:var(--wine-dark);font-weight:600;}
-  .menu-cta-btn{
-    display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;
-    padding:12px;border-radius:10px;background:var(--wine);color:#fff;text-decoration:none;
-    font-size:13px;font-weight:600;letter-spacing:.06em;
-  }
-  .menu-cta-btn svg{width:15px;height:15px;stroke:#fff;}
   /* ═══════ v7：板块分隔 / 场地卡 / 权益合并 / 分享 ═══════ */
 
   /* ── 板块分隔带 ── */
@@ -772,6 +869,7 @@
   }
   .cost-link svg{width:11px;height:11px;stroke:var(--wine);}
   .cost-link:active{opacity:.85;}
+  .cost-link + .cost-link{margin-left:8px;}
 
   /* ── CTA 双按钮 ── */
   .cta-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px;}
@@ -914,8 +1012,8 @@
         </div>
 
         <div class="field">
-          <div class="field-label"><span class="idx"><!--pnid:uKkLE8dzZjmKi3oSaa5I9u-->04</span><!--pnid:mausxx7s267ahpZmID63rK-->预计桌数<span class="tip"><!--pnid:qjn3m6cDzEfglQEisY8kBh-->3 席起订 · 1 席 = 10 位</span></div>
-          <div class="numwrap">
+          <div class="field-label"><span class="idx"><!--pnid:uKkLE8dzZjmKi3oSaa5I9u-->04</span><!--pnid:mausxx7s267ahpZmID63rK-->预计桌数<span class="req">必填</span><span class="tip"><!--pnid:qjn3m6cDzEfglQEisY8kBh-->3 席起订 · 1 席 = 10 位</span></div>
+          <div class="numwrap is-primary" id="bqTablesWrap">
             <input autocomplete="off" id="bqTables" inputmode="numeric" pattern="[0-9]*" placeholder="请输入桌数" type="text">
             <span class="unit"><!--pnid:88T0ULQhE2Z7iLAR34sBh0-->席</span>
           </div>
@@ -924,7 +1022,7 @@
         <div class="field">
           <div class="field-label"><span class="idx"><!--pnid:9xcAU8Cw6maxjdzJvIaFLQ-->05</span><!--pnid:3JxtjDRjZaf7IveQs6B4jf-->人均餐标预算</div>
           <div class="numwrap">
-            <input autocomplete="off" id="bqBudget" inputmode="numeric" pattern="[0-9]*" placeholder="请输入人均预算" type="text">
+            <input autocomplete="off" id="bqBudget" inputmode="numeric" pattern="[0-9]*" placeholder="填写人均预算可获得推荐菜单" type="text">
             <span class="unit"><!--pnid:IfZEaymAWrFNLY4t36rt3X-->元/位</span>
           </div>
         </div>
@@ -974,8 +1072,8 @@
         </div>
 
         <div class="field">
-          <div class="field-label"><span class="idx"><!--pnid:AR61riDFgyt46VAKM2BhG2-->03</span><!--pnid:KqwxCQYH8UELdXzEkLl3Tb-->参会人数</div>
-          <div class="numwrap">
+          <div class="field-label"><span class="idx"><!--pnid:AR61riDFgyt46VAKM2BhG2-->03</span><!--pnid:KqwxCQYH8UELdXzEkLl3Tb-->参会人数<span class="req">必填</span></div>
+          <div class="numwrap is-primary" id="mtPeopleWrap">
             <input autocomplete="off" id="mtPeople" inputmode="numeric" pattern="[0-9]*" placeholder="请输入参会人数" type="text">
             <span class="unit"><!--pnid:MRvPrMcdcBQ8hrjqgXiq3i-->人</span>
           </div>
@@ -1028,11 +1126,15 @@
             <button class="opt" data-val="multi"><!--pnid:FJ794eljhTC2g5nZAF1znp-->多天</button>
           </div>
           <div class="subblock" id="mtDaysWrap" style="margin-top:10px">
-            <div class="subblock-title"><!--pnid:89emvXt5BTTpGyP0dE8GRz-->会议日期<span class="hint" id="mtDateHint"><!--pnid:2amQYLstFVXxj8VF0NByjb-->选填</span></div>
+            <div class="subblock-title"><!--pnid:89emvXt5BTTpGyP0dE8GRz-->会议日期<span class="req">必填</span><span class="hint" id="mtDateHint"><!--pnid:2amQYLstFVXxj8VF0NByjb--></span></div>
             <div class="date-pair">
-              <div class="numwrap is-text"><input aria-label="开始日期" autocomplete="off" id="mtDateS" type="date"></div>
+              <div class="numwrap is-text is-primary is-date" id="mtDateSWrap"><input aria-label="开始日期" autocomplete="off" id="mtDateS" type="date"></div>
               <span class="date-sep" id="mtDateSep" style="display:none"><!--pnid:X2bmgvkLHmovTguQneLtPv-->至</span>
-              <div class="numwrap is-text" id="mtDateEWrap" style="display:none"><input aria-label="结束日期" autocomplete="off" id="mtDateE" type="date"></div>
+              <div class="numwrap is-text is-primary is-date" id="mtDateEWrap" style="display:none"><input aria-label="结束日期" autocomplete="off" id="mtDateE" type="date"></div>
+            </div>
+            <div class="opts" data-group="mtHalf" id="mtHalfPick" style="display:none;margin-top:10px">
+              <button class="opt is-on" data-val="am"><!--pnid:halfAm-->早上</button>
+              <button class="opt" data-val="pm"><!--pnid:halfPm-->下午</button>
             </div>
             <div class="field-help" id="mtDaysCalc"></div>
             <input id="mtDays" type="hidden" value>
@@ -1040,9 +1142,9 @@
         </div>
 
         <div class="field" id="mtMealField">
-          <div class="field-label"><span class="idx"><!--pnid:XomdbiwNMOAUHAhIKhu7ci-->07</span><!--pnid:5mlrpFw0pXfVkrWrKe8qGb-->用餐安排<span class="tip"><!--pnid:CZIOrXto662VGDeWWD0P3Z-->简餐 38 元/位</span></div>
+          <div class="field-label"><span class="idx"><!--pnid:XomdbiwNMOAUHAhIKhu7ci-->07</span><!--pnid:5mlrpFw0pXfVkrWrKe8qGb-->用餐安排<span class="tip"><!--pnid:CZIOrXto662VGDeWWD0P3Z--><button class="tip-link" data-menu="s1" data-mtype="简餐">简餐 38 元/位 · 看菜单</button></span></div>
           <div class="subblock" style="margin-top:0">
-            <div class="subblock-title"><!--pnid:yKnvgR7cTLL8ig4OEtxe1s-->按会议日程逐餐选择<span class="hint" id="mtMealHint"></span></div>
+            <div class="subblock-title"><!--pnid:yKnvgR7cTLL8ig4OEtxe1s-->按会议日程逐餐选择<span class="hint" id="mtMealHint"></span><button class="viewtoggle" id="mtMealView" data-mealview><!--pnid:mtMealView-->按日期看</button></div>
             <div id="mtMealRows"></div>
           </div>
         </div>
@@ -1298,6 +1400,24 @@
         [['汤羹',['石斛炖老鸡汤']],['凉菜',['四小碟（两荤两素）']],
          ['热菜',['鸿运金猪拼盘','芝士伊面焗双青龙','竹林大扇鸡','陈皮清蒸六头鲍','清蒸老虎斑','发财圆蹄','一品牛仔骨','碧绿炒双鱿','雀巢海中宝','瑶柱鲜菇浸菜心']],
          ['主食 · 甜品',['海鲜炒饭','五彩汤圆']],['果盘',['精美水果拼盘']]])
+    ],
+
+    // 会议简餐（KB：38 元/人，两荤一素一汤）
+    simple: [
+      { id:'s1', name:'简餐菜单一', price:38, unit:'人', fee:false, raw:true,
+        tagline:'两荤一素一汤 · 米饭任加',
+        groups:[
+          ['荤菜',['香菇滑鸡','小炒肉']],
+          ['素菜',['炒菜心']],
+          ['汤',['虫草花筒骨汤']]
+        ] },
+      { id:'s2', name:'简餐菜单二', price:38, unit:'人', fee:false, raw:true,
+        tagline:'两荤一素一汤 · 米饭任加',
+        groups:[
+          ['荤菜',['豆豉蒸排骨','回锅肉']],
+          ['素菜',['炒菜心']],
+          ['汤',['茶树菇汤']]
+        ] }
     ]
   };
   // 兼容旧引用
@@ -1347,14 +1467,14 @@
 
   // 全房型优惠价（KB《2026 商务订房协议》+《山水S酒店介绍》房型间数）
   var ROOM_TYPES = [
-    { name:'高级大床房', count:56, area:'30㎡', list:738, walk:368, rate:258, tag:'会议 / 宴席优惠房型', conf:'小度语音房控、智能马桶、55 寸电视、1.8m×2m 大床' },
-    { name:'豪华双床房', count:40, area:'36㎡', list:738, walk:368, rate:258, tag:'会议 / 宴席优惠房型', conf:'洗衣机、小度语音房控、智能马桶、1.2m×2m 双床' },
-    { name:'家庭大床房', area:'2.4m 大床', list:798, walk:398, rate:298, conf:'洗衣机 + 烘干机、小度语音房控、智能马桶、2m×2.4m 大床' },
+    { name:'高级大床房', count:56, area:'30㎡', list:738, walk:368, rate:258, tag:'会议 / 宴席优惠房型', conf:'小度语音房控、智能马桶、55 寸电视、1.8m×2m 大床', keep:true },
+    { name:'豪华双床房', count:40, area:'36㎡', list:738, walk:368, rate:258, tag:'会议 / 宴席优惠房型', conf:'洗衣机、小度语音房控、智能马桶、1.2m×2m 双床', keep:true },
     { name:'豪华大床房', count:8,  area:'36㎡', list:838, walk:418, rate:338, conf:'洗衣机 + 烘干机、保险柜、2m×2m 大床' },
+    { name:'行政豪华套房', count:3, area:'78㎡', list:1158, walk:578, rate:468, conf:'一房一厅、独立洗衣房、浴缸、按摩椅、咖啡机' },
+    { name:'家庭大床房', area:'2.4m 大床', list:798, walk:398, rate:298, conf:'洗衣机 + 烘干机、小度语音房控、智能马桶、2m×2.4m 大床' },
     { name:'悦享茶艺房', count:3,  area:'45㎡', list:938, walk:468, rate:378, conf:'开放式客厅、实木茶艺桌、2m×2m 大床' },
     { name:'悦享麻将房', count:6,  area:'45㎡', list:978, walk:488, rate:398, conf:'开放式客厅、麻将机、2m×2m 大床' },
-    { name:'行政茶艺套房', count:8, area:'68㎡', list:1098, walk:548, rate:438, conf:'一房一厅、独立洗衣房、浴缸、迷你吧台、茶艺桌' },
-    { name:'行政豪华套房', count:3, area:'78㎡', list:1158, walk:578, rate:468, conf:'一房一厅、独立洗衣房、浴缸、按摩椅、咖啡机' }
+    { name:'行政茶艺套房', count:8, area:'68㎡', list:1098, walk:548, rate:438, conf:'一房一厅、独立洗衣房、浴缸、迷你吧台、茶艺桌' }
   ];
 
   /* ═══════════════════════════════════════════════
@@ -1366,7 +1486,8 @@
   }
   function defaultMeeting(){
     return { people:'', needMeal:true, needRoom:false, layout:'classroom', duration:'full',
-             days:'', meals:{}, rooms:{}, host:'', company:'', dateS:'', dateE:'' };
+             half:'am', mealView:'day',
+             days:'', meals:{}, mealNums:{}, rooms:{}, host:'', company:'', dateS:'', dateE:'' };
   }
   var state = { board:null, banquet:defaultBanquet(), meeting:defaultMeeting() };
   var lastBq = null, lastMt = null;   // 最近一次匹配结果（供生成分享图使用）
@@ -1467,10 +1588,18 @@
     return p ? p.id : 'page-entry';
   }
 
+  var pageScroll = {};   // 每个页面离开时的滚动位置，返回时还原
+
   function showOnly(id){
+    var cur = activePageId();
+    if(cur && cur !== id){
+      pageScroll[cur] = window.pageYOffset || document.documentElement.scrollTop || 0;
+    }
     var pages = document.querySelectorAll('.page');
     for(var i=0;i<pages.length;i++) pages[i].classList.toggle('is-active', pages[i].id === id);
-    window.scrollTo(0,0);
+    var y = pageScroll[id] || 0;
+    // 等新页面布局生效后再还原（否则会被旧高度夹掉）
+    requestAnimationFrame(function(){ window.scrollTo(0, y); });
   }
 
   function pushPage(id, title){
@@ -1494,6 +1623,7 @@
 
   function openBoard(board){
     pageStack.length = 0;
+    pageScroll = {};
     state.banquet = defaultBanquet();
     state.meeting = defaultMeeting();
     state.board = board;
@@ -1529,8 +1659,8 @@
 
     html += '<div class="section-title" style="margin-bottom:10px">全房型价目</div>';
 
-    ROOM_TYPES.forEach(function(r){
-      html += '<div class="rate-card">' +
+    function roomCard(r){
+      return '<div class="rate-card">' +
         '<div class="rate-top">' +
           '<div class="rate-name">' + esc(r.name) + '</div>' +
           '<div class="rate-meta">' + (r.count ? r.count + ' 间 · ' : '') + r.area + '</div>' +
@@ -1542,14 +1672,33 @@
         '</div>' +
         '<div class="rate-conf">' + esc(r.conf) + '</div>' +
       '</div>';
-    });
+    }
+
+    // 优惠房型（高级大床房 / 豪华双床房）直接展示，其余房型折叠为「其他房型」
+    var mainRooms = ROOM_TYPES.filter(function(r){ return r.keep; });
+    var moreRooms = ROOM_TYPES.filter(function(r){ return !r.keep; })
+      .sort(function(a, b){ return (a.rate || 0) - (b.rate || 0); });
+
+    html += '<div class="rate-group"><span>会议 / 宴席优惠房型</span><i>可直接预订</i></div>';
+    mainRooms.forEach(function(r){ html += roomCard(r); });
+
+    if(moreRooms.length){
+      html += '<button class="foldbtn" data-fold="roomsMore"' +
+        ' data-label="查看其他 ' + moreRooms.length + ' 种房型" data-label-alt="收起其他房型">' +
+        svgChev() + '查看其他 ' + moreRooms.length + ' 种房型</button>' +
+        '<div class="foldbody" id="roomsMoreBody">' +
+          '<div class="rate-group"><span>其他房型</span><i>需销售人员确认房态</i></div>';
+      moreRooms.forEach(function(r){ html += roomCard(r); });
+      html += '</div>';
+    }
 
     html += '<div class="rate-note" style="margin-top:14px">' +
       '<b>预订说明</b>' +
-      '· 以上房价均含税、含双早（按床位赠送，每间最多双早，加早 48 元/份）<br>' +
-      '· 会议 / 宴席专享价 ¥258 适用于高级大床房、豪华双床房；其余房型按上表协议价执行<br>' +
+      '· 以上房价均含税、含双早<br>' +
       '· 法定节假日及本地大型会展期间价格另议<br>' +
-      '· 建议提前 48 小时预订，以免满房' +
+      '· 建议提前 48 小时预订，以免满房<br>' +
+      '· 其他房型预订可致电销售人员 ' +
+        '<a class="rn-tel" href="' + TEL_HREF + '">' + TEL_TEXT + '</a>' +
     '</div>';
 
     $('roomsList').innerHTML = html;
@@ -1562,7 +1711,7 @@
   var menuCtx = { id:'w1', type:'婚宴' };
 
   function menuById(id){
-    var keys = ['wedding','yearend','engagement'];
+    var keys = ['wedding','yearend','engagement','simple'];
     for(var i=0;i<keys.length;i++){
       var arr = MENUS[keys[i]];
       for(var j=0;j<arr.length;j++) if(arr[j].id === id) return { menu:arr[j], family:keys[i] };
@@ -1571,6 +1720,7 @@
   }
 
   function familyLabel(fam, type){
+    if(fam === 'simple') return '简餐';
     if(fam === 'wedding'){
       if(type === '答谢宴') return '答谢宴';
       if(type === '户外婚礼') return '户外婚礼';
@@ -1613,6 +1763,9 @@
   ];
 
   function menuDisplayGroups(p){
+    if(p.raw){
+      return (p.groups || []).map(function(g){ return { label:g[0], dishes:g[1] }; });
+    }
     var buckets = { starter:[], soup:[], main:[], carb:[], fruit:[] };
     (p.groups || []).forEach(function(g){
       var slot = GROUP_SLOT[g[0]] || GROUP_SLOT[String(g[0]).split(' ')[0]];
@@ -1635,11 +1788,11 @@
       '<div class="mh-eyebrow">' + esc(familyLabel(fam, t)) + '菜单 · 2026 版</div>' +
       '<div class="mh-name">' + esc(name) + '</div>' +
       '<div class="mh-price"><span class="cur">¥</span><span class="num">' + money(m.price) +
-        '</span><span class="per">/ 席（10 位用）</span></div>' +
-      (m.tagline ? '<div class="mh-tagline">' + esc(m.tagline) + '</div>' : '') +
-      '<div class="mh-tags">' +
-        '<span class="mh-tag">' + dishCount(m) + ' 道菜</span>' +
-        '<span class="mh-tag">另加 10% 服务费</span>' +
+        '</span><span class="per">' + (m.unit ? ('/ ' + m.unit) : '/ 席（10 位用）') + '</span></div>' +
+      '<div class="mh-meta">' +
+        (m.tagline ? '<span>' + esc(m.tagline) + '</span>' : '') +
+        '<span class="mstat">' + dishCount(m) + ' 道菜' +
+          (m.fee === false ? '' : ' · 另加 10% 服务费') + '</span>' +
       '</div>' +
     '</div>';
 
@@ -1653,7 +1806,9 @@
           '</div>' +
           '<div class="dish-grid">' +
             g.dishes.map(function(d, di){
-              var wide = (g.dishes.length % 2 === 1 && di === g.dishes.length - 1) ? ' wide' : '';
+              // 长菜名（>12 字）独占一行，避免在括号处折行；奇数条目的最后一条也通栏
+              var wide = (String(d).length > 11 || (g.dishes.length % 2 === 1 && di === g.dishes.length - 1))
+                ? ' wide' : '';
               return '<div class="dish' + wide + '">' + esc(d) + '</div>';
             }).join('') +
           '</div>' +
@@ -1682,14 +1837,33 @@
       return '<span class="deck-dot' + (i === deck.idx ? ' is-on' : '') + '" data-deckdot="' + i + '"></span>';
     }).join('');
 
+    var arrL = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" ' +
+      'stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4.5L8 12l7 7.5"/></svg>';
+    var arrR = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" ' +
+      'stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5L16 12l-7 7.5"/></svg>';
+
     return '<div class="deck-wrap">' +
       '<div class="menu-deck" id="menuDeck">' + cards + '</div>' +
       '<div class="deck-meta">' +
-        '<div class="deck-dots">' + dots + '</div>' +
-        '<div class="deck-count" id="deckCount">' + (deck.idx + 1) + ' / ' + deck.n + '</div>' +
+        '<button class="deck-arrow" data-deckgo="-1" aria-label="上一款菜单">' + arrL + '</button>' +
+        '<div class="deck-mid">' +
+          '<div class="deck-dots">' + dots + '</div>' +
+          '<div class="deck-count" id="deckCount">' + (deck.idx + 1) + ' / ' + deck.n + '</div>' +
+        '</div>' +
+        '<button class="deck-arrow" data-deckgo="1" aria-label="下一款菜单">' + arrR + '</button>' +
       '</div>' +
-      '<div class="deck-hint">左右滑动切换其它档位</div>' +
+      '<div class="deck-hint">左右滑动，或点按两侧按键切换档位</div>' +
     '</div>';
+  }
+
+  // 环形相对位置：首尾相接，支持循环滑动
+  function deckRel(i){
+    var n = deck.n || 1;
+    if(n < 2) return 0;
+    var rel = i - deck.idx;
+    if(rel > n / 2) rel -= n;
+    if(rel < -n / 2) rel += n;
+    return rel;
   }
 
   function deckLayout(animate){
@@ -1700,7 +1874,7 @@
     if(!animate) box.classList.add('no-anim');
 
     for(var i=0;i<cards.length;i++){
-      var c = cards[i], rel = i - deck.idx;
+      var c = cards[i], rel = deckRel(i);
       if(rel === 0){
         c.style.transform = 'translate3d(0,0,0) scale(1) rotate(0deg)';
         c.style.opacity = '1'; c.style.zIndex = '5'; c.style.pointerEvents = 'auto';
@@ -1734,9 +1908,16 @@
   }
 
   function deckGoto(i){
-    if(i < 0 || i >= deck.n || i === deck.idx) return;
-    deck.idx = i;
+    var n = deck.n || 0;
+    if(!n) return;
+    var next = ((i % n) + n) % n;          // 取模 → 首尾循环
+    if(next === deck.idx) return;
+    deck.idx = next;
     deckLayout(true);
+  }
+
+  function deckStep(dir){
+    deckGoto(deck.idx + dir);
   }
 
   function deckRelayout(){
@@ -1772,27 +1953,28 @@
         try{ box.setPointerCapture(pid); }catch(err){}
       }
       dx = mx;
-      var edge = (deck.idx === 0 && dx > 0) || (deck.idx === deck.n - 1 && dx < 0);
-      var shown = edge ? dx * 0.3 : dx;
+      var n = deck.n || 1;
+      var shown = dx * 0.86;   // 阻尼：卡片跟手比手指慢一点
+      var drag = shown;
 
       var cards = box.querySelectorAll('.mdeck-card');
       var cur = cards[deck.idx];
+      var nx = cards[(deck.idx + 1) % n];
+      var pv = cards[(deck.idx - 1 + n) % n];
       if(cur){
         cur.style.transform = 'translate3d(' + shown + 'px,0,0) scale(1) rotate(' + (shown * 0.02) + 'deg)';
         cur.style.opacity = '1';
         cur.style.zIndex = '6';
       }
-      if(dx < 0 && cards[deck.idx + 1]){
-        var p = Math.min(1, Math.abs(dx) / w);
-        var nx = cards[deck.idx + 1];
+      if(drag < 0 && nx && nx !== cur){
+        var p = Math.min(1, Math.abs(drag) / w);
         nx.style.transform = 'translate3d(' + (8 - 8 * p) + '%,' + (8 - 8 * p) + 'px,0) scale(' +
           (0.935 + 0.065 * p) + ') rotate(' + (1.2 * (1 - p)) + 'deg)';
         nx.style.opacity = String(0.6 + 0.4 * p);
         nx.style.zIndex = '7';
       }
-      if(dx > 0 && cards[deck.idx - 1]){
-        var q = Math.min(1, dx / w);
-        var pv = cards[deck.idx - 1];
+      if(drag > 0 && pv && pv !== cur){
+        var q = Math.min(1, drag / w);
         pv.style.transform = 'translate3d(' + (-8 + 8 * q) + '%,' + (8 - 8 * q) + 'px,0) scale(' +
           (0.935 + 0.065 * q) + ') rotate(' + (-1.2 * (1 - q)) + 'deg)';
         pv.style.opacity = String(0.6 + 0.4 * q);
@@ -1807,16 +1989,33 @@
       box.classList.remove('no-anim');
       try{ if(pid != null) box.releasePointerCapture(pid); }catch(err){}
       var th = Math.min(72, w * 0.18);
-      var next = deck.idx;
+      var next = deck.idx, n = deck.n || 1;
       if(dx < -th) next = deck.idx + 1;
       else if(dx > th) next = deck.idx - 1;
       dx = 0;
-      deck.idx = Math.max(0, Math.min(deck.n - 1, next));
+      deck.idx = ((next % n) + n) % n;      // 环形取模，不夹紧
       deckLayout(true);
     }
     box.addEventListener('pointerup', end);
     box.addEventListener('pointercancel', end);
     box.addEventListener('pointerleave', function(){ if(active && !locked) end(); });
+  }
+
+  // 同一会议单里既有简餐又有围餐 → 菜单页底部给个互跳按钮
+  function crossMealLink(fam){
+    if(fam !== 'simple' && fam !== 'yearend') return '';
+    var ms = state.meeting.meals || {};
+    var hasSimple = false, hasTable = false;
+    for(var k in ms){
+      if(ms[k] === 'simple') hasSimple = true;
+      else if(ms[k] === 'table') hasTable = true;
+    }
+    var to = null;
+    if(fam === 'simple' && hasTable) to = { id:'y1', type:'围餐', name:'围餐菜单' };
+    else if(fam === 'yearend' && hasSimple) to = { id:'s1', type:'简餐', name:'简餐菜单' };
+    if(!to) return '';
+    return '<button class="menu-xlink" data-menu="' + to.id + '" data-mtype="' + to.type + '">' +
+      '查看' + to.name + svgArrow() + '</button>';
   }
 
   function renderMenuPage(id, type){
@@ -1826,16 +2025,8 @@
     var fam = found.family;
     var t = type || familyLabel(fam);
 
-    var html = '<div class="section">' +
-      buildDeck(fam, t, id) +
-      '<div class="menu-cta">' +
-        '<div class="menu-cta-line">' +
-          '· 每席按 <b>10 位</b> 计，价格另加 <b>10% 服务费</b><br>' +
-          '· 菜单有效期至 2026 年 12 月 31 日' +
-        '</div>' +
-        '<a class="menu-cta-btn" href="' + TEL_HREF + '">' + svgPhone() + '咨询与订席 ' + TEL_TEXT + '</a>' +
-      '</div>' +
-    '</div>';
+    // 菜单详情：堆叠轮播 + （同一会议单里两种餐型都在时）底部互跳按钮
+    var html = '<div class="section">' + buildDeck(fam, t, id) + '</div>' + crossMealLink(fam);
 
     $('menuDetail').innerHTML = html;
     deckBind();
@@ -1862,6 +2053,7 @@
     setGroup('bqPeriod', state.banquet.period);
     setGroup('mtLayout', state.meeting.layout);
     setGroup('mtDuration', state.meeting.duration);
+    setGroup('mtHalf', state.meeting.half || 'am');
 
     $('bqHost').value = state.banquet.host;
     $('bqDate').value = state.banquet.date;
@@ -1881,10 +2073,13 @@
       }
     }
 
-    var isMulti = state.meeting.duration === 'multi';
-    $('mtDateSep').style.display = isMulti ? 'inline' : 'none';
-    $('mtDateEWrap').style.display = isMulti ? 'flex' : 'none';
-    $('mtDateHint').textContent = isMulti ? '多天请选起止日期' : '选填';
+    setDatePairMode(state.meeting.duration === 'multi');
+    showHalfPick();
+    // 首填项：填了就把外发光收一点，没填保持高亮
+    var tw = $('bqTablesWrap'), pw = $('mtPeopleWrap');
+    if(tw) tw.classList.toggle('is-filled', !!String(state.banquet.tables || ''));
+    if(pw) pw.classList.toggle('is-filled', !!String(state.meeting.people || ''));
+    syncDatePrimary();
     updateMtDaysCalc();
     $('mtMealField').style.display = state.meeting.needMeal ? 'block' : 'none';
     $('mtRoomField').style.display = state.meeting.needRoom ? 'block' : 'none';
@@ -2107,9 +2302,9 @@
       '<div class="cta-actions">' +
         '<a class="cta-btn" href="' + TEL_HREF + '">' + svgPhone() + '拨打 ' + TEL_TEXT + '</a>' +
         '<button class="cta-btn is-ghost" data-wechat="banquet">' + svgWechat() + '添加微信</button>' +
-        '<button class="cta-btn is-ghost" data-export="banquet">' + svgDown() + '导出档案</button>' +
+        '<button class="cta-btn is-ghost" data-export="banquet">' + svgDown() + '导出方案</button>' +
       '</div>' +
-      '<div class="cta-tel">「添加微信」<b>复制手机号 + 打开微信</b> · 「导出档案」<b>生成方案图并存入相册</b></div>' +
+      '<div class="cta-tel">「添加微信」<b>复制手机号 + 打开微信</b> · 「导出方案」<b>存方案图到相册</b></div>' +
       '</div></div>';
 
     box.innerHTML = html;
@@ -2127,8 +2322,7 @@
 
   // 类型按钮下方的常驻提示
   var TYPE_HELP = {
-    '户外婚礼': '仅 4F 合苑厅全厅（含空中花园）承接，全厅最多 ' + OUTDOOR_MAX + ' 席',
-    '乔迁宴': '4 档菜单 ¥1,699–2,999 / 席（10 位用），可选午宴或晚宴'
+    '户外婚礼': '仅 4F 合苑厅全厅（含空中花园）承接，全厅最多 ' + OUTDOOR_MAX + ' 席'
   };
 
   // 超出常规容量时，返回当前桌数对应的「极限摆法」档
@@ -2310,6 +2504,24 @@
   }
 
   // 区间变化后重算天数，并重建逐餐 / 住房行
+  // 会议日期区：多天时起止日期纵向堆叠（两个日期框并排会被日历图标挤压）
+  function setDatePairMode(isMulti){
+    $('mtDateSep').style.display = isMulti ? 'inline' : 'none';
+    $('mtDateEWrap').style.display = isMulti ? 'flex' : 'none';
+    $('mtDateHint').textContent = isMulti ? '多天请选起止日期' : '';
+    var sw = $('mtDateSWrap');
+    var dp = sw ? sw.closest('.date-pair') : null;
+    if(dp) dp.classList.toggle('is-stack', !!isMulti);
+  }
+
+  // 必填日期：选了就收一点外发光（与席数 / 人数同一套反馈）
+  function syncDatePrimary(){
+    var m = state.meeting;
+    var sw = $('mtDateSWrap'), ew = $('mtDateEWrap');
+    if(sw) sw.classList.toggle('is-filled', !!m.dateS);
+    if(ew) ew.classList.toggle('is-filled', !!m.dateE);
+  }
+
   function syncMeetingDays(){
     var m = state.meeting;
     if(m.duration === 'multi'){
@@ -2320,8 +2532,15 @@
     }
     $('mtDays').value = m.days;
     updateMtDaysCalc();
+    syncDatePrimary();
     buildMeetingRows();
     renderMeeting();
+  }
+
+  // 「早上 / 下午」只在半天时出现
+  function showHalfPick(){
+    var el = $('mtHalfPick');
+    if(el) el.style.display = (state.meeting.duration === 'half') ? 'grid' : 'none';
   }
 
   function meetingDays(m){
@@ -2330,14 +2549,47 @@
   }
 
   function mealSlots(m){
-    if(m.duration === 'half') return [{ key:'d1l', label:'第1天 午餐' }];
-    var d = meetingDays(m);
     var out = [];
+    if(m.duration === 'half'){
+      var pm = (m.half === 'pm');
+      out.push({ key: pm ? 'd1d' : 'd1l', meal: pm ? '晚餐' : '午餐', day:1 });
+      return out;
+    }
+    var d = meetingDays(m);
     for(var i=1;i<=d;i++){
-      out.push({ key:'d'+i+'l', label:'第' + i + '天 午餐' });
-      out.push({ key:'d'+i+'d', label:'第' + i + '天 晚餐' });
+      out.push({ key:'d'+i+'l', meal:'午餐', day:i });
+      out.push({ key:'d'+i+'d', meal:'晚餐', day:i });
     }
     return out;
+  }
+
+  // 日期基准 + 偏移天数 → 「11月8日」
+  function dateTextOf(base, addDays){    if(!base) return '';
+    var p = String(base).split('-');
+    if(p.length < 3) return '';
+    var y = num(p[0]), mo = num(p[1]), dd = num(p[2]);
+    if(!y || !mo || !dd) return '';
+    var dt = new Date(Date.UTC(y, mo - 1, dd));
+    dt.setUTCDate(dt.getUTCDate() + (addDays || 0));
+    return (dt.getUTCMonth() + 1) + '月' + dt.getUTCDate() + '日';
+  }
+
+  // '2026-11-08' → '2026年11月8日' / '11月8日'
+  function cnDate(iso, withYear){
+    if(!iso) return '';
+    var p = String(iso).split('-');
+    if(p.length < 3) return String(iso);
+    var y = num(p[0]), mo = num(p[1]), dd = num(p[2]);
+    if(!y || !mo || !dd) return String(iso);
+    return (withYear ? (y + '年') : '') + mo + '月' + dd + '日';
+  }
+
+  // 餐次标签：默认「第1天 午餐」，选了会议日期后可切「11月8日 午餐」
+  function mealSlotLabel(sl, m){
+    var useDate = (m.mealView === 'date') && !!m.dateS;
+    var dt = useDate ? dateTextOf(m.dateS, (sl.day || 1) - 1) : '';
+    if(m.duration === 'half') return dt ? (dt + ' ' + sl.meal) : sl.meal;
+    return (dt || ('第' + sl.day + '天')) + ' ' + sl.meal;
   }
 
   function roomNights(m){
@@ -2353,21 +2605,57 @@
     return out;
   }
 
-  function buildMeetingRows(){
+  function buildMeetingRows(animKey){
     var m = state.meeting;
+    if(!m.mealNums || typeof m.mealNums !== 'object') m.mealNums = {};
+    var mq = m.mealNums;
+    var people = num(m.people);
 
     var slots = mealSlots(m);
     $('mtMealRows').innerHTML = slots.map(function(sl){
       var v = m.meals[sl.key] || 'none';
-      return '<div class="mealrow">' +
-        '<div class="mr-label">' + sl.label + '</div>' +
-        '<div class="mr-opts">' +
+      var isSimple = v === 'simple', isTable = v === 'table';
+      var open = isSimple || isTable;
+      var fill = '';
+
+      if(open){
+        var dflt = isSimple ? people : (people ? Math.ceil(people / 10) : 0);
+        var cur = (mq[sl.key] == null) ? '' : String(mq[sl.key]);
+        var unit = isSimple ? '份' : '桌';
+        fill = '<label class="mr-fill' + (sl.key === animKey ? '' : ' is-open') + '">' +
+            '<input type="text" inputmode="numeric" pattern="[0-9]*" ' +
+              'data-mealnum="' + sl.key + '" value="' + esc(cur) + '" placeholder="' + dflt + '" autocomplete="off">' +
+            '<span>' + unit + '</span></label>';
+      }
+
+      return '<div class="mealrow" data-mkey="' + sl.key + '">' +
+        '<div class="mr-label' + (m.dateS ? ' is-tap' : '') + '" data-mealview="1"' +
+          ' title="' + (m.dateS ? '点击切换：日期 / 天数' : '先选会议日期') + '">' +
+          mealSlotLabel(sl, m) + '</div>' +
+        '<div class="mr-opts">' + fill +
           '<button class="seg ' + (v === 'none' ? 'is-on' : '') + '" data-meal="' + sl.key + '" data-val="none">不用</button>' +
-          '<button class="seg ' + (v === 'simple' ? 'is-on' : '') + '" data-meal="' + sl.key + '" data-val="simple">简餐38</button>' +
+          '<button class="seg ' + (v === 'simple' ? 'is-on' : '') + '" data-meal="' + sl.key + '" data-val="simple">简餐</button>' +
           '<button class="seg ' + (v === 'table' ? 'is-on' : '') + '" data-meal="' + sl.key + '" data-val="table">围餐</button>' +
         '</div></div>';
     }).join('');
-    $('mtMealHint').textContent = '共 ' + slots.length + ' 餐';
+    $('mtMealHint').textContent = '共 ' + slots.length + ' 餐' +
+      (m.duration === 'half' ? (' · ' + (m.half === 'pm' ? '下午' : '上午')) : '');
+
+    var vBtn = $('mtMealView');
+    if(vBtn){
+      var onDate = (m.mealView === 'date') && !!m.dateS;
+      vBtn.textContent = onDate ? '按天数看' : '按日期看';
+      vBtn.style.display = m.dateS ? '' : 'none';
+    }
+
+    // 刚点开的那一格：先回流再补 is-open，让份数区从 0 宽度向左展开
+    if(animKey){
+      var nf = $('mtMealRows').querySelector('.mr-fill:not(.is-open)');
+      if(nf){
+        void nf.offsetWidth;
+        nf.classList.add('is-open');
+      }
+    }
 
     var nights = roomNights(m);
     $('mtRoomRows').innerHTML = nights.map(function(n){
@@ -2402,11 +2690,18 @@
   function meetingCost(m, people){
     var slots = mealSlots(m);
     var simpleCount = 0, tableCount = 0, mealTotal = 0;
+    var simplePcs = 0, tableTables = 0, simpleTotal = 0, tableTotal = 0;
+    var mq = (m.mealNums && typeof m.mealNums === 'object') ? m.mealNums : {};
 
     slots.forEach(function(sl){
       var v = m.meals[sl.key];
-      if(v === 'simple'){ simpleCount++; mealTotal += people * SIMPLE_MEAL; }
-      else if(v === 'table'){ tableCount++; mealTotal += Math.ceil(people / 10) * TABLE_MEAL_MIN; }
+      if(v === 'simple'){
+        var n = num(mq[sl.key]) || people;      // 未填 → 按参会人数
+        simpleCount++; simplePcs += n; simpleTotal += n * SIMPLE_MEAL; mealTotal += n * SIMPLE_MEAL;
+      }else if(v === 'table'){
+        var t = num(mq[sl.key]) || Math.ceil(people / 10);   // 未填 → 按 10 人/桌
+        tableCount++; tableTables += t; tableTotal += t * TABLE_MEAL_MIN; mealTotal += t * TABLE_MEAL_MIN;
+      }
     });
 
     var roomTotal = 0, roomCount = 0, nightUsed = 0, kingCount = 0, twinCount = 0;
@@ -2424,6 +2719,8 @@
 
     return {
       simpleCount:simpleCount, tableCount:tableCount, mealTotal:mealTotal,
+      simplePcs:simplePcs, tableTables:tableTables,
+      simpleTotal:simpleTotal, tableTotal:tableTotal,
       roomCount:roomCount, nightUsed:nightUsed, roomTotal:roomTotal,
       kingCount:kingCount, twinCount:twinCount,
       total: mealTotal + roomTotal
@@ -2452,7 +2749,8 @@
 
     var days = meetingDays(m);
     var sess = sessionCount(m);
-    var durationText = m.duration === 'half' ? '半天（1 节 / 4 小时）'
+    var halfTxt = (m.half === 'pm') ? '下午' : '上午';
+    var durationText = m.duration === 'half' ? ('半天 · ' + halfTxt + '（1 节 / 4 小时）')
       : (m.duration === 'full' ? '全天（2 节 / 8 小时）' : days + ' 天（' + sess + ' 节）');
 
     // 年华厅为婚礼堂，不参与会议匹配；合苑按 A / B 分厅分别参与
@@ -2581,8 +2879,11 @@
 
     var mtHost = String(m.host || '').replace(/^\s+|\s+$/g,'');
     var mtCompany = String(m.company || '').replace(/^\s+|\s+$/g,'');
+    // 导出 / 大字文案里用中文日期，别把 2026-11-08 这种原始格式抛给客人
     var mtDateTxt = m.dateS
-      ? ((m.duration === 'multi' && m.dateE) ? (m.dateS + ' 至 ' + m.dateE) : m.dateS)
+      ? ((m.duration === 'multi' && m.dateE)
+          ? (cnDate(m.dateS, true) + ' 至 ' + cnDate(m.dateE, false))
+          : cnDate(m.dateS, true))
       : '';
     var mtSub = '';
     if(mtDateTxt || mtCompany){
@@ -2610,9 +2911,9 @@
       '<div class="cta-actions">' +
         '<a class="cta-btn" href="' + TEL_HREF + '">' + svgPhone() + '拨打 ' + TEL_TEXT + '</a>' +
         '<button class="cta-btn is-ghost" data-wechat="meeting">' + svgWechat() + '添加微信</button>' +
-        '<button class="cta-btn is-ghost" data-export="meeting">' + svgDown() + '导出档案</button>' +
+        '<button class="cta-btn is-ghost" data-export="meeting">' + svgDown() + '导出方案</button>' +
       '</div>' +
-      '<div class="cta-tel">「添加微信」<b>复制手机号 + 打开微信</b> · 「导出档案」<b>生成方案图并存入相册</b></div>' +
+      '<div class="cta-tel">「添加微信」<b>复制手机号 + 打开微信</b> · 「导出方案」<b>存方案图到相册</b></div>' +
       '</div></div>';
 
     box.innerHTML = html;
@@ -2627,12 +2928,15 @@
 
     if(m.needMeal){
       var parts = [];
-      if(cost.simpleCount) parts.push('简餐 × ' + cost.simpleCount + ' 餐');
-      if(cost.tableCount) parts.push('围餐 × ' + cost.tableCount + ' 餐');
+      if(cost.simpleCount) parts.push('简餐 × ' + cost.simpleCount + ' 餐 · ' + cost.simplePcs + ' 份');
+      if(cost.tableCount) parts.push('围餐 × ' + cost.tableCount + ' 餐 · ' + cost.tableTables + ' 桌');
       rowsHtml += '<div class="cost-row">' +
         '<div class="cr-name">用餐' + (parts.length
-          ? '<small>' + parts.join('，') + '（' + people + ' 人）</small>'
+          ? '<small>' + parts.join('，') + '</small>'
           : '<small>未选择餐次</small>') +
+          (cost.simpleCount
+            ? '<button class="cost-link" data-menu="s1" data-mtype="简餐">简餐 · 查看菜单' + svgArrow() + '</button>'
+            : '') +
           (cost.tableCount
             ? '<button class="cost-link" data-menu="y1" data-mtype="围餐">围餐 · 查看菜单' + svgArrow() + '</button>'
             : '') + '</div>' +
@@ -2871,10 +3175,17 @@
         rows2.push(['场地费', h2.hallFee ? '¥' + money(hallFeeOf(h2, mt.sess)) + ' · ' + mt.duration : '—']);
       }
       if(mt.needMeal && mt.cost.mealTotal){
-        var mp = [];
-        if(mt.cost.simpleCount) mp.push('简餐 ' + mt.cost.simpleCount + ' 餐');
-        if(mt.cost.tableCount) mp.push('围餐 ' + mt.cost.tableCount + ' 餐');
-        rows2.push(['用餐', mp.join(' + ') + ' · ¥' + money(mt.cost.mealTotal)]);
+        // 两种用餐形式各占一行，并把计算过程写出来
+        if(mt.cost.simpleCount){
+          rows2.push(['用餐 · 简餐',
+            mt.cost.simplePcs + ' 份 × ¥' + SIMPLE_MEAL + '/份 = ¥' + money(mt.cost.simpleTotal) +
+            (mt.cost.simpleCount > 1 ? ('（' + mt.cost.simpleCount + ' 餐）') : '')]);
+        }
+        if(mt.cost.tableCount){
+          rows2.push(['用餐 · 围餐',
+            mt.cost.tableTables + ' 桌 × ¥' + money(TABLE_MEAL_MIN) + '/桌 = ¥' + money(mt.cost.tableTotal) +
+            (mt.cost.tableCount > 1 ? ('（' + mt.cost.tableCount + ' 餐）') : '')]);
+        }
       }
       if(mt.needRoom && mt.cost.roomTotal){
         rows2.push(['住房', '大床 ' + mt.cost.kingCount + ' + 双床 ' + mt.cost.twinCount +
@@ -3108,7 +3419,7 @@
     setTimeout(goWechat, 460);
   }
 
-  // 「导出档案」：生成方案图 → 直接请求存入相册
+  // 「导出方案」：生成方案图 → 直接请求存入相册
   function doExport(kind){
     var cv = buildShot(kind);
     if(!cv){ toast('暂无可导出的方案，请先填写需求'); return; }
@@ -3191,7 +3502,7 @@
       return;
     }
 
-    // 导出档案：生成方案图并请求存入相册
+    // 导出方案：生成方案图并请求存入相册
     var exBtn = t.closest('[data-export]');
     if(exBtn){
       doExport(exBtn.getAttribute('data-export'));
@@ -3215,6 +3526,13 @@
       return;
     }
 
+    // 菜单轮播左右圆形按键
+    var deckArrow = t.closest('[data-deckgo]');
+    if(deckArrow){
+      deckStep(Number(deckArrow.getAttribute('data-deckgo')) || 1);
+      return;
+    }
+
     // 打开菜单详情
     var menuBtn = t.closest('[data-menu]');
     if(menuBtn){
@@ -3222,8 +3540,11 @@
       var mtype = menuBtn.getAttribute('data-mtype') || '婚宴';
       menuCtx = { id:mid, type:mtype };
       renderMenuPage(mid, mtype);
+      var mTitle = '菜单详情<span class="sub">' + esc(mtype) + '</span>';
       if(activePageId() !== 'page-menu'){
-        pushPage('page-menu', '菜单详情<span class="sub">' + esc(mtype) + '</span>');
+        pushPage('page-menu', mTitle);
+      }else{
+        $('topTitle').innerHTML = mTitle;   // 简餐 ↔ 围餐 互跳时，顶部标题跟着换
       }
       deckRelayout();
       return;
@@ -3259,18 +3580,30 @@
           }
           renderMeeting();
         }
+        else if(group === 'mtHalf'){
+          state.meeting.half = val;
+          buildMeetingRows();
+          renderMeeting();
+        }
         else if(group === 'mtDuration'){
           state.meeting.duration = val;
-          var multi = (val === 'multi');
-          $('mtDateSep').style.display = multi ? 'inline' : 'none';
-          $('mtDateEWrap').style.display = multi ? 'flex' : 'none';
-          $('mtDateHint').textContent = multi ? '多天请选起止日期' : '选填';
+          setDatePairMode(val === 'multi');
+          showHalfPick();
           syncMeetingDays();
           buildMeetingRows();
           renderMeeting();
         }
         return;
       }
+    }
+
+    // 餐次显示方式：第1天 ⇄ 11月8日
+    var mvBtn = t.closest('[data-mealview]');
+    if(mvBtn){
+      if(!state.meeting.dateS){ toast('先选会议日期，才能按日期查看'); return; }
+      state.meeting.mealView = (state.meeting.mealView === 'date') ? 'day' : 'date';
+      buildMeetingRows();
+      return;
     }
 
     // 组合形态（会议必选 + 用餐/住房 多选）
@@ -3286,11 +3619,27 @@
       return;
     }
 
-    // 餐次
+    // 餐次（点简餐 / 围餐 → 在按键左侧就地展开份数 / 桌数）
     var seg = t.closest('.seg');
     if(seg){
-      state.meeting.meals[seg.getAttribute('data-meal')] = seg.getAttribute('data-val');
-      buildMeetingRows();
+      var mKey = seg.getAttribute('data-meal');
+      var mVal = seg.getAttribute('data-val');
+      var prevVal = state.meeting.meals[mKey] || 'none';
+      // 点的还是当前这颗：什么也不做（不重建、不重播动画）
+      if(prevVal === mVal) return;
+      // 份 ↔ 桌 不可通用，换餐型时清掉之前填的数量
+      if((prevVal === 'simple' && mVal === 'table') || (prevVal === 'table' && mVal === 'simple')){
+        delete state.meeting.mealNums[mKey];
+      }
+      state.meeting.meals[mKey] = mVal;
+      var nowOpen = (mVal === 'simple' || mVal === 'table');
+      buildMeetingRows(nowOpen ? mKey : null);
+      // 轻回弹（仅状态变化时一次）
+      var hit = $('mtMealRows').querySelector('.seg.is-on[data-meal="' + mKey + '"]');
+      if(hit){
+        hit.classList.add('is-pop');
+        setTimeout(function(){ hit.classList.remove('is-pop'); }, 240);
+      }
       renderMeeting();
       return;
     }
@@ -3302,6 +3651,12 @@
       if(body){
         var open = body.classList.toggle('is-open');
         fold.classList.toggle('is-open', open);
+        // 可选：按展开状态切换按钮文案（data-label / data-label-alt）
+        var lb = fold.getAttribute('data-label');
+        if(lb){
+          var alt = fold.getAttribute('data-label-alt') || lb;
+          fold.innerHTML = svgChev() + (open ? alt : lb);
+        }
       }
       return;
     }
@@ -3316,6 +3671,10 @@
       if(v.length > 1 && v.charAt(0) === '0') v = v.replace(/^0+/,'');
       this.value = v;
       apply(v);
+      var wrap = this.parentNode;
+      if(wrap && wrap.classList && wrap.classList.contains('numwrap')){
+        wrap.classList.toggle('is-filled', !!v);
+      }
     });
   }
 
@@ -3402,6 +3761,23 @@
     }
     state.meeting.rooms[key][rt] = v;
     renderMeeting();
+  });
+
+  // 简餐份数 / 围餐桌数（点选餐次后展开的动态行）
+  $('mtMealRows').addEventListener('input', function(e){
+    var el = e.target;
+    if(!el.getAttribute || !el.getAttribute('data-mealnum')) return;
+    var v = el.value.replace(/[^0-9]/g,'');
+    if(v.length > 3) v = v.slice(0,3);
+    el.value = v;
+    var key = el.getAttribute('data-mealnum');
+    state.meeting.mealNums[key] = v;
+    renderMeeting();
+  });
+
+  // 卡片高度跟随内容，窗口尺寸变化后重新量一次（横竖屏 / 分屏）
+  window.addEventListener('resize', function(){
+    if(activePageId() === 'page-menu') deckRelayout();
   });
 
   syncFormUI();
