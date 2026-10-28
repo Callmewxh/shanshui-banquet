@@ -3850,7 +3850,7 @@
 
     var secH = Math.max(perkH, menusH);
 
-    var footH = 252;
+    var footH = 306;   // 底部：二维码 / 联系方式 / 地址 + 右下角免责说明
     var gapV = 18;
     var H = headH + gapV + cardH + gapV + secH + 40 + footH;
 
@@ -4005,49 +4005,60 @@
       syOff += mh + 22;
     }
 
-    /* ── 底部 ── */
+    /* ── 底部：左二维码 / 右两栏（联系方式 · 地址）/ 右下角免责说明 ── */
     var footTop = secTop + secH + 40;
     ctx.fillStyle = '#F7EDED';
     ctx.fillRect(0, footTop, W, H - footTop);
 
-    var fx = M, fy0 = footTop + 30;
+    var fy0 = footTop + 28;
+    var panel = 178, pad = 7;
+
+    // 1) 二维码（左）
     if(d.qr){
-      // 二维码：白边收到 7px，尺寸取 41 个模组（33 + 4 边距×2）的整数倍 164px，
-      // 模组从 2px 提到 4px —— 扫码更快，也不再有外面一圈很宽的白框
-      var panel = 178, pad = 7;
-      rr(ctx, fx, fy0, panel, panel, 8);
+      // 白边收到 7px，尺寸取 41 个模组（33 + 4 边距×2）的整数倍 164px，
+      // 模组 4px —— 扫码快，也不再有外面一圈很宽的白框
+      rr(ctx, M, fy0, panel, panel, 8);
       ctx.fillStyle = '#fff';
       ctx.fill();
       ctx.strokeStyle = '#E7D2D2';
       ctx.lineWidth = 1;
       ctx.stroke();
       if(QR_READY()){
-        // 销售微信二维码图片：留出 8px 内白边当静区，四周只剩 15px，不再是一大圈白
+        // 销售微信二维码图片：留 8px 内白边当静区，四周只剩 15px
         var qs = panel - pad * 2 - 16;
         ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(QR_IMG, fx + (panel - qs) / 2, fy0 + (panel - qs) / 2, qs, qs);
+        ctx.drawImage(QR_IMG, M + (panel - qs) / 2, fy0 + (panel - qs) / 2, qs, qs);
       }else if(!SALES.qrImage){
-        // 内置矩阵只给「没有配图」的那一版用；配了图但没加载好就留白，
-        // 绝不回退到别的销售二维码（画错人比没画更糟）
-        drawQR(ctx, fx + pad, fy0 + pad, panel - pad * 2, '#2B0B0B');
+        // 内置矩阵只给「没配图」的那一版用；配了图没加载好就留白，绝不画错人
+        drawQR(ctx, M + pad, fy0 + pad, panel - pad * 2, '#2B0B0B');
       }
-      tx(ctx, '扫码加微信 · ' + (SALES.name || '专属销售'), fx + panel / 2, fy0 + panel + 22, 16, '400', '#8C7676', 'center');
-      fx += panel + 32;
+      tx(ctx, '扫码加微信 · ' + (SALES.name || '专属销售'), M + panel / 2, fy0 + panel + 24, 16, '400', '#8C7676', 'center');
     }
 
-    // 右侧分两栏，把宽度用满，避免右边一片空
-    var rightW = W - M - fx;
-    var c1x = fx;
-    var c2x = fx + Math.round(rightW * 0.42);
-    var rTop = fy0 + (d.qr ? 24 : 20);
+    // 2) 右两栏：整块与二维码块垂直居中，视线不会一头沉
+    var fxR = d.qr ? (M + panel + 46) : M;
+    var rightW = W - M - fxR;
+    var c1x = fxR;
+    var c2x = fxR + Math.round(rightW * 0.44);
+    var rTop = fy0 + 56;
 
-    tx(ctx, '预订热线 / 微信同号', c1x, rTop, 19, '400', '#9C8585');
-    fitTx(ctx, TEL_TEXT, c1x, rTop + 58, 38, '700', '#8B1A1A', 'left', c2x - c1x - 18);
-    tx(ctx, '扫码或致电均可预订', c1x, rTop + 98, 17, '400', '#8C7676');
+    tx(ctx, '预订热线 / 微信同号', c1x, rTop + 2, 18, '400', '#9C8585');
+    fitTx(ctx, TEL_TEXT, c1x, rTop + 56, 40, '700', '#8B1A1A', 'left', c2x - c1x - 24);
+    tx(ctx, '扫码或致电均可预订', c1x, rTop + 92, 16, '400', '#8C7676');
 
-    tx(ctx, '酒店地址', c2x, rTop, 19, '400', '#9C8585');
-    fitTx(ctx, '惠州市惠城区仲恺大道惠环段 175 号', c2x, rTop + 42, 19, '400', '#4A3A3A', 'left', W - M - c2x);
-    fitTx(ctx, d.note, c2x, rTop + 74, 16, '400', '#B9A5A5', 'left', W - M - c2x);
+    tx(ctx, '酒店地址', c2x, rTop + 2, 18, '400', '#9C8585');
+    fitTx(ctx, '惠州市惠城区仲恺大道惠环段 175 号', c2x, rTop + 38, 18, '400', '#4A3A3A', 'left', W - M - c2x);
+    fitTx(ctx, '导航搜「' + HOTEL.name + '」', c2x, rTop + 74, 16, '400', '#8C7676', 'left', W - M - c2x);
+
+    // 3) 右下角：一条细线隔开，免责说明右对齐贴边，不和地址混在一起
+    var lineY = footTop + footH - 52;
+    ctx.strokeStyle = '#EFE2E2';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(M, lineY);
+    ctx.lineTo(W - M, lineY);
+    ctx.stroke();
+    fitTx(ctx, d.note, W - M, lineY + 28, 17, '400', '#ADA0A0', 'right', W - M * 2);
 
     return cv;
   }
