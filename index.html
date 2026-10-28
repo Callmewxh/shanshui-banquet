@@ -1339,10 +1339,11 @@
   var TEL_HREF = SALES.telHref;
 
   /* ── 一键导航（底部置顶块左段定位针用）
-     点一下 = 交给手机系统去导航（不在页面里自己弹列表、不跳任何网站）：
+     点一下 = 直接请求系统去唤起地图 App（不在页面里自绘列表、不跳任何地图网页）：
        iOS       → maps://?daddr=lat,lng&q=名称    苹果地图，iOS 没有「选择应用」这一层
-       安卓/鸿蒙  → geo:lat,lng?q=lat,lng          由系统解析 → 弹「选择应用」，已装的高德/百度/腾讯/华为地图
+       安卓/鸿蒙  → geo:lat,lng?q=lat,lng          交给系统 → 弹「选择应用」，已装的高德/百度/腾讯/华为地图
                                                   都能选；设过默认地图就直接进那家，进来即「到这里」的路线页
+       电脑浏览器 → 没有系统地图可唤起，拦住并提示用手机打开（绝不跳网页版地图）
      坐标系：这里 23.029255, 114.365941 由携程 BD09(23.03558,114.372365) 换算成 GCJ-02，
      与「距惠环站 140 米」吻合。⚠️ 换坐标务必给 GCJ-02（别贴百度/谷歌的 WGS-84，会偏 500–1000 米）。
      ⚠️ q= 里绝不放中文店名：鸿蒙部分地图 App 不解码 %E5 这类转义，会把整串编码当名字显示（v28 前的乱码）。
@@ -1355,19 +1356,20 @@
     lng: '114.365941'
   };
 
-  // 定位针的 href：直接写成系统认识的 scheme，点击时由浏览器交给操作系统去挑 App
+  // 定位针的 href：只写系统 scheme，点击后由浏览器交给操作系统弹「选择应用 → 对应地图 App」
+  // 全站不保留任何「地图网页版」链接（v29 前的 uri.amap.com / api.map.baidu.com 兜底全部删除）
   function hotelNavHref(){
     var ua = navigator.userAgent || '';
     var ll = HOTEL.lat + ',' + HOTEL.lng;
     if(/iPhone|iPad|iPod/i.test(ua)){
-      return 'maps://?daddr=' + ll + '&q=' + encodeURIComponent(HOTEL.name);
+      return 'maps://?daddr=' + ll + '&q=' + encodeURIComponent(HOTEL.name);   // 苹果地图，iOS 无选择层
     }
-    if(/Android|HarmonyOS|OpenHarmony/i.test(ua)){
-      return 'geo:' + ll + '?q=' + ll;          // 纯坐标 → 不乱码；系统负责选 App
-    }
-    // 桌面预览：没有系统地图可唤起，给高德网页路线页
-    return 'https://uri.amap.com/navigation?to=' + HOTEL.lng + ',' + HOTEL.lat + ',' +
-           encodeURIComponent(HOTEL.name) + '&mode=car&policy=1&coordinate=gaode&callnative=1&src=shanshui';
+    return 'geo:' + ll + '?q=' + ll;      // 纯坐标 → 不乱码；安卓/鸿蒙由系统弹 App 选择
+  }
+
+  // 手机（能唤起系统地图）才直跳；电脑上没有系统地图可唤起 → 拦住，只提示，绝不跳网页
+  function isMobileUA(){
+    return /Android|HarmonyOS|OpenHarmony|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
   }
 
   // 摆桌形式（容量口径见《宴会中心2025价格体系》+《山水S酒店介绍》）
@@ -4462,15 +4464,13 @@
 
   (function mountBookbar(){
     // 定位 + 一键拨打 合成一个胶囊：左段定位针（交给系统去选地图导航），右段「一键拨打」（拨号）
-    var navHref = hotelNavHref();
-    var navAttr = /^https?:/i.test(navHref) ? ' target="_blank" rel="noopener"' : '';  // 仅桌面预览是网页
     var inner =
       '<div class="bookbar-info">' +
         '<div class="bookbar-addr">仲恺大道惠环段 175 号</div>' +
         '<div class="bookbar-tel">预订热线<b>' + TEL_TEXT + '</b></div>' +
       '</div>' +
       '<div class="bookbar-act">' +
-        '<a class="ba-nav" href="' + navHref + '"' + navAttr + ' ' +
+        '<a class="ba-nav" href="' + hotelNavHref() + '" ' +
           'aria-label="导航到' + esc(HOTEL.name) + '">' + svgPin() + '</a>' +
         '<span class="ba-sep" aria-hidden="true"></span>' +
         '<a class="ba-book" href="' + TEL_HREF + '" aria-label="一键拨打预订电话 ' + TEL_TEXT + '">' +
@@ -4504,13 +4504,19 @@
     syncBookbar();
   })();
 
-  // 点「定位针」：不拦默认行为，把 geo: / maps:// 交给浏览器 → 操作系统弹「选择应用」去导航
-  // 只在 1.6 秒后仍停在页面上（本机没有可用地图 App）时提示一句，不跳任何网站
+  // 点「定位针」：手机上不拦默认行为，把 geo: / maps:// 交给浏览器 → 系统弹「选择应用」进对应 App
+  // 电脑浏览器没有系统地图可唤起 → 拦住，只提示用手机打开（全站没有任何地图网页链接）
   document.addEventListener('click', function(e){
     var t = e.target;
     var a = t && t.closest ? t.closest('.ba-nav') : null;
     if(!a) return;
-    if(/^https?:/i.test(a.getAttribute('href') || '')) return;   // 桌面预览走网页，不做提示
+
+    if(!isMobileUA()){
+      e.preventDefault();
+      toast('电脑上无法唤起地图 App，请用手机打开本页后点击定位', 3000);
+      return;
+    }
+
     var t0 = Date.now();
     setTimeout(function(){
       if(document.hidden) return;                 // 已切到地图 App，不用提示
