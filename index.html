@@ -1338,45 +1338,45 @@
   var TEL_HREF = SALES.telHref;
 
   /* ── 一键导航（底部置顶块左段定位针用）
-     目标：点一下直接调起手机「默认地图 App」，不先给一张网页地图。
-       iOS       → maps://?q=…                 （系统地图 Apple Maps）
-       安卓/鸿蒙  → geo:0,0?q=…                （系统默认地图，装了高德/百度/腾讯都走默认那个）
-       没唤起    → 1.3 秒后自动退回高德网页版（callnative=1 再试一次拉起本机地图）
-     拿到准确坐标后把 lat / lng 填上，自动改用「打点直达」（marker / geo:lat,lng） */
+     点一下 = 打开地图 + 目的地已设好，直接进「到这里」的路线：
+       iOS       → maps://?daddr=lat,lng&q=名称    （系统地图，直接出驾车路线）
+       安卓/鸿蒙  → geo:lat,lng?q=lat,lng(名称)     （系统默认地图，落在点上，导航一键开始）
+       没唤起    → 1.3 秒后退回高德网页「路线规划」页（同样直接到目的地）
+     坐标系：高德 / 苹果在国内都用 GCJ-02。这里填的 23.029255, 114.365941 由携程 BD09 坐标
+     (23.03558, 114.372365) 换算而来，与「距惠环站 140 米」的位置吻合。
+     ⚠️ 若以后换坐标，务必给 GCJ-02（别直接贴百度/谷歌的 WGS-84，会偏 500–1000 米）。 */
   var HOTEL = {
     name: '山水S酒店(惠州仲恺惠环店)',
     city: '惠州',
     addr: '惠州市惠城区仲恺大道惠环段 175 号',
-    lat: '',
-    lng: ''
+    lat: '23.029255',
+    lng: '114.365941'
   };
 
-  // 导航目标：优先「直接唤起手机默认地图 App」，不行再退到高德网页版
-  //   iOS      → https://maps.apple.com/?q=…   （系统默认地图）
-  //   安卓/鸿蒙 → geo:0,0?q=…                  （系统默认地图，装了高德/百度/腾讯都行）
-  //   其它/桌面 → 高德网页版（callnative=1 也会试着拉起本机地图）
+  // 导航目标：优先「直接唤起手机默认地图并带好目的地」，不行再退到高德网页路线页
   function navTargets(){
     var ua = navigator.userAgent || '';
     var q = encodeURIComponent(HOTEL.name);
     var hasLL = !!(HOTEL.lat && HOTEL.lng);
+    var ll = HOTEL.lat + ',' + HOTEL.lng;
 
     var web = hasLL
-      ? 'https://uri.amap.com/marker?position=' + HOTEL.lng + ',' + HOTEL.lat +
-        '&name=' + q + '&src=shanshui&coordinate=gaode&callnative=1'
+      ? 'https://uri.amap.com/navigation?to=' + HOTEL.lng + ',' + HOTEL.lat + ',' + q +
+        '&mode=car&policy=1&src=shanshui&coordinate=gaode&callnative=1'
       : 'https://uri.amap.com/search?keyword=' + q +
         '&city=' + encodeURIComponent(HOTEL.city || '惠州') + '&callnative=1';
 
     var app = '';
     if(/iPhone|iPad|iPod/i.test(ua)){
       app = hasLL
-        ? 'maps://?ll=' + HOTEL.lat + ',' + HOTEL.lng + '&q=' + q
+        ? 'maps://?daddr=' + ll + '&q=' + q
         : 'maps://?q=' + q;
       web = hasLL
-        ? 'https://maps.apple.com/?ll=' + HOTEL.lat + ',' + HOTEL.lng + '&q=' + q
+        ? 'https://maps.apple.com/?daddr=' + ll + '&q=' + q
         : 'https://maps.apple.com/?q=' + q;
     }else if(/Android|HarmonyOS|OpenHarmony/i.test(ua)){
       app = hasLL
-        ? 'geo:' + HOTEL.lat + ',' + HOTEL.lng + '?q=' + HOTEL.lat + ',' + HOTEL.lng + '(' + q + ')'
+        ? 'geo:' + ll + '?q=' + ll + '(' + q + ')'
         : 'geo:0,0?q=' + q;
     }
     return { app: app, web: web, href: web };
@@ -1384,7 +1384,7 @@
 
   function hotelNavHref(){ return navTargets().href; }
 
-  // 点了就跳：先唤起本机地图 App；1.3 秒内没被接管（没装 / 被拦）再退回网页地图
+  // 点了就跳：先唤起本机地图 App（目的地已带入）；1.3 秒内没被接管（没装 / 被拦）再退回网页
   function navToHotel(){
     var t = navTargets();
     if(!t.app){ location.href = t.web; return; }
