@@ -3577,7 +3577,7 @@
         title: (b.type || '宴席') + '方案',
         sub: b.tables + ' 席 · ' + b.period + (b.budget ? ' · 人均预算 ¥' + money(b.budget) : ''),
         blocks: blocks, perks: perks, perkTitle:'礼遇与权益',
-        menus: menus, qr:true
+        menus: menus, qr:true, note:'以上为参考报价，菜单为意向参考，最终以正式合同为准'
       };
     }
 
@@ -3680,7 +3680,7 @@
         title:'会议方案',
         sub: sub2.join(' · '),
         blocks: blocks2, perks: perks2, perkTitle:'会议权益',
-        menus: menus2, qr:true
+        menus: menus2, qr:true, note:'以上为参考报价，菜单为意向参考，最终以正式合同为准'
       };
     }
     return null;
@@ -4047,7 +4047,7 @@
 
     tx(ctx, '酒店地址', c2x, rTop, 19, '400', '#9C8585');
     fitTx(ctx, '惠州市惠城区仲恺大道惠环段 175 号', c2x, rTop + 42, 19, '400', '#4A3A3A', 'left', W - M - c2x);
-    fitTx(ctx, '城轨惠环站 D 口步行 20 米 · 200+ 免费停车位', c2x, rTop + 74, 19, '400', '#4A3A3A', 'left', W - M - c2x);
+    fitTx(ctx, d.note, c2x, rTop + 74, 16, '400', '#B9A5A5', 'left', W - M - c2x);
 
     return cv;
   }
