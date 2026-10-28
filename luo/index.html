@@ -4504,25 +4504,18 @@
     syncBookbar();
   })();
 
-  // 点「定位针」：手机上不拦默认行为，把 geo: / maps:// 交给浏览器 → 系统弹「选择应用」进对应 App
+  // 点「定位针」：手机上**完全不干预**，让 <a href="geo:…"> 这个原生链接自己交给浏览器 → 操作系统
+  //   ⚠️ v30 曾在这里挂 1.6 秒计时器，判定「页面没被切走 = 没装地图」并弹提示——
+  //      这个判据是错的：系统「选择应用」是个弹窗，页面并不会 hidden，用户挑 App 的时间也可能超过 1.6 秒，
+  //      结果装了高德也会被提示「未检测到地图 App」（用户实测踩到）。所以提示已整体删除，宁可不说话。
   // 电脑浏览器没有系统地图可唤起 → 拦住，只提示用手机打开（全站没有任何地图网页链接）
   document.addEventListener('click', function(e){
     var t = e.target;
     var a = t && t.closest ? t.closest('.ba-nav') : null;
     if(!a) return;
-
-    if(!isMobileUA()){
-      e.preventDefault();
-      toast('电脑上无法唤起地图 App，请用手机打开本页后点击定位', 3000);
-      return;
-    }
-
-    var t0 = Date.now();
-    setTimeout(function(){
-      if(document.hidden) return;                 // 已切到地图 App，不用提示
-      if(Date.now() - t0 < 1200) return;
-      toast('未检测到地图 App，可在高德 / 百度地图搜索「' + HOTEL.name + '」', 3200);
-    }, 1600);
+    if(isMobileUA()) return;                      // 手机：放行原生 geo: / maps://，不加任何判断
+    e.preventDefault();
+    toast('电脑上无法唤起地图 App，请用手机打开本页后点击定位', 3000);
   }, false);
 
   /* ═══════════════════════════════════════════════
