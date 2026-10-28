@@ -644,35 +644,6 @@
 
   .foot-note{text-align:center;font-size:10.5px;color:#BFAFAF;padding:22px 20px 8px;letter-spacing:.04em;line-height:1.7;}
 
-  /* ── 选择地图（底部弹层）：点定位针后用哪家地图导航 ── */
-  .navmask{
-    position:fixed;inset:0;z-index:120;background:rgba(42,27,27,.44);
-    opacity:0;pointer-events:none;transition:opacity .22s ease;
-  }
-  .navmask.is-on{opacity:1;pointer-events:auto;}
-  .navsheet{
-    position:fixed;left:0;right:0;bottom:0;z-index:121;margin:0 auto;max-width:480px;
-    background:#fff;border-radius:18px 18px 0 0;
-    padding:4px 0 calc(10px + env(safe-area-inset-bottom));
-    box-shadow:0 -8px 28px rgba(94,15,15,.18);
-    transform:translateY(104%);transition:transform .26s cubic-bezier(.22,.61,.36,1);
-  }
-  .navsheet.is-on{transform:translateY(0);}
-  .navsheet-hd{padding:16px 20px 12px;font-size:15px;font-weight:600;letter-spacing:.02em;}
-  .navsheet-hd span{display:block;margin-top:5px;font-size:12.5px;font-weight:400;color:var(--ink-3);letter-spacing:0;}
-  .navsheet-item{
-    display:flex;align-items:center;gap:11px;padding:15px 20px;
-    font-size:15.5px;color:var(--ink);text-decoration:none;border-top:1px solid var(--line);
-  }
-  .navsheet-item:active{background:var(--wine-tint);}
-  .navsheet-item .dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;}
-  .navsheet-item .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .navsheet-item .ar{color:var(--ink-3);font-size:13px;letter-spacing:.02em;}
-  .navsheet-cancel{
-    margin:10px 16px 2px;padding:13px 0;text-align:center;border-radius:12px;
-    background:#F6F0F0;color:var(--ink-2);font-size:15px;
-  }
-  .navsheet-cancel:active{background:#EFE5E5;}
   .reset-link{
     display:block;width:100%;margin-top:16px;background:none;border:none;font-family:inherit;
     font-size:12.5px;color:var(--ink-3);letter-spacing:.04em;padding:10px;cursor:pointer;
@@ -1368,14 +1339,14 @@
   var TEL_HREF = SALES.telHref;
 
   /* ── 一键导航（底部置顶块左段定位针用）
-     点一下 → 底部弹出「用哪个地图导航」，客户自己挑高德 / 百度 / 腾讯 / 系统地图；
-     选中后直接唤起那家 App 并进到「到此结束」的驾车路线页；
-     1.2 秒内没被 App 接管（没装 / 被拦）→ 落到同一家的网页版路线页，一样直达目的地。
-     坐标系：高德 / 腾讯 / 苹果在国内都用 GCJ-02；百度用 BD09，所以百度链接带 coord_type=gcj02 让它自己转。
-     这里的 23.029255, 114.365941 由携程 BD09(23.03558,114.372365) 换算而来，与「距惠环站 140 米」吻合。
-     ⚠️ 换坐标务必给 GCJ-02（别直接贴百度/谷歌的 WGS-84，会偏 500–1000 米）。
-     ⚠️ 别再拼 geo:…?q=lat,lng(中文名)：鸿蒙部分地图 App 不解码 %E5 这类转义，
-        会把整串编码原样显示成乱码（截图问题）。系统地图现在只传纯数字坐标，名称让 App 自己反查。 */
+     点一下 = 交给手机系统去导航（不在页面里自己弹列表、不跳任何网站）：
+       iOS       → maps://?daddr=lat,lng&q=名称    苹果地图，iOS 没有「选择应用」这一层
+       安卓/鸿蒙  → geo:lat,lng?q=lat,lng          由系统解析 → 弹「选择应用」，已装的高德/百度/腾讯/华为地图
+                                                  都能选；设过默认地图就直接进那家，进来即「到这里」的路线页
+     坐标系：这里 23.029255, 114.365941 由携程 BD09(23.03558,114.372365) 换算成 GCJ-02，
+     与「距惠环站 140 米」吻合。⚠️ 换坐标务必给 GCJ-02（别贴百度/谷歌的 WGS-84，会偏 500–1000 米）。
+     ⚠️ q= 里绝不放中文店名：鸿蒙部分地图 App 不解码 %E5 这类转义，会把整串编码当名字显示（v28 前的乱码）。
+        只给纯数字坐标最稳，店名由地图 App 自己反查（实测能反出「山水S酒店仲恺惠环店内」）。 */
   var HOTEL = {
     name: '山水S酒店(惠州仲恺惠环店)',
     city: '惠州',
@@ -1384,107 +1355,19 @@
     lng: '114.365941'
   };
 
-  // 各家地图「一步进导航」的链接：app = 原生 scheme；web = 网页兜底（同一家，不串）
-  function mapChoices(){
+  // 定位针的 href：直接写成系统认识的 scheme，点击时由浏览器交给操作系统去挑 App
+  function hotelNavHref(){
     var ua = navigator.userAgent || '';
-    var ios  = /iPhone|iPad|iPod/i.test(ua);
-    var andr = /Android|HarmonyOS|OpenHarmony/i.test(ua);
-    var nm = encodeURIComponent(HOTEL.name);
-    var la = HOTEL.lat, ln = HOTEL.lng;
-    var amapWeb = 'https://uri.amap.com/navigation?to=' + ln + ',' + la + ',' + nm +
-                  '&mode=car&policy=1&coordinate=gaode&callnative=1&src=shanshui';
-
-    var list = [
-      { key:'amap', name:'高德地图', color:'#1B7CF2',
-        app:'amapuri://route/plan/?dlat=' + la + '&dlon=' + ln + '&dname=' + nm +
-            '&dev=0&t=0&sourceApplication=shanshui',
-        web: amapWeb },
-      { key:'baidu', name:'百度地图', color:'#2B62DE',
-        app:'baidumap://map/direction?destination=latlng:' + la + ',' + ln + '|name:' + nm +
-            '&coord_type=gcj02&mode=driving&src=webapp.shanshui',
-        web:'https://api.map.baidu.com/direction?destination=latlng:' + la + ',' + ln + '|name:' + nm +
-            '&coord_type=gcj02&mode=driving&output=html&src=webapp.shanshui' },
-      { key:'tencent', name:'腾讯地图', color:'#0FA8E0',
-        app:'qqmap://map/routeplan?type=drive&to=' + nm + '&tocoord=' + la + ',' + ln +
-            '&coord_type=1&policy=0&referer=shanshui',
-        web:'https://apis.map.qq.com/uri/v1/routeplan?type=drive&to=' + nm + '&tocoord=' + la + ',' + ln +
-            '&policy=0&referer=shanshui' }
-    ];
-
-    if(ios){
-      list.push({ key:'apple', name:'苹果地图', color:'#3B82F6',
-        app:'maps://?daddr=' + la + ',' + ln + '&q=' + nm,
-        web:'https://maps.apple.com/?daddr=' + la + ',' + ln + '&q=' + nm });
-    }else if(andr){
-      list.push({ key:'geo', name:'系统地图（默认）', color:'#8B1A1A',
-        app:'geo:' + la + ',' + ln + '?q=' + la + ',' + ln,   // 纯坐标，不带中文名 → 不会显示乱码
-        web: amapWeb });
+    var ll = HOTEL.lat + ',' + HOTEL.lng;
+    if(/iPhone|iPad|iPod/i.test(ua)){
+      return 'maps://?daddr=' + ll + '&q=' + encodeURIComponent(HOTEL.name);
     }
-    return list;
-  }
-
-  function hotelNavHref(){ return mapChoices()[0].web; }
-
-  /* ── 选择地图弹层（懒创建，只建一次） ── */
-  var navSheet = null, navMask = null, navTimer = 0;
-
-  function ensureNavSheet(){
-    if(navSheet) return;
-    navMask = document.createElement('div');
-    navMask.className = 'navmask';
-    navMask.id = 'navMask';
-
-    navSheet = document.createElement('div');
-    navSheet.className = 'navsheet';
-    navSheet.id = 'navSheet';
-    navSheet.setAttribute('role', 'dialog');
-    navSheet.setAttribute('aria-label', '选择地图导航');
-
-    var items = mapChoices().map(function(it){
-      return '<a class="navsheet-item" href="' + it.web + '" data-map="' + it.key + '">' +
-               '<i class="dot" style="background:' + it.color + '"></i>' +
-               '<span class="nm">' + it.name + '</span>' +
-               '<span class="ar">导航</span>' +
-             '</a>';
-    }).join('');
-
-    navSheet.innerHTML =
-      '<div class="navsheet-hd">用哪个地图导航？' +
-        '<span>目的地：' + esc(HOTEL.name) + '</span>' +
-      '</div>' + items +
-      '<div class="navsheet-cancel" id="navCancel">取消</div>';
-
-    document.body.appendChild(navMask);
-    document.body.appendChild(navSheet);
-  }
-
-  function openNavSheet(){
-    ensureNavSheet();
-    navMask.classList.add('is-on');
-    clearTimeout(navTimer);
-    navTimer = setTimeout(function(){ navSheet.classList.add('is-on'); }, 18);  // 给一帧布局，保证滑入动画
-  }
-  function closeNavSheet(){
-    if(!navSheet) return;
-    clearTimeout(navTimer);
-    navSheet.classList.remove('is-on');
-    navMask.classList.remove('is-on');
-  }
-
-  // 唤起某家地图：先试原生 scheme；1.2 秒内页面没被切走 → 落到该家网页版路线页
-  function launchMap(item){
-    var t0 = Date.now(), done = false;
-    function toWeb(){ if(done) return; done = true; location.href = item.web; }
-    var timer = setTimeout(function(){
-      if(document.hidden) return;          // App 已接管，别再跳网页
-      if(Date.now() - t0 < 400) return;
-      toWeb();
-    }, 1200);
-    document.addEventListener('visibilitychange', function onVis(){
-      if(document.hidden){ clearTimeout(timer); document.removeEventListener('visibilitychange', onVis); }
-    });
-    try{ location.href = item.app; }
-    catch(e){ clearTimeout(timer); toWeb(); }
+    if(/Android|HarmonyOS|OpenHarmony/i.test(ua)){
+      return 'geo:' + ll + '?q=' + ll;          // 纯坐标 → 不乱码；系统负责选 App
+    }
+    // 桌面预览：没有系统地图可唤起，给高德网页路线页
+    return 'https://uri.amap.com/navigation?to=' + HOTEL.lng + ',' + HOTEL.lat + ',' +
+           encodeURIComponent(HOTEL.name) + '&mode=car&policy=1&coordinate=gaode&callnative=1&src=shanshui';
   }
 
   // 摆桌形式（容量口径见《宴会中心2025价格体系》+《山水S酒店介绍》）
@@ -4578,14 +4461,16 @@
   }
 
   (function mountBookbar(){
-    // 定位 + 一键拨打 合成一个胶囊：左段定位针（唤起手机默认地图），右段「一键拨打」（拨号）
+    // 定位 + 一键拨打 合成一个胶囊：左段定位针（交给系统去选地图导航），右段「一键拨打」（拨号）
+    var navHref = hotelNavHref();
+    var navAttr = /^https?:/i.test(navHref) ? ' target="_blank" rel="noopener"' : '';  // 仅桌面预览是网页
     var inner =
       '<div class="bookbar-info">' +
         '<div class="bookbar-addr">仲恺大道惠环段 175 号</div>' +
         '<div class="bookbar-tel">预订热线<b>' + TEL_TEXT + '</b></div>' +
       '</div>' +
       '<div class="bookbar-act">' +
-        '<a class="ba-nav" href="' + hotelNavHref() + '" ' +
+        '<a class="ba-nav" href="' + navHref + '"' + navAttr + ' ' +
           'aria-label="导航到' + esc(HOTEL.name) + '">' + svgPin() + '</a>' +
         '<span class="ba-sep" aria-hidden="true"></span>' +
         '<a class="ba-book" href="' + TEL_HREF + '" aria-label="一键拨打预订电话 ' + TEL_TEXT + '">' +
@@ -4619,25 +4504,19 @@
     syncBookbar();
   })();
 
-  // 点「定位针」：底部弹出「用哪个地图导航」，客户选哪家就进哪家的导航
+  // 点「定位针」：不拦默认行为，把 geo: / maps:// 交给浏览器 → 操作系统弹「选择应用」去导航
+  // 只在 1.6 秒后仍停在页面上（本机没有可用地图 App）时提示一句，不跳任何网站
   document.addEventListener('click', function(e){
     var t = e.target;
-    if(!t || !t.closest) return;
-
-    if(t.closest('.ba-nav')){ e.preventDefault(); openNavSheet(); return; }
-
-    if(t.closest('#navCancel')){ e.preventDefault(); closeNavSheet(); return; }
-    if(t.closest('#navMask')){ e.preventDefault(); closeNavSheet(); return; }
-
-    var item = t.closest('.navsheet-item');
-    if(item){
-      e.preventDefault();
-      var key = item.getAttribute('data-map');
-      var list = mapChoices(), pick = null;
-      for(var i = 0; i < list.length; i++) if(list[i].key === key) pick = list[i];
-      closeNavSheet();
-      if(pick) launchMap(pick);
-    }
+    var a = t && t.closest ? t.closest('.ba-nav') : null;
+    if(!a) return;
+    if(/^https?:/i.test(a.getAttribute('href') || '')) return;   // 桌面预览走网页，不做提示
+    var t0 = Date.now();
+    setTimeout(function(){
+      if(document.hidden) return;                 // 已切到地图 App，不用提示
+      if(Date.now() - t0 < 1200) return;
+      toast('未检测到地图 App，可在高德 / 百度地图搜索「' + HOTEL.name + '」', 3200);
+    }, 1600);
   }, false);
 
   /* ═══════════════════════════════════════════════
