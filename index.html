@@ -1307,8 +1307,21 @@
      一、数据（对齐 IMA「山水S酒店3.0」知识库）
      ═══════════════════════════════════════════════ */
 
-  var TEL_TEXT = '133 0262 7911';
-  var TEL_HREF = 'tel:13302627911';
+  /* ══════════════════════════════════════════════
+     销售配置（两个共享链接的唯一差异区）
+     换销售只改这一块：name / telText / telHref / qrImage
+     qrImage 留空 → 用文件内置的 33×33 二维码矩阵（吴先生）
+     qrImage 填 data:image/png;base64,… → 导出图改用该图片
+     ══════════════════════════════════════════════ */
+  var SALES = {
+    name:    '吴先生',
+    telText: '133 0262 7911',
+    telHref: 'tel:13302627911',
+    qrImage: ''
+  };
+
+  var TEL_TEXT = SALES.telText;
+  var TEL_HREF = SALES.telHref;
 
   // 摆桌形式（容量口径见《宴会中心2025价格体系》+《山水S酒店介绍》）
   var LAYOUTS = [
@@ -3239,7 +3252,7 @@
      七·B、一键加微信：存图 + 复制手机号 + 打开微信
      ═══════════════════════════════════════════════ */
 
-  var TEL_NUM = '13302667911'.replace('666','262');
+  var TEL_NUM = TEL_HREF.replace('tel:', '');
 
   function toast(msg, ms){
     var el = $('toast');
@@ -3349,6 +3362,20 @@
     "111111101011110110010100110010110"
   ];
   var WX_QR_N = 33;
+
+  // 销售微信二维码（可选，来自 SALES.qrImage）：data URI，页内预解码，导出时直接画
+  var QR_IMG = null;
+  (function preloadQr(){
+    var src = SALES.qrImage;
+    if(!src) return;
+    var im = new Image();
+    im.decoding = 'sync';
+    im.src = src;
+    QR_IMG = im;
+  })();
+  function QR_READY(){
+    return !!(QR_IMG && QR_IMG.complete && QR_IMG.naturalWidth > 0);
+  }
   var WX_QR_QUIET = 4;
 
   // 在 (x,y) 绘制 size×size 的无底色二维码（二维码静区已内含，模块尺寸取整避免糊边）
@@ -3916,8 +3943,15 @@
       ctx.strokeStyle = '#E7D2D2';
       ctx.lineWidth = 1;
       ctx.stroke();
-      drawQR(ctx, fx + pad, fy0 + pad, panel - pad * 2, '#2B0B0B');
-      tx(ctx, '扫码加微信 · 专属销售', fx + panel / 2, fy0 + panel + 22, 16, '400', '#8C7676', 'center');
+      if(QR_READY()){
+        // 销售微信二维码图片：留出 8px 内白边当静区，四周只剩 15px，不再是一大圈白
+        var qs = panel - pad * 2 - 16;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(QR_IMG, fx + (panel - qs) / 2, fy0 + (panel - qs) / 2, qs, qs);
+      }else{
+        drawQR(ctx, fx + pad, fy0 + pad, panel - pad * 2, '#2B0B0B');
+      }
+      tx(ctx, '扫码加微信 · ' + (SALES.name || '专属销售'), fx + panel / 2, fy0 + panel + 22, 16, '400', '#8C7676', 'center');
       fx += panel + 32;
     }
 
@@ -3964,6 +3998,15 @@
 
   // 「导出方案」：生成方案图 → 直接进入预览，不触发下载 / 分享面板
   function doExport(kind){
+    // 图片二维码还没解码完 → 等它加载好再生成，避免导出图缺码 / 画错人
+    if(SALES.qrImage && !QR_READY()){
+      if(QR_IMG && !QR_IMG._retry){
+        QR_IMG._retry = 1;
+        QR_IMG.addEventListener('load', function(){ doExport(kind); });
+        QR_IMG.addEventListener('error', function(){ toast('二维码加载失败，请刷新页面再试'); });
+      }
+      return;
+    }
     var cv = buildShot(kind);
     if(!cv){ toast('暂无可导出的方案，请先填写需求'); return; }
 
@@ -4362,7 +4405,8 @@
     var inner =
       '<div class="bookbar-info">' +
         '<div class="bookbar-addr">仲恺大道惠环段 175 号 · 惠环站 D 口</div>' +
-        '<div class="bookbar-tel">预订热线 <b>' + TEL_TEXT + '</b></div>' +
+        '<div class="bookbar-tel">预订热线 <b>' + TEL_TEXT + '</b>' +
+          (SALES.name ? ' · ' + SALES.name : '') + '</div>' +
       '</div>' +
       '<a class="bookbar-btn" href="' + TEL_HREF + '">' + svgPhone() + '一键拨打</a>';
 
