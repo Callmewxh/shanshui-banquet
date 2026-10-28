@@ -627,18 +627,18 @@
     display:flex;align-items:center;justify-content:center;height:42px;
     color:#fff;text-decoration:none;-webkit-tap-highlight-color:transparent;
   }
-  .ba-nav{width:44px;flex:0 0 44px;}
+  .ba-nav{width:46px;flex:0 0 46px;}
   .ba-nav svg{width:19px;height:19px;stroke:#fff;}
   .ba-nav:active{background:rgba(255,255,255,.16);}
   .ba-sep{flex:0 0 1px;width:1px;height:19px;background:rgba(255,255,255,.34);}
   .ba-book{
-    padding:0 17px 0 13px;flex:0 0 auto;
-    font-size:14px;font-weight:600;letter-spacing:.08em;white-space:nowrap;
+    padding:0 18px 0 12px;flex:0 0 auto;gap:6px;
+    font-size:14px;font-weight:600;letter-spacing:.06em;white-space:nowrap;
   }
+  .ba-book svg{width:15px;height:15px;stroke:#fff;flex:0 0 auto;}
   .ba-book:active{background:rgba(255,255,255,.16);}
   .bookbar-info{flex:1 1 0;min-width:0;}
   .bookbar-addr{font-size:11px;color:var(--ink-2);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .bookbar-addr i{font-style:normal;color:var(--wine);font-weight:600;margin-right:4px;}
   .bookbar-tel{font-size:11px;color:var(--ink-3);margin-top:3px;white-space:nowrap;overflow:hidden;}
   .bookbar-tel b{color:var(--wine);font-weight:600;letter-spacing:.01em;font-size:11.5px;margin-left:3px;}
 
@@ -1337,12 +1337,12 @@
   var TEL_TEXT = SALES.telText;
   var TEL_HREF = SALES.telHref;
 
-  /* ── 一键导航（底部置顶块的定位按钮用）
-     拿不到可靠的 POI 坐标，所以默认「按名称唤起导航 App」：
-       https://uri.amap.com/search?keyword=…&city=…&callnative=1
-     高德 / 百度 / 腾讯地图装在手机上时，callnative=1 会直接拉起本机地图 App。
-     以后拿到准确坐标，把 lat / lng 填上即可改用「打点直达」：
-       https://uri.amap.com/marker?position=lng,lat&name=…&coordinate=gaode&callnative=1 */
+  /* ── 一键导航（底部置顶块左段定位针用）
+     目标：点一下直接调起手机「默认地图 App」，不先给一张网页地图。
+       iOS       → maps://?q=…                 （系统地图 Apple Maps）
+       安卓/鸿蒙  → geo:0,0?q=…                （系统默认地图，装了高德/百度/腾讯都走默认那个）
+       没唤起    → 1.3 秒后自动退回高德网页版（callnative=1 再试一次拉起本机地图）
+     拿到准确坐标后把 lat / lng 填上，自动改用「打点直达」（marker / geo:lat,lng） */
   var HOTEL = {
     name: '山水S酒店(惠州仲恺惠环店)',
     city: '惠州',
@@ -1351,14 +1351,50 @@
     lng: ''
   };
 
-  function hotelNavHref(){
-    var nm = encodeURIComponent(HOTEL.name);
-    if(HOTEL.lat && HOTEL.lng){
-      return 'https://uri.amap.com/marker?position=' + HOTEL.lng + ',' + HOTEL.lat +
-             '&name=' + nm + '&src=shanshui&coordinate=gaode&callnative=1';
+  // 导航目标：优先「直接唤起手机默认地图 App」，不行再退到高德网页版
+  //   iOS      → https://maps.apple.com/?q=…   （系统默认地图）
+  //   安卓/鸿蒙 → geo:0,0?q=…                  （系统默认地图，装了高德/百度/腾讯都行）
+  //   其它/桌面 → 高德网页版（callnative=1 也会试着拉起本机地图）
+  function navTargets(){
+    var ua = navigator.userAgent || '';
+    var q = encodeURIComponent(HOTEL.name);
+    var hasLL = !!(HOTEL.lat && HOTEL.lng);
+
+    var web = hasLL
+      ? 'https://uri.amap.com/marker?position=' + HOTEL.lng + ',' + HOTEL.lat +
+        '&name=' + q + '&src=shanshui&coordinate=gaode&callnative=1'
+      : 'https://uri.amap.com/search?keyword=' + q +
+        '&city=' + encodeURIComponent(HOTEL.city || '惠州') + '&callnative=1';
+
+    var app = '';
+    if(/iPhone|iPad|iPod/i.test(ua)){
+      app = hasLL
+        ? 'maps://?ll=' + HOTEL.lat + ',' + HOTEL.lng + '&q=' + q
+        : 'maps://?q=' + q;
+      web = hasLL
+        ? 'https://maps.apple.com/?ll=' + HOTEL.lat + ',' + HOTEL.lng + '&q=' + q
+        : 'https://maps.apple.com/?q=' + q;
+    }else if(/Android|HarmonyOS|OpenHarmony/i.test(ua)){
+      app = hasLL
+        ? 'geo:' + HOTEL.lat + ',' + HOTEL.lng + '?q=' + HOTEL.lat + ',' + HOTEL.lng + '(' + q + ')'
+        : 'geo:0,0?q=' + q;
     }
-    return 'https://uri.amap.com/search?keyword=' + nm +
-           '&city=' + encodeURIComponent(HOTEL.city || '惠州') + '&callnative=1';
+    return { app: app, web: web, href: web };
+  }
+
+  function hotelNavHref(){ return navTargets().href; }
+
+  // 点了就跳：先唤起本机地图 App；1.3 秒内没被接管（没装 / 被拦）再退回网页地图
+  function navToHotel(){
+    var t = navTargets();
+    if(!t.app){ location.href = t.web; return; }
+    var t0 = Date.now();
+    try{ location.href = t.app; }catch(e){ location.href = t.web; return; }
+    if(t.app.indexOf('http') !== 0){          // geo: / maps: 这类 scheme 才需要兜底
+      setTimeout(function(){
+        if(!document.hidden && Date.now() - t0 > 700) location.href = t.web;
+      }, 1300);
+    }
   }
 
   // 摆桌形式（容量口径见《宴会中心2025价格体系》+《山水S酒店介绍》）
@@ -4445,19 +4481,18 @@
   }
 
   (function mountBookbar(){
-    // 定位 + 预订 合成一个胶囊：左段定位针（跳地图 App），右段「预订」（拨号）
+    // 定位 + 一键拨打 合成一个胶囊：左段定位针（唤起手机默认地图），右段「一键拨打」（拨号）
     var inner =
       '<div class="bookbar-info">' +
-        '<div class="bookbar-addr">' +
-          (SALES.name ? '<i>' + esc(SALES.name) + '</i>' : '') +
-          '仲恺大道惠环段 175 号</div>' +
+        '<div class="bookbar-addr">仲恺大道惠环段 175 号</div>' +
         '<div class="bookbar-tel">预订热线<b>' + TEL_TEXT + '</b></div>' +
       '</div>' +
       '<div class="bookbar-act">' +
-        '<a class="ba-nav" href="' + hotelNavHref() + '" target="_blank" rel="noopener" ' +
+        '<a class="ba-nav" href="' + hotelNavHref() + '" ' +
           'aria-label="导航到' + esc(HOTEL.name) + '">' + svgPin() + '</a>' +
         '<span class="ba-sep" aria-hidden="true"></span>' +
-        '<a class="ba-book" href="' + TEL_HREF + '" aria-label="拨打预订电话 ' + TEL_TEXT + '">预订</a>' +
+        '<a class="ba-book" href="' + TEL_HREF + '" aria-label="一键拨打预订电话 ' + TEL_TEXT + '">' +
+          svgPhone() + '一键拨打</a>' +
       '</div>';
 
     // 1) 跟随内容的两页：各自末尾挂一张静态卡片
@@ -4486,6 +4521,15 @@
     document.addEventListener('input', function(){ setTimeout(scheduleBookbar, 60); });
     syncBookbar();
   })();
+
+  // 点「定位针」：不跳网页，直接唤起手机默认地图 App（安卓 geo: / iOS 苹果地图）
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    var a = t && t.closest ? t.closest('.ba-nav') : null;
+    if(!a) return;
+    e.preventDefault();
+    navToHotel();
+  }, false);
 
   /* ═══════════════════════════════════════════════
      九、刷新不丢进度 / 下拉防误触
