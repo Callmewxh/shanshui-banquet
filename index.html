@@ -644,6 +644,36 @@
 
   .foot-note{text-align:center;font-size:10.5px;color:#BFAFAF;padding:22px 20px 8px;letter-spacing:.04em;line-height:1.7;}
 
+  /* ── 选择地图（底部弹层）：点定位针后用哪家地图导航 ── */
+  .navmask{
+    position:fixed;inset:0;z-index:120;background:rgba(42,27,27,.44);
+    opacity:0;pointer-events:none;transition:opacity .22s ease;
+  }
+  .navmask.is-on{opacity:1;pointer-events:auto;}
+  .navsheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:121;margin:0 auto;max-width:480px;
+    background:#fff;border-radius:18px 18px 0 0;
+    padding:4px 0 calc(10px + env(safe-area-inset-bottom));
+    box-shadow:0 -8px 28px rgba(94,15,15,.18);
+    transform:translateY(104%);transition:transform .26s cubic-bezier(.22,.61,.36,1);
+  }
+  .navsheet.is-on{transform:translateY(0);}
+  .navsheet-hd{padding:16px 20px 12px;font-size:15px;font-weight:600;letter-spacing:.02em;}
+  .navsheet-hd span{display:block;margin-top:5px;font-size:12.5px;font-weight:400;color:var(--ink-3);letter-spacing:0;line-height:1.5;}
+  .navsheet-item{
+    display:flex;align-items:center;gap:11px;padding:15px 20px;
+    font-size:15.5px;color:var(--ink);text-decoration:none;border-top:1px solid var(--line);
+  }
+  .navsheet-item:active{background:var(--wine-tint);}
+  .navsheet-item .dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;}
+  .navsheet-item .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .navsheet-item .ar{color:var(--ink-3);font-size:13px;letter-spacing:.02em;}
+  .navsheet-cancel{
+    margin:10px 16px 2px;padding:13px 0;text-align:center;border-radius:12px;
+    background:#F6F0F0;color:var(--ink-2);font-size:15px;
+  }
+  .navsheet-cancel:active{background:#EFE5E5;}
+
   .reset-link{
     display:block;width:100%;margin-top:16px;background:none;border:none;font-family:inherit;
     font-size:12.5px;color:var(--ink-3);letter-spacing:.04em;padding:10px;cursor:pointer;
@@ -1356,20 +1386,101 @@
     lng: '114.365941'
   };
 
-  // 定位针的 href：只写系统 scheme，点击后由浏览器交给操作系统弹「选择应用 → 对应地图 App」
-  // 全站不保留任何「地图网页版」链接（v29 前的 uri.amap.com / api.map.baidu.com 兜底全部删除）
+  // 定位针的 href：手机上是 geo:/maps://，点开走下面的「选择地图」面板（面板里是各家 App 的 scheme）
+  // ⚠️ 不再指望系统帮我们弹选择：鸿蒙上 geo: 只会拉起「系统地图」，高德根本没得选；微信里 geo: 直接没反应
+  // 全站不保留任何「地图网页版」链接（uri.amap.com / api.map.baidu.com 之类一律不许出现）
   function hotelNavHref(){
-    var ua = navigator.userAgent || '';
     var ll = HOTEL.lat + ',' + HOTEL.lng;
-    if(/iPhone|iPad|iPod/i.test(ua)){
-      return 'maps://?daddr=' + ll + '&q=' + encodeURIComponent(HOTEL.name);   // 苹果地图，iOS 无选择层
-    }
-    return 'geo:' + ll + '?q=' + ll;      // 纯坐标 → 不乱码；安卓/鸿蒙由系统弹 App 选择
+    if(isIOS()) return 'maps://?daddr=' + ll;
+    return 'geo:' + ll + '?q=' + ll;
   }
 
-  // 手机（能唤起系统地图）才直跳；电脑上没有系统地图可唤起 → 拦住，只提示，绝不跳网页
+  function isIOS(){
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+  }
+  function isAndroid(){
+    return /Android|HarmonyOS|OpenHarmony/i.test(navigator.userAgent || '');
+  }
+  // 手机（能唤起地图 App）才弹面板；电脑上没有地图 App 可唤起 → 只提示，绝不跳网页
   function isMobileUA(){
-    return /Android|HarmonyOS|OpenHarmony|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+    return isIOS() || isAndroid();
+  }
+  // 微信 / 企业微信内置浏览器：外部 App scheme 基本被拦，需要提示「右上角用浏览器打开」
+  function isWeChat(){
+    return /MicroMessenger|wxwork/i.test(navigator.userAgent || '');
+  }
+
+  /* 各家的「直接进导航」scheme —— 全部只传坐标，不带中文店名：
+     ⚠️ 带中文会被编码成 %E5…，鸿蒙上的地图 App 不解码，直接显示成乱码（v28 的坑）。
+        只给经纬度，目的地名称由各家 App 自己反查（都能反出「山水S酒店…」）。 */
+  function mapOptions(){
+    var la = HOTEL.lat, ln = HOTEL.lng, ll = la + ',' + ln;
+    var ios = isIOS();
+    var list = [
+      { key:'amap',    name:'高德地图', color:'#1B7CF2',
+        app: ios
+          ? 'iosamap://path?sourceApplication=shanshui&dlat=' + la + '&dlon=' + ln + '&dev=0&t=0'
+          : 'amapuri://route/plan/?sourceApplication=shanshui&dlat=' + la + '&dlon=' + ln + '&dev=0&t=0' },
+      { key:'baidu',   name:'百度地图', color:'#2B62DE',
+        app: 'baidumap://map/direction?destination=latlng:' + ll + '&coord_type=gcj02&mode=driving' },
+      { key:'tencent', name:'腾讯地图', color:'#0FA8E0',
+        app: 'qqmap://map/routeplan?type=drive&tocoord=' + ll + '&coord_type=1&referer=shanshui' },
+      { key:'system',  name: ios ? '苹果地图' : '系统地图', color:'#8B1A1A',
+        app: ios ? 'maps://?daddr=' + ll : 'geo:' + ll + '?q=' + ll }
+    ];
+    return list;
+  }
+
+  /* ── 选择地图弹层（懒创建，只建一次） ──
+     面板每一行本身就是 <a href="各家 scheme">，点下去是浏览器原生跳转，最不容易被拦。
+     微信里额外加一句「右上角用浏览器打开」的提示：微信通常会拦掉这些 scheme。 */
+  var navSheet = null, navMask = null, navTimer = 0;
+
+  function navSheetHtml(){
+    var items = mapOptions().map(function(it){
+      return '<a class="navsheet-item" href="' + it.app + '" data-map="' + it.key + '">' +
+               '<i class="dot" style="background:' + it.color + '"></i>' +
+               '<span class="nm">' + it.name + '</span>' +
+               '<span class="ar">导航</span>' +
+             '</a>';
+    }).join('');
+    var hd = isWeChat()
+      ? '<div class="navsheet-hd">选择地图导航' +
+          '<span>点了没反应？微信会拦掉地图 App。请点右上角 ··· → 「在浏览器打开」，再点定位即可。</span>' +
+        '</div>'
+      : '<div class="navsheet-hd">用哪个地图导航？' +
+          '<span>目的地：' + esc(HOTEL.name) +
+            (isMobileUA() ? '' : '（电脑上仅可预览，请用手机打开本页操作）') + '</span>' +
+        '</div>';
+    return hd + items + '<div class="navsheet-cancel" id="navCancel">取消</div>';
+  }
+
+  function ensureNavSheet(){
+    if(navSheet) return;
+    navMask = document.createElement('div');
+    navMask.className = 'navmask';
+    navMask.id = 'navMask';
+    navSheet = document.createElement('div');
+    navSheet.className = 'navsheet';
+    navSheet.id = 'navSheet';
+    navSheet.setAttribute('role', 'dialog');
+    navSheet.setAttribute('aria-label', '选择地图导航');
+    navSheet.innerHTML = navSheetHtml();
+    document.body.appendChild(navMask);
+    document.body.appendChild(navSheet);
+  }
+
+  function openNavSheet(){
+    ensureNavSheet();
+    navMask.classList.add('is-on');
+    clearTimeout(navTimer);
+    navTimer = setTimeout(function(){ navSheet.classList.add('is-on'); }, 18);  // 一帧后再加，保证滑入动画
+  }
+  function closeNavSheet(){
+    if(!navSheet) return;
+    clearTimeout(navTimer);
+    navSheet.classList.remove('is-on');
+    navMask.classList.remove('is-on');
   }
 
   // 摆桌形式（容量口径见《宴会中心2025价格体系》+《山水S酒店介绍》）
@@ -4504,18 +4615,28 @@
     syncBookbar();
   })();
 
-  // 点「定位针」：手机上**完全不干预**，让 <a href="geo:…"> 这个原生链接自己交给浏览器 → 操作系统
-  //   ⚠️ v30 曾在这里挂 1.6 秒计时器，判定「页面没被切走 = 没装地图」并弹提示——
-  //      这个判据是错的：系统「选择应用」是个弹窗，页面并不会 hidden，用户挑 App 的时间也可能超过 1.6 秒，
-  //      结果装了高德也会被提示「未检测到地图 App」（用户实测踩到）。所以提示已整体删除，宁可不说话。
-  // 电脑浏览器没有系统地图可唤起 → 拦住，只提示用手机打开（全站没有任何地图网页链接）
+  // 点「定位针」：弹出「选择地图」面板（面板里每行是各家 App 的 scheme，点下去原生唤起）
+  //   · 不再指望系统弹选择：鸿蒙上 geo: 只会拉起系统地图，高德根本没得选；微信里 geo: 完全没反应
+  //   · 电脑上同样弹出（方便预览这套 UI），只是面板里点了不会有反应，标题里会写清楚
+  //   · 全站没有任何地图网页链接，绝不会把客户带到 uri.amap.com 之类
   document.addEventListener('click', function(e){
     var t = e.target;
     var a = t && t.closest ? t.closest('.ba-nav') : null;
     if(!a) return;
-    if(isMobileUA()) return;                      // 手机：放行原生 geo: / maps://，不加任何判断
-    e.preventDefault();
-    toast('电脑上无法唤起地图 App，请用手机打开本页后点击定位', 3000);
+    e.preventDefault();                           // 不直跳，先让客户选哪家地图
+    openNavSheet();
+  }, false);
+
+  // 面板内的动作：选地图交给原生跳转（不拦截）、取消 / 点遮罩关闭
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    if(!t || !t.closest) return;
+    if(t.closest('#navCancel') || t.closest('#navMask')){
+      e.preventDefault();
+      closeNavSheet();
+      return;
+    }
+    if(t.closest('.navsheet-item')) closeNavSheet();   // 不拦默认，让浏览器去唤起对应 App
   }, false);
 
   /* ═══════════════════════════════════════════════
