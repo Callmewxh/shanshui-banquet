@@ -442,6 +442,10 @@
     font-size:11.5px;color:var(--ink-3);line-height:1.6;margin-top:8px;
     padding-top:9px;border-top:1px dashed rgba(139,26,26,.16);
   }
+  .pkg-hint{
+    font-size:11px;color:#B08E6A;line-height:1.55;margin-top:7px;letter-spacing:.02em;
+    position:relative;z-index:1;
+  }
   .pkg-btn{
     width:100%;margin-top:12px;padding:11px;border-radius:10px;border:none;
     background:var(--wine);color:#fff;font-family:inherit;font-size:13px;font-weight:600;
@@ -724,7 +728,7 @@
     color:#4A0C0C;box-shadow:0 3px 10px rgba(0,0,0,.24);
   }
 
-  /* 菜单图钉：右上角小圆孔，点一下钉住 = 已选 */
+  /* 菜单图钉：右上角小圆孔，点一下钉住 = 标记意向（仅参考，不等于定档） */
   .mpin{
     position:absolute;top:10px;right:10px;z-index:5;width:26px;height:26px;padding:0;
     border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
@@ -1359,16 +1363,17 @@
 
     { id:'heyuanA', name:'合苑A厅', banquetName:'合苑厅', floor:'4F', areaText:'140㎡',
       banquet:10, mset:{ classroom:90, theatre:100, ushape:60, fishbone:60, board:50 },
-      pillarless:false, led:true, ledText:'4.5米LED', signRoom:false,
+      pillarless:true, led:true, ledText:'4.5米LED', signRoom:false,
       hallFee:{ one:2800, two:5000 },
       banPriority:1,
-      note:'合苑主厅，配 <b>4.5 米 LED 屏</b>；宴席 A+B 全厅 10 桌，A 厅单独 4 桌' },
+      note:'合苑主厅（<b>无柱</b>），配 <b>4.5 米 LED 屏</b>；4 桌以内用 A 厅，5–10 桌 A+B 全厅' },
 
     { id:'heyuanB', name:'合苑B厅', floor:'4F', areaText:'70㎡',
       banquet:0, mset:{ classroom:30, theatre:50, ushape:20, fishbone:30, board:20 },
-      pillarless:false, led:false, projector:'投影', signRoom:false,
+      meeting:false,                                    // 无屏无投影，不参与会议推荐
+      pillarless:true, led:false, projector:'', signRoom:false,
       hallFee:{ one:1500, two:2800 },
-      note:'合苑小厅；A 厅开会时 B 厅可摆 4 桌用餐' }
+      note:'合苑小厅（<b>无柱</b>，<b>不配 LED / 投影</b>）；可作 4F 用餐间或分会场，不单独承接会议与宴席' }
   ];
 
   /* ── 菜单库（KB 各宴席菜单 PDF 2026 版，按上菜顺序分组） ── */
@@ -1843,7 +1848,7 @@
   function pickMenuHtml(m, fam){
     var on = isMenuPicked(fam, m.id);
     return '<button class="mpin' + (on ? ' is-picked' : '') + '" data-pick="' + m.id +
-      '" data-pfam="' + fam + '" aria-label="选中这份菜单">' +
+      '" data-pfam="' + fam + '" aria-label="标记为意向菜单">' +
       '<span class="mpin-hole"></span>' +
       '<svg class="mpin-svg" viewBox="0 0 24 24" aria-hidden="true">' +
         '<path d="M8.4 3h7.2l-.85 5.5 3.35 2.7v1.35H5.9V11.2l3.35-2.7L8.4 3z" fill="#B3251F"/>' +
@@ -2006,7 +2011,7 @@
         '</div>' +
         '<button class="deck-arrow" data-deckgo="1" aria-label="下一款菜单">' + arrR + '</button>' +
       '</div>' +
-      '<div class="deck-hint">左右滑动，或点按两侧按键切换档位</div>' +
+      '<div class="deck-hint">左右滑动切换档位 · 菜单仅供挑选参考，点右上角图钉标记意向</div>' +
     '</div>';
   }
 
@@ -2435,7 +2440,7 @@
       html += '<div class="pkg">' +
         '<div class="pkg-tags">' +
           '<span class="pkg-tag strong">' + esc(s.type) + '</span>' +
-          (pkgPicked ? '<span class="pkg-tag">已选菜单</span>' : '') +
+          (pkgPicked ? '<span class="pkg-tag">意向菜单</span>' : '') +
           '<span class="pkg-tag">' + periodText + '</span>' +
           '<span class="pkg-tag">每席 10 位</span>' +
           '<span class="pkg-tag">' + dishCount(p) + ' 道菜</span>' +
@@ -2443,8 +2448,9 @@
         '<div class="pkg-name">' + esc(mName) + '</div>' +
         '<div class="pkg-price">' + pkgPriceText(p) + '<span>/席</span></div>' +
         '<div class="pkg-sub">人均约 ¥' + perPerson + ' · 另加 10% 服务费</div>' +
+        '<div class="pkg-hint">菜单供参考 · 可逐档查看后标记意向，最终以门店确认为准</div>' +
         '<button class="pkg-btn" data-menu="' + p.id + '" data-mtype="' + esc(s.type) + '">' +
-          '查看完整菜单' + svgArrow() + '</button>' +
+          '查看完整菜单 · 标记意向' + svgArrow() + '</button>' +
       '</div>';
     }
     html += '</div>';
@@ -2974,8 +2980,8 @@
     var durationText = m.duration === 'half' ? ('半天 · ' + halfTxt + '（1 节 / 4 小时）')
       : (m.duration === 'full' ? '全天（2 节 / 8 小时）' : days + ' 天（' + sess + ' 节）');
 
-    // 年华厅为婚礼堂，不参与会议匹配；合苑按 A / B 分厅分别参与
-    var rows = HALLS.filter(function(h){ return !!h.mset; }).map(function(h){
+    // 年华厅为婚礼堂，不参与会议匹配；合苑只推 A 厅（B 厅无屏无投影，meeting:false）
+    var rows = HALLS.filter(function(h){ return !!h.mset && h.meeting !== false; }).map(function(h){
       var cap = h.mset[layout];
       var supported = (cap != null);
       return {
@@ -3006,7 +3012,7 @@
         ' 人的会议室</div></div>';
     }else{
       var altHint = (layout === 'ushape' || layout === 'fishbone')
-        ? '该摆桌形式仅合苑 A / B 厅有标准容量，' + people + ' 人建议改为<b>课桌式</b>或<b>剧院式</b>，或致电 '
+        ? '该摆桌形式目前仅<b>合苑A厅</b>有标准容量，' + people + ' 人建议改为<b>课桌式</b>或<b>剧院式</b>，或致电 '
         : '暂无可容纳 ' + people + ' 人的单间会议室，建议致电 ';
       html += '<div class="summary is-empty"><span class="summary-dot"></span>' +
         '<div class="summary-text">' + altHint + TEL_TEXT + ' 咨询分会场方案</div></div>';
@@ -3466,7 +3472,7 @@
         title: (b.type || '宴席') + '方案',
         sub: b.tables + ' 席 · ' + b.period + (b.budget ? ' · 人均预算 ¥' + money(b.budget) : ''),
         blocks: blocks, perks: perks, perkTitle:'礼遇与权益',
-        menus: menus, qr:true, note:'以上为参考报价，最终以正式合同为准'
+        menus: menus, qr:true, note:'以上为参考报价，菜单为意向参考，最终以正式合同为准'
       };
     }
 
@@ -3569,7 +3575,7 @@
         title:'会议方案',
         sub: sub2.join(' · '),
         blocks: blocks2, perks: perks2, perkTitle:'会议权益',
-        menus: menus2, qr:true, note:'以上为参考报价，最终以正式合同为准'
+        menus: menus2, qr:true, note:'以上为参考报价，菜单为意向参考，最终以正式合同为准'
       };
     }
     return null;
@@ -3621,6 +3627,7 @@
     fitTx(ctx, menuNameFor(pk.menu, pk.type || pk.cap) || pk.menu.name, bx + 16, by + 32, 20, '700', '#7B1414', 'left', w - 32);
     var pr = '¥' + money(pk.menu.price) + (pk.menu.unit ? ' / ' + pk.menu.unit : ' / 席');
     tx(ctx, pr, bx + 16, by + 55, 15, '600', '#8A6A3A');
+    tx(ctx, '意向参考', bx + w - 16, by + 55, 12, '400', '#B08E8A', 'right');
 
     // 胶带（半透明米色，跨在卡顶边上）
     ctx.save();
@@ -3738,7 +3745,7 @@
 
     var secH = Math.max(perkH, menusH);
 
-    var footH = 232;
+    var footH = 252;
     var gapV = 18;
     var H = headH + gapV + cardH + gapV + secH + 40 + footH;
 
@@ -3900,31 +3907,34 @@
 
     var fx = M, fy0 = footTop + 30;
     if(d.qr){
-      var panel = 150, pad = 14;
-      rr(ctx, fx, fy0, panel, panel, 16);
+      // 二维码：白边收到 7px，尺寸取 41 个模组（33 + 4 边距×2）的整数倍 164px，
+      // 模组从 2px 提到 4px —— 扫码更快，也不再有外面一圈很宽的白框
+      var panel = 178, pad = 7;
+      rr(ctx, fx, fy0, panel, panel, 8);
       ctx.fillStyle = '#fff';
       ctx.fill();
       ctx.strokeStyle = '#E7D2D2';
       ctx.lineWidth = 1;
       ctx.stroke();
       drawQR(ctx, fx + pad, fy0 + pad, panel - pad * 2, '#2B0B0B');
-      tx(ctx, '扫码加微信 · 专属销售', fx + panel / 2, fy0 + panel + 24, 16, '400', '#8C7676', 'center');
-      fx += panel + 30;
+      tx(ctx, '扫码加微信 · 专属销售', fx + panel / 2, fy0 + panel + 22, 16, '400', '#8C7676', 'center');
+      fx += panel + 32;
     }
 
     // 右侧分两栏，把宽度用满，避免右边一片空
     var rightW = W - M - fx;
     var c1x = fx;
     var c2x = fx + Math.round(rightW * 0.42);
+    var rTop = fy0 + (d.qr ? 24 : 20);
 
-    tx(ctx, '预订热线 / 微信同号', c1x, fy0 + 20, 19, '400', '#9C8585');
-    fitTx(ctx, TEL_TEXT, c1x, fy0 + 74, 36, '700', '#8B1A1A', 'left', c2x - c1x - 18);
-    tx(ctx, '扫码或致电均可预订', c1x, fy0 + 112, 17, '400', '#8C7676');
+    tx(ctx, '预订热线 / 微信同号', c1x, rTop, 19, '400', '#9C8585');
+    fitTx(ctx, TEL_TEXT, c1x, rTop + 58, 38, '700', '#8B1A1A', 'left', c2x - c1x - 18);
+    tx(ctx, '扫码或致电均可预订', c1x, rTop + 98, 17, '400', '#8C7676');
 
-    tx(ctx, '酒店地址', c2x, fy0 + 20, 19, '400', '#9C8585');
-    fitTx(ctx, '惠州市惠城区仲恺大道惠环段 175 号', c2x, fy0 + 60, 19, '400', '#4A3A3A', 'left', W - M - c2x);
-    fitTx(ctx, '城轨惠环站 D 口步行 20 米 · 200+ 免费停车位', c2x, fy0 + 92, 19, '400', '#4A3A3A', 'left', W - M - c2x);
-    tx(ctx, d.note, c2x, fy0 + 132, 16, '400', '#B9A5A5');
+    tx(ctx, '酒店地址', c2x, rTop, 19, '400', '#9C8585');
+    fitTx(ctx, '惠州市惠城区仲恺大道惠环段 175 号', c2x, rTop + 42, 19, '400', '#4A3A3A', 'left', W - M - c2x);
+    fitTx(ctx, '城轨惠环站 D 口步行 20 米 · 200+ 免费停车位', c2x, rTop + 74, 19, '400', '#4A3A3A', 'left', W - M - c2x);
+    fitTx(ctx, d.note, c2x, rTop + 116, 16, '400', '#B9A5A5', 'left', W - M - c2x);
 
     return cv;
   }
