@@ -617,28 +617,30 @@
   .bookbar--off{display:none;}
   /* 有置顶条的页面：底部留出让位，内容不被压住 */
   .page.has-bookbar{padding-bottom:calc(88px + env(safe-area-inset-bottom));}
-  /* 一键导航：占整行左侧 1/4，只画定位符号 */
-  .bookbar-nav{
-    flex:0 0 25%;height:42px;min-width:46px;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:12px;background:var(--wine-soft);border:1px solid var(--wine-line);
-    text-decoration:none;
+  /* 定位 + 预订 合成一个胶囊按键：左段跳导航，右段拨电话，中间一道细分隔线 */
+  .bookbar-act{
+    flex:0 0 auto;display:flex;align-items:center;height:42px;border-radius:21px;overflow:hidden;
+    background:linear-gradient(135deg,#9A2222,#7A1616);
+    box-shadow:0 4px 12px rgba(139,26,26,.22);
   }
-  .bookbar-nav svg{width:21px;height:21px;stroke:var(--wine);}
-  .bookbar-nav:active{background:#EFDBDB;}
+  .bookbar-act a{
+    display:flex;align-items:center;justify-content:center;height:42px;
+    color:#fff;text-decoration:none;-webkit-tap-highlight-color:transparent;
+  }
+  .ba-nav{width:44px;flex:0 0 44px;}
+  .ba-nav svg{width:19px;height:19px;stroke:#fff;}
+  .ba-nav:active{background:rgba(255,255,255,.16);}
+  .ba-sep{flex:0 0 1px;width:1px;height:19px;background:rgba(255,255,255,.34);}
+  .ba-book{
+    padding:0 17px 0 13px;flex:0 0 auto;
+    font-size:14px;font-weight:600;letter-spacing:.08em;white-space:nowrap;
+  }
+  .ba-book:active{background:rgba(255,255,255,.16);}
   .bookbar-info{flex:1 1 0;min-width:0;}
   .bookbar-addr{font-size:11px;color:var(--ink-2);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .bookbar-addr i{font-style:normal;color:var(--wine);font-weight:600;margin-right:4px;}
   .bookbar-tel{font-size:11px;color:var(--ink-3);margin-top:3px;white-space:nowrap;overflow:hidden;}
   .bookbar-tel b{color:var(--wine);font-weight:600;letter-spacing:.01em;font-size:11.5px;margin-left:3px;}
-  .bookbar-btn{
-    flex:0 0 auto;min-width:116px;max-width:172px;
-    display:flex;align-items:center;justify-content:center;gap:5px;height:42px;padding:0 14px;border-radius:21px;
-    background:linear-gradient(135deg,#9A2222,#7A1616);color:#fff;font-size:13.5px;font-weight:600;letter-spacing:.04em;
-    text-decoration:none;box-shadow:0 4px 12px rgba(139,26,26,.22);white-space:nowrap;
-  }
-  .bookbar-btn:active{opacity:.9;}
-  .bookbar-btn svg{width:15px;height:15px;stroke:#fff;flex:0 0 auto;}
 
   .foot-note{text-align:center;font-size:10.5px;color:#BFAFAF;padding:22px 20px 8px;letter-spacing:.04em;line-height:1.7;}
   .reset-link{
@@ -1342,7 +1344,7 @@
      以后拿到准确坐标，把 lat / lng 填上即可改用「打点直达」：
        https://uri.amap.com/marker?position=lng,lat&name=…&coordinate=gaode&callnative=1 */
   var HOTEL = {
-    name: '山水S酒店',
+    name: '山水S酒店(惠州仲恺惠环店)',
     city: '惠州',
     addr: '惠州市惠城区仲恺大道惠环段 175 号',
     lat: '',
@@ -4443,16 +4445,20 @@
   }
 
   (function mountBookbar(){
+    // 定位 + 预订 合成一个胶囊：左段定位针（跳地图 App），右段「预订」（拨号）
     var inner =
-      '<a class="bookbar-nav" href="' + hotelNavHref() + '" target="_blank" rel="noopener" ' +
-        'aria-label="一键导航到' + esc(HOTEL.name) + '">' + svgPin() + '</a>' +
       '<div class="bookbar-info">' +
         '<div class="bookbar-addr">' +
           (SALES.name ? '<i>' + esc(SALES.name) + '</i>' : '') +
           '仲恺大道惠环段 175 号</div>' +
-        '<div class="bookbar-tel">预订<b>' + TEL_TEXT + '</b></div>' +
+        '<div class="bookbar-tel">预订热线<b>' + TEL_TEXT + '</b></div>' +
       '</div>' +
-      '<a class="bookbar-btn" href="' + TEL_HREF + '">' + svgPhone() + '一键拨打</a>';
+      '<div class="bookbar-act">' +
+        '<a class="ba-nav" href="' + hotelNavHref() + '" target="_blank" rel="noopener" ' +
+          'aria-label="导航到' + esc(HOTEL.name) + '">' + svgPin() + '</a>' +
+        '<span class="ba-sep" aria-hidden="true"></span>' +
+        '<a class="ba-book" href="' + TEL_HREF + '" aria-label="拨打预订电话 ' + TEL_TEXT + '">预订</a>' +
+      '</div>';
 
     // 1) 跟随内容的两页：各自末尾挂一张静态卡片
     BOOKBAR_FLOW_PAGES.forEach(function(id){
