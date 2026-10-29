@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name="viewport">
 <meta content="#8B1A1A" name="theme-color">
+<meta content="noindex,nofollow" name="robots">
 <title>山水S酒店 · 宴席/会议报价（date 测试版）</title>
 <style>
   :root{
@@ -5768,6 +5769,9 @@
       qField('sales.name', Q.sales.name, { max:12 }) + '</div>';
     body += '<div class="q-row"><span class="ql">电话</span>' +
       qField('sales.tel', Q.sales.tel, { max:20 }) + '</div>';
+    body += '<div class="q-btns" style="margin-top:14px">' +
+      '<button class="q-btn is-plain" type="button" data-qact="newQuote">＋ 新建另一份报价</button>' +
+      '</div>';
     return qCard('08', '备注与有效期', '会印在报价单上', body);
   }
 
@@ -6378,6 +6382,7 @@
       return;
     }
     if(act === 'chooserClose'){ $('qChooser').classList.remove('is-on'); return; }
+    if(act === 'newQuote'){ $('qChooser').classList.add('is-on'); return; }
   }
 
   document.addEventListener('click', function(e){
@@ -6451,6 +6456,8 @@
       showOnly('page-sheet');
       $('topTitle').innerHTML = '我的报价<span class="sub">山水S酒店</span>';
       $('backBtn').style.visibility = 'hidden';
+      if($('saleBtn')) $('saleBtn').style.display = 'none';   // 客人视角不给编辑入口
+      if($('entrySale')) $('entrySale').style.display = 'none';
       return true;
     }catch(e){ return false; }
   }
