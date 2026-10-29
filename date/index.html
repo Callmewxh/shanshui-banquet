@@ -1717,15 +1717,6 @@
   </div>
 </div>
 
-<div class="q-chooser" id="qChooser">
-  <div class="qc-mask" data-qact="chooserClose"></div>
-  <div class="qc-panel">
-    <h3>新建一份报价单</h3>
-    <p>可直接开单，也可以先在前面填客人需求，<br>系统会把厅、菜单、餐次带过来</p>
-    <div class="qc-opts">
-      <button class="qc-opt" data-qnew="banquet" type="button"><b>宴席报价</b><span>婚宴 / 宝宝宴 / 乔迁宴…</span></button>
-      <button class="qc-opt" data-qnew="meeting" type="button"><b>会议报价</b><span>房 / 餐 / 会 自由组合</span></button>
-    </div>
     <button class="qc-cancel" data-qact="chooserClose" type="button">取消</button>
   </div>
 </div>
@@ -5313,8 +5304,8 @@
   var Q_RIGHTS_KEY = 'ssq_rights_v1';
   var Q_PASSCODE = '220618';
 
-  // 常驻权益池：每季度改这里，点「存为本季模板」后每单自动带出
-  var RIGHTS_DEFAULT = [
+  // 权益池按类型分开：宴席用宴席的，会议用会议的，互不串
+  var RIGHTS_BANQUET = [
     '免费精美请柬（10 份/席）、嘉宾提名册及签字笔',
     '免费签到台、指引牌、婚礼台号牌',
     '自带酒水免开瓶费',
@@ -5325,16 +5316,29 @@
     '每席奉送 1.25L 大瓶装汽水二支',
     '满月酒菜价 9.5 折'
   ];
+  var RIGHTS_MEETING = [
+    '音响、投影、LED 屏幕全套免费使用',
+    '翻页笔、备用电脑、讲台',
+    '铅笔、便签纸、矿泉水、席卡',
+    '全场高速 Wi-Fi',
+    '独立签到区（山水厅 3F 厅外 240㎡）',
+    '200+ 免费停车位（含电车充电桩）',
+    '专属会务管家全程驻场',
+    '会议期间免费提供茶歇区'
+  ];
 
-  function qRightsPool(){
+  function qRightsDefault(kind){ return kind === 'meeting' ? RIGHTS_MEETING : RIGHTS_BANQUET; }
+  function qRightsKey(kind){ return 'ssq_rights_' + (kind === 'meeting' ? 'meeting' : 'banquet') + '_v2'; }
+
+  function qRightsPool(kind){
     try{
-      var raw = localStorage.getItem(Q_RIGHTS_KEY);
+      var raw = localStorage.getItem(qRightsKey(kind));
       if(raw){
         var arr = JSON.parse(raw);
         if(arr && arr.length) return arr;
       }
     }catch(e){}
-    return RIGHTS_DEFAULT.slice();
+    return qRightsDefault(kind).slice();
   }
 
   function qn(v){                       // 带符号数字（加减收可为负）
@@ -5394,7 +5398,7 @@
   function qSeedRights(target){
     var q = target || Q;
     if(!q) return;
-    q.rights = qRightsPool().map(function(t){ return { t:t, on:true, special:false }; });
+    q.rights = qRightsPool(q.kind).map(function(t){ return { t:t, on:true, special:false }; });
   }
 
   /* ── 从客人已填需求带出（两种类型各自独立，不串字段） ── */
@@ -5895,7 +5899,8 @@
     b += '<div class="q-row"><span class="ql">电话</span>' +
       qField('sales.tel', Q.sales.tel, { max:20 }) + '</div>';
     b += '<div class="q-btns" style="margin-top:14px">' +
-      '<button class="q-btn is-plain" type="button" data-qact="newQuote">＋ 新建另一份报价</button>' +
+      '<button class="q-btn is-plain" type="button" data-qact="switchKind">⇄ 改做' +
+        (Q.kind === 'banquet' ? '会议' : '宴席') + '报价</button>' +
     '</div>';
     return qShell('tail', '08', '备注与报价人', '会印在报价单上', b);
   }
@@ -6191,25 +6196,166 @@
     return decodeURIComponent(escape(atob(s)));
   }
 
-  function qEncode(){
-    var d = Q, f = [];
-    f.push('2', d.kind, qClean(d.no), qClean(d.host), qClean(d.company));
-    f.push(d.date || '', qClean(d.period), d.pax || '', d.tables || '', d.sess || '', qClean(d.layout));
-    f.push(d.hall.id || '', qClean(d.hall.name), qClean(d.hall.floor), d.hall.stdFee || '', d.hall.fee || '', qClean(d.hall.note));
-    f.push(d.menu.tpl || '', qClean(d.menu.name), d.menu.price || '', d.menu.override || '');
-    f.push((d.menu.dishes || []).map(function(x){ return [qClean(x.g), qClean(x.n), x.d || ''].join('^'); }).join('~'));
-    f.push((d.meals || []).map(function(x){ return [qClean(x.label), qClean(x.unit), x.qty || '', x.price || '', x.std || ''].join('^'); }).join('~'));
-    f.push((d.rooms || []).map(function(x){ return [qClean(x.label), x.qty || '', x.nights || '', x.price || '', x.std || '', x.free ? 1 : 0].join('^'); }).join('~'));
-    f.push((d.extras || []).map(function(x){ return [qClean(x.label), x.qty || '', x.price || ''].join('^'); }).join('~'));
-    f.push([d.service.on ? 1 : 0, d.service.rate || ''].join('^'));
-    f.push([d.discount.amount || '', qClean(d.discount.note)].join('^'));
-    f.push((d.rights || []).filter(function(r){ return r.on; })
-      .map(function(r){ return (r.special ? '#' : '') + qClean(r.t); }).join('~'));
-    f.push(qClean(d.note), qClean(d.sales.name), qClean(d.sales.tel));
-    return qB64(f.join('|'));
+  /* ── 分享编码 v3：只存「差异」，链接比整份 JSON 短 2～3 倍 ──
+     规则：
+       · 文本一律 base64url，整串只用 ~ ^ , : . 这些 URL 安全字符，不用再转义
+       · 菜品只存「模板里的第几道 + 加减收」，换过的菜才存菜名
+       · 权益只存「模板里的第几条」，自定义的才存文字
+       · 厅名/楼层/标准价、菜单名/席价 由 id 反查，不写进链接
+     ── */
+  function qHallById(id){
+    for(var i = 0; i < HALLS.length; i++) if(HALLS[i].id === id) return HALLS[i];
+    return null;
+  }
+  function qTxt(v){ return qHas(v) ? qB64(qClean(v)) : ''; }
+  function qUnTxt(v){ if(!v) return ''; try{ return qUnB64(v); }catch(e){ return ''; } }
+
+  function qDishBase(tpl){
+    var out = [], hit = tpl ? menuById(tpl) : null;
+    if(hit && hit.menu.groups) hit.menu.groups.forEach(function(g){
+      g[1].forEach(function(n){ out.push({ g:g[0], n:n }); });
+    });
+    return out;
+  }
+  function qDishCode(){
+    var base = qDishBase(Q.menu.tpl), idx = {};
+    base.forEach(function(d, i){ if(!(d.n in idx)) idx[d.n] = i; });
+    return (Q.menu.dishes || []).map(function(d){
+      var dl = qn(d.d);
+      if(!qHas(d.n)) return 'z' + (dl ? (':' + dl) : '');       // 还没写菜名的行
+      var key = (d.n in idx) ? String(idx[d.n]) : ('x' + qTxt(d.n));
+      return key + (dl ? (':' + dl) : '');
+    }).join(',');
+  }
+  function qDishFrom(code, tpl){
+    var base = qDishBase(tpl), out = [];
+    String(code || '').split(',').filter(Boolean).forEach(function(tk){
+      var a = tk.split(':'), head = a[0], dl = a[1] || '';
+      if(head.charAt(0) === 'z'){ out.push({ g:'自定', n:'', d:dl }); }
+      else if(head.charAt(0) === 'x'){
+        var nm = qUnTxt(head.slice(1));
+        if(nm) out.push({ g:'自定', n:nm, d:dl });
+      }else{
+        var b = base[+head];
+        if(b) out.push({ g:b.g, n:b.n, d:dl });
+      }
+    });
+    return out;
+  }
+  function qRightsCode(){
+    var pool = qRightsDefault(Q.kind);
+    return (Q.rights || []).filter(function(r){ return r.on && qHas(r.t); }).map(function(r){
+      var i = pool.indexOf(r.t);
+      return ((i >= 0) ? ('i' + i) : ('x' + qTxt(r.t))) + (r.special ? 's' : '');
+    }).join(',');
+  }
+  function qRightsFrom(code, kind){
+    var pool = qRightsDefault(kind), out = [];
+    String(code || '').split(',').filter(Boolean).forEach(function(tk){
+      var sp = tk.slice(-1) === 's';
+      var head = sp ? tk.slice(0, -1) : tk;
+      var t = (head.charAt(0) === 'x') ? qUnTxt(head.slice(1)) : (pool[+head.slice(1)] || '');
+      if(t) out.push({ t:t, on:true, special:sp });
+    });
+    return out;
   }
 
-  function qDecode(code){
+  function qEncode(){
+    var d = Q, f = [];
+    f.push('v3');
+    f.push(d.kind === 'meeting' ? 'm' : 'b');
+    f.push(String(d.no || '').replace(/^SS-/, '').replace(/[^0-9-]/g, ''));
+    f.push(qTxt(d.host));
+    f.push(qTxt(d.company));
+    f.push(String(d.date || '').replace(/-/g, ''));
+    f.push(d.period === '午宴' ? 'l' : (d.period === '晚宴' ? 'd' : ''));
+    f.push(d.pax || ''); f.push(d.tables || ''); f.push(d.sess || '');
+    f.push(qTxt(d.layout));
+    f.push(d.hall.id || '');
+    f.push(d.hall.id ? '' : qTxt(d.hall.name));
+    f.push(d.hall.fee || '');
+    f.push(qTxt(d.hall.note));
+    f.push(d.menu.tpl || '');
+    f.push(d.menu.override || '');
+    f.push(qDishCode());
+    f.push((d.meals || []).map(function(x){
+      return [qTxt(x.label), qTxt(x.unit), x.qty || '', x.price || '', x.std || ''].join('^');
+    }).join(','));
+    f.push((d.rooms || []).map(function(x){
+      return [qTxt(x.label), x.qty || '', x.nights || '', x.price || '', x.std || '', x.free ? 1 : 0].join('^');
+    }).join(','));
+    f.push((d.extras || []).map(function(x){
+      return [qTxt(x.label), x.qty || '', x.price || ''].join('^');
+    }).join(','));
+    f.push((d.service.on ? 1 : 0) + '^' + (d.service.rate || ''));
+    f.push((d.discount.amount || '') + '^' + qTxt(d.discount.note));
+    f.push(qRightsCode());
+    f.push(qTxt(d.note));
+    f.push(qTxt(d.sales.name));
+    f.push(String(d.sales.tel || '').replace(/[^0-9]/g, ''));
+    return f.join('~');
+  }
+
+  function qDecodeV3(code){
+    var f = code.split('~');
+    var kind = (f[1] === 'm') ? 'meeting' : 'banquet';
+    var q = qNew(kind);
+    q.no = f[2] ? ('SS-' + f[2]) : q.no;
+    q.host = qUnTxt(f[3]); q.company = qUnTxt(f[4]);
+    var dt = String(f[5] || '');
+    q.date = dt.length === 8 ? (dt.slice(0,4) + '-' + dt.slice(4,6) + '-' + dt.slice(6,8)) : '';
+    q.period = (f[6] === 'l') ? '午宴' : (f[6] === 'd' ? '晚宴' : '');
+    q.pax = f[7] || ''; q.tables = f[8] || ''; q.sess = f[9] || '';
+    q.layout = qUnTxt(f[10]);
+
+    var hid = f[11] || '';
+    var h = qHallById(hid);
+    q.hall = {
+      id: hid,
+      name: h ? h.name : qUnTxt(f[12]),
+      floor: h ? (h.floor || '') : '',
+      stdFee: h ? ((kind === 'meeting') ? hallFeeOf(h, qi(q.sess) || 1) : (h.venueFee || 0)) : '',
+      fee: f[13] || '',
+      note: qUnTxt(f[14])
+    };
+
+    var tpl = f[15] || '';
+    var mm = tpl ? menuById(tpl) : null;
+    q.menu = {
+      tpl: tpl,
+      name: mm ? mm.menu.name : '',
+      price: mm ? mm.menu.price : '',
+      override: f[16] || '',
+      dishes: qDishFrom(f[17], tpl)
+    };
+
+    q.meals = String(f[18] || '').split(',').filter(Boolean).map(function(tk){
+      var a = tk.split('^');
+      return { label:qUnTxt(a[0]), unit:qUnTxt(a[1]) || '位', qty:a[2] || '', price:a[3] || '', std:a[4] || '' };
+    });
+    q.rooms = String(f[19] || '').split(',').filter(Boolean).map(function(tk){
+      var a = tk.split('^');
+      return { label:qUnTxt(a[0]), qty:a[1] || '', nights:a[2] || '', price:a[3] || '', std:a[4] || '', free:a[5] === '1' };
+    });
+    q.extras = String(f[20] || '').split(',').filter(Boolean).map(function(tk){
+      var a = tk.split('^');
+      return { label:qUnTxt(a[0]), qty:a[1] || '', price:a[2] || '' };
+    });
+
+    var sv = String(f[21] || '').split('^');
+    q.service = { on:sv[0] === '1', rate:sv[1] || 10 };
+    var ds = String(f[22] || '').split('^');
+    q.discount = { amount:ds[0] || '', note:qUnTxt(ds[1]) };
+    q.rights = qRightsFrom(f[23], kind);
+    q.note = qUnTxt(f[24]);
+    var tel = String(f[26] || '').replace(/[^0-9]/g, '');
+    if(tel.length === 11) tel = tel.slice(0, 3) + ' ' + tel.slice(3, 7) + ' ' + tel.slice(7);
+    q.sales = { name:qUnTxt(f[25]) || SALES.name, tel:tel || SALES.telText };
+    return q;
+  }
+
+  // 老链接（v1 / v2）继续能打开
+  function qDecodeLegacy(code){
     var f = qUnB64(code).split('|');
     var ver = f[0] || '2';
     var q = qNew(f[1] === 'meeting' ? 'meeting' : 'banquet');
@@ -6219,17 +6365,17 @@
     q.sess = f[9] || ''; q.layout = f[10] || '';
     q.hall = { id:f[11] || '', name:f[12] || '', floor:f[13] || '', stdFee:f[14] || '', fee:f[15] || '', note:f[16] || '' };
     q.menu = { tpl:f[17] || '', name:f[18] || '', price:f[19] || '', override:f[20] || '', dishes:[] };
-    q.menu.dishes = (f[21] || '').split('~').filter(Boolean).map(function(s){
-      var a = s.split('^'); return { g:a[0], n:a[1], d:a[2] };
+    q.menu.dishes = (f[21] || '').split('~').filter(Boolean).map(function(x){
+      var a = x.split('^'); return { g:a[0], n:a[1], d:a[2] };
     });
-    q.meals = (f[22] || '').split('~').filter(Boolean).map(function(s){
-      var a = s.split('^'); return { label:a[0], unit:a[1], qty:a[2], price:a[3], std:a[4] };
+    q.meals = (f[22] || '').split('~').filter(Boolean).map(function(x){
+      var a = x.split('^'); return { label:a[0], unit:a[1], qty:a[2], price:a[3], std:a[4] };
     });
-    q.rooms = (f[23] || '').split('~').filter(Boolean).map(function(s){
-      var a = s.split('^'); return { label:a[0], qty:a[1], nights:a[2], price:a[3], std:a[4], free:a[5] === '1' };
+    q.rooms = (f[23] || '').split('~').filter(Boolean).map(function(x){
+      var a = x.split('^'); return { label:a[0], qty:a[1], nights:a[2], price:a[3], std:a[4], free:a[5] === '1' };
     });
-    q.extras = (f[24] || '').split('~').filter(Boolean).map(function(s){
-      var a = s.split('^'); return { label:a[0], qty:a[1], price:a[2] };
+    q.extras = (f[24] || '').split('~').filter(Boolean).map(function(x){
+      var a = x.split('^'); return { label:a[0], qty:a[1], price:a[2] };
     });
     var sv = (f[25] || '').split('^');
     q.service = { on:sv[0] === '1', rate:sv[1] || 10 };
@@ -6240,13 +6386,15 @@
       return { t:(sp ? s.slice(1) : s), on:true, special:sp };
     });
     q.note = f[28] || '';
-    // v1 旧链接在 29 位是有效期，多占一格
-    if(ver === '1'){
-      q.sales = { name:f[30] || SALES.name, tel:f[31] || SALES.telText };
-    }else{
-      q.sales = { name:f[29] || SALES.name, tel:f[30] || SALES.telText };
-    }
+    if(ver === '1') q.sales = { name:f[30] || SALES.name, tel:f[31] || SALES.telText };
+    else q.sales = { name:f[29] || SALES.name, tel:f[30] || SALES.telText };
     return q;
+  }
+
+  function qDecode(code){
+    var raw = String(code || '');
+    if(raw.indexOf('v3~') === 0) return qDecodeV3(raw);
+    return qDecodeLegacy(raw);
   }
 
   function qShare(){
@@ -6430,9 +6578,14 @@
     qPersist();
   }
   function qStart(kind){
-    if(kind === 'banquet') qOpen(qFromBanquet());
-    else if(kind === 'meeting') qOpen(qFromMeeting());
-    else $('qChooser').classList.add('is-on');
+    if(kind === 'meeting') qOpen(qFromMeeting());
+    else qOpen(qFromBanquet());
+  }
+  // 从哪个板块进来就直接开哪种报价：有草稿接着改，没有就按当前需求新建
+  function qEnter(kind){
+    var d = qDraft(kind);
+    if(d){ qOpen(d); toast('已恢复上次的' + (kind === 'meeting' ? '会议' : '宴席') + '报价', 2000); return; }
+    qStart(kind);
   }
   function qPersist(){
     if(!Q) return;
@@ -6555,7 +6708,7 @@
     if(act === 'addRight'){ Q.rights.push({ t:'', on:true, special:false }); qRenderEditor(); return; }
     if(act === 'rightsSave'){
       try{
-        localStorage.setItem(Q_RIGHTS_KEY, JSON.stringify(
+        localStorage.setItem(qRightsKey(Q.kind), JSON.stringify(
           Q.rights.filter(function(r){ return qHas(r.t); }).map(function(r){ return r.t; })
         ));
         toast('已存为本季权益模板');
@@ -6563,7 +6716,7 @@
       return;
     }
     if(act === 'rightsLoad'){
-      var pool = qRightsPool();
+      var pool = qRightsPool(Q.kind);
       var cur = {};
       Q.rights.forEach(function(r){ if(r.on) cur[r.t] = 1; });
       Q.rights = pool.map(function(t){ return { t:t, on:true, special:false }; });
@@ -6572,7 +6725,7 @@
       return;
     }
     if(act === 'rightsReset'){
-      Q.rights = RIGHTS_DEFAULT.map(function(t){ return { t:t, on:true, special:false }; });
+      Q.rights = qRightsDefault(Q.kind).map(function(t){ return { t:t, on:true, special:false }; });
       qRenderEditor();
       toast('已恢复默认权益');
       return;
@@ -6597,8 +6750,7 @@
       $('qBar').classList.add('is-on');
       return;
     }
-    if(act === 'chooserClose'){ $('qChooser').classList.remove('is-on'); return; }
-    if(act === 'newQuote'){ $('qChooser').classList.add('is-on'); return; }
+    if(act === 'switchKind'){ qStart(Q.kind === 'banquet' ? 'meeting' : 'banquet'); return; }
 
     if(act === 'lockClose'){ qLockClose(); return; }
     if(act === 'lockOk'){ qLockCheck(); return; }
@@ -6627,10 +6779,7 @@
       return;
     }
     qLockClose();
-    var b = state.board;
-    var d = b ? qDraft(b) : null;
-    if(d){ qOpen(d); toast('已恢复上次的报价单', 2000); return; }
-    $('qChooser').classList.add('is-on');
+    qEnter(state.board === 'meeting' ? 'meeting' : 'banquet');
   }
 
   /* ── 长按底部「一键拨打」进入销售台 ── */
@@ -6672,12 +6821,6 @@
     var actEl = t.closest('[data-qact]');
     if(actEl){ qAction(actEl.getAttribute('data-qact'), actEl); return; }
 
-    var nw = t.closest('[data-qnew]');
-    if(nw){
-      $('qChooser').classList.remove('is-on');
-      qStart(nw.getAttribute('data-qnew'));
-      return;
-    }
   });
 
   document.addEventListener('keydown', function(e){
@@ -6714,6 +6857,16 @@
     }
     qRefresh();
   }, true);
+
+  // 仅测试用：带 ?__t=1 时暴露编解码，方便做往返断言
+  if(location.search.indexOf('__t=1') > -1){
+    window.__Q = {
+      enc:function(){ return qEncode(); },
+      dec:function(c){ return qDecode(c); },
+      cur:function(){ return Q; },
+      start:function(k){ qStart(k); }
+    };
+  }
 
   // 带 ?q= 打开：直接给客人看报价单
   function qBoot(){
