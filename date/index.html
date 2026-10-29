@@ -6260,11 +6260,14 @@
     ctx.font = (weight || '400') + ' ' + size + 'px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
     var out = [], cur = '';
     var s = String(text || '');
+    var NO_START = '，。、；：！？）》」』%”’…·';
     for(var i = 0; i < s.length; i++){
       var ch = s.charAt(i);
       if(ch === '\n'){ out.push(cur); cur = ''; continue; }
-      if(ctx.measureText(cur + ch).width > maxW && cur){ out.push(cur); cur = ch; }
-      else cur += ch;
+      if(ctx.measureText(cur + ch).width > maxW && cur){
+        if(NO_START.indexOf(ch) > -1){ cur += ch; out.push(cur); cur = ''; continue; }  // 标点不落行首
+        out.push(cur); cur = ch;
+      }else cur += ch;
     }
     if(cur) out.push(cur);
     return out.length ? out : [''];
@@ -6287,11 +6290,12 @@
 
     var metaH = meta.length ? Math.ceil(meta.length / 2) * 92 : 0;
     var sumH = (c.disc || c.gift) ? 190 : 150;
-    var rH = rights.length ? 56 + rLines.reduce(function(a, l){ return a + l.length * 32 + 16; }, 0) : 0;
-    var spH = specials.length ? 60 + sLines.reduce(function(a, l){ return a + l.length * 32 + 16; }, 0) : 0;
-    var nH = nLines.length ? 44 + nLines.length * 30 + 16 : 0;
+    // 高度逐段对齐实际绘制（标题 50+30、合计前 12、权益块 38+主体+26、备注 38+主体+16、落款 186+34）
+    var rH = rights.length ? 38 + rLines.reduce(function(a, l){ return a + l.length * 32 + 16; }, 0) + 26 : 0;
+    var spH = specials.length ? 38 + sLines.reduce(function(a, l){ return a + l.length * 32 + 16; }, 0) + 26 : 0;
+    var nH = nLines.length ? 38 + nLines.length * 30 + 16 : 0;
 
-    var H = 236 + metaH + 56 + Math.max(1, lines.length) * 84 + 16 + sumH + rH + spH + nH + 220 + dLines.length * 28 + 48;
+    var H = 236 + metaH + 80 + Math.max(1, lines.length) * 84 + 12 + sumH + 44 + rH + spH + nH + 220 + dLines.length * 28 + 40;
 
     var cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
