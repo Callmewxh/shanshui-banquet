@@ -638,6 +638,7 @@
   }
   .ba-book svg{width:15px;height:15px;stroke:#fff;flex:0 0 auto;}
   .ba-book:active{background:rgba(255,255,255,.16);}
+  .ba-book{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
   .bookbar-info{flex:1 1 0;min-width:0;}
   .bookbar-addr{font-size:11px;color:var(--ink-2);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .bookbar-tel{font-size:11px;color:var(--ink-3);margin-top:3px;white-space:nowrap;overflow:hidden;}
@@ -986,6 +987,77 @@
     .page.is-active{display:block !important;}
   }
 
+  /* ── v2：逐卡确认 / 特批 / 赠送 / 密码锁 ── */
+  .q-card.is-done{background:#FFFEFC;}
+  .q-card.is-done .q-head{background:linear-gradient(180deg,#FBFFFA,#F6FBF5);border-bottom-color:#E6F0E3;}
+  .q-head .qi.is-ok{background:#E9F5E6;border-color:#CFE6C9;color:#2E7D32;}
+  .q-head .qi.is-ok svg{width:11px;height:11px;stroke:#2E7D32;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+  .q-mod{
+    margin-left:auto;flex:0 0 auto;padding:4px 10px;border-radius:8px;cursor:pointer;
+    border:1px solid var(--wine-line);background:#fff;color:var(--wine);
+    font-family:inherit;font-size:11.5px;font-weight:600;
+  }
+  .q-sum{padding:10px 14px 12px;font-size:12.5px;color:var(--ink-2);line-height:1.65;letter-spacing:.01em;}
+  .q-sum b{color:var(--ink);font-weight:600;}
+  .q-card.is-empty .q-head{border-bottom:none;background:#FCFAFA;}
+  .q-card.is-empty .qh{color:var(--ink-3);}
+  .q-foot{padding:0 14px 14px;}
+  .q-okbtn{
+    width:100%;height:38px;border-radius:10px;border:1px solid var(--wine);cursor:pointer;
+    background:linear-gradient(135deg,#9A2222,#7A1616);color:#fff;
+    font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.02em;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    box-shadow:0 4px 12px rgba(139,26,26,.18);
+  }
+  .q-okbtn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;}
+  .q-okbtn:active{opacity:.9;}
+
+  .q-flag{
+    flex:0 0 auto;height:26px;padding:0 7px;border-radius:7px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--ink-3);
+    font-family:inherit;font-size:10.5px;font-weight:600;letter-spacing:.02em;
+  }
+  .q-flag.is-on{background:#FFF4E6;border-color:#E9C79A;color:#8A5A18;}
+  .q-flag.is-gift.is-on{background:#EAF4FF;border-color:#BBD8F5;color:#16558F;}
+
+  .q-in-tag{
+    display:inline-block;font-size:9px;font-weight:600;letter-spacing:.04em;
+    color:#A08C8C;background:#F6F1F1;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:1px;
+  }
+  .sh-in-tag{display:inline-block;font-size:9px;color:var(--ink-3);background:#F6F1F1;border-radius:4px;padding:1px 5px;margin-left:5px;}
+
+  .sh-sec-sub{padding:10px 16px 2px;font-size:10.5px;font-weight:600;letter-spacing:.1em;color:#8A5A18;}
+  .sh-rights li.is-special i{background:#FFF4E6;color:#8A5A18;}
+  .sh-rights li.is-special span{color:var(--ink);}
+
+  /* 密码锁 */
+  .q-lock{position:fixed;inset:0;z-index:100;display:none;}
+  .q-lock.is-on{display:block;}
+  .q-lock .ql-mask{position:absolute;inset:0;background:rgba(30,18,18,.55);}
+  .ql-panel{
+    position:absolute;left:22px;right:22px;top:50%;transform:translateY(-50%);max-width:420px;margin:0 auto;
+    background:#fff;border-radius:18px;padding:22px 20px 18px;box-shadow:var(--shadow-lg);text-align:center;
+  }
+  .ql-title{font-size:16px;font-weight:600;letter-spacing:.04em;}
+  .ql-sub{font-size:12px;color:var(--ink-3);margin-top:6px;}
+  .ql-input{
+    width:100%;height:48px;margin-top:16px;border-radius:12px;border:1px solid var(--wine-line);
+    text-align:center;font-family:inherit;font-size:22px;letter-spacing:.5em;color:var(--wine);
+    background:#FFFCFC;padding-left:.5em;
+  }
+  .ql-input:focus{outline:none;border-color:var(--wine);box-shadow:0 0 0 3px rgba(139,26,26,.08);}
+  .ql-err{height:16px;font-size:11px;color:#C0392B;margin-top:6px;}
+  .ql-btns{display:flex;gap:9px;margin-top:8px;}
+  .ql-btns button{
+    flex:1;height:42px;border-radius:11px;border:1px solid var(--line);background:#FAFAFA;
+    color:var(--ink-2);font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;
+  }
+  .ql-btns button.is-main{
+    background:linear-gradient(135deg,#9A2222,#6E1212);color:#fff;border-color:#7A1515;
+    box-shadow:0 6px 14px rgba(139,26,26,.22);
+  }
+  .ql-tip{margin-top:12px;font-size:10px;color:var(--ink-3);line-height:1.6;}
+
   .rate-note b{color:var(--wine-dark);font-weight:600;display:block;margin-bottom:5px;font-size:12px;letter-spacing:.04em;}
   .rate-note .rn-tel{
     color:var(--wine);font-weight:600;text-decoration:none;letter-spacing:.02em;
@@ -1331,7 +1403,7 @@
       <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
     <div class="topbar-title" id="topTitle"><!--pnid:5IVh2g1TzNxXq9jAulo7vZ-->山水S酒店</div>
-    <button class="topbar-sale" id="saleBtn" type="button">销售</button>
+    <div class="topbar-spacer"></div>
   </div>
 
   <!--pnid:wPwvisxL1jjXKCnx9rs1zp--><!-- ══════ 入口 ══════ -->
@@ -1350,7 +1422,7 @@
     <div class="entry-wrap">
       <div class="entry-hint"><!--pnid:nLEvtKDoYLCSm7ud8x4ttC-->请选择您的需求方向</div>
 
-      <div class="dv-badge"><b>DATE 测试版</b> · 本页仅供内部测试「销售报价」，与正式两个链接互不影响</div>
+      <div class="dv-badge"><b>DATE 测试版</b> · 内部测试中，与正式两个链接互不影响</div>
 
       <button class="entry-card" data-board="banquet">
         <span class="entry-icon">
@@ -1376,12 +1448,6 @@
           <em><!--pnid:cdJbxkRopSaWEkhAb3NErh-->会议 + 用餐 + 住房 自由组合</em>
         </span>
         <span class="entry-arrow"><!--pnid:3QCAapSYmFeLkpPTDm6Aw4-->›</span>
-      </button>
-
-      <button class="entry-sale" id="entrySale" type="button">
-        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--wine);flex:0 0 18px"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
-        销售开单 · 编辑报价单
-        <span>改菜单 / 改价<br>生成专属报价链接</span>
       </button>
 
       <div class="foot-note"><!--pnid:hGalwlvVecsMOI8UYrjASX-->山水S酒店（惠州仲恺惠环店）<br><!--pnid:fWdiUwqEuS1kOrslwj2FUj-->广东省惠州市惠城区仲恺大道惠环段 175 号（惠环站 D 口）</div>
@@ -1521,9 +1587,9 @@
           <div class="subblock" id="mtClockWrap" style="display:none;margin-top:10px">
             <div class="subblock-title">起止时间<span class="req">必填</span><span class="hint" id="mtClockHint"></span></div>
             <div class="date-pair">
-              <div class="numwrap is-text"><input aria-label="开始时间" id="mtTimeS" type="time" value="09:00"></div>
+              <div class="numwrap is-text"><input aria-label="开始时间" id="mtTimeS" type="time" value="06:00"></div>
               <span class="date-sep">至</span>
-              <div class="numwrap is-text"><input aria-label="结束时间" id="mtTimeE" type="time" value="12:00"></div>
+              <div class="numwrap is-text"><input aria-label="结束时间" id="mtTimeE" type="time" value="09:00"></div>
             </div>
             <div class="field-help">按 4 小时 / 节计场地费，跨上午按早餐、跨午按午餐记餐次</div>
           </div>
@@ -1563,16 +1629,13 @@
             <button class="opt is-on" data-val="classroom"><!--pnid:YDHVgP0Jw4ba6K8nZ1OjX6-->课桌式</button>
             <button class="opt" data-val="theatre"><!--pnid:2qZLkuZ8QBC8wiYIsaxCb5-->剧院式</button>
             <button class="opt" data-val="ushape"><!--pnid:rIRNgT35GtJlYNMtSd8U3D-->U 型</button>
-            <button class="opt" data-val="vshape">V 字型</button>
             <button class="opt" data-val="fishbone"><!--pnid:VbTC9wkiQrfJ1uqYBhnGVQ-->鱼骨式</button>
-            <button class="opt" data-val="boardroom">董事会</button>
-            <button class="opt" data-val="banquet">宴会圆桌</button>
           </div>
           <div class="field-help" id="mtLayoutTip"><!--pnid:UtHz36VVDL6EDcx59a7Mox-->有桌有椅，适合培训、考试、需记录</div>
         </div>
 
         <div class="field" id="mtMealField">
-          <div class="field-label"><span class="idx"><!--pnid:XomdbiwNMOAUHAhIKhu7ci-->07</span><!--pnid:5mlrpFw0pXfVkrWrKe8qGb-->用餐安排<span class="tip"><!--pnid:CZIOrXto662VGDeWWD0P3Z--><button class="tip-link" data-menu="s1" data-mtype="简餐">简餐 38 元/位 · 看菜单</button></span></div>
+          <div class="field-label"><span class="idx"><!--pnid:XomdbiwNMOAUHAhIKhu7ci-->07</span><!--pnid:5mlrpFw0pXfVkrWrKe8qGb-->用餐安排</div>
           <div class="subblock" style="margin-top:0">
             <div class="subblock-title"><!--pnid:yKnvgR7cTLL8ig4OEtxe1s-->按会议日程逐餐选择<span class="hint" id="mtMealHint"></span><button class="viewtoggle" id="mtMealView" data-mealview><!--pnid:mtMealView-->按日期看</button></div>
             <div id="mtMealRows"></div>
@@ -1664,6 +1727,21 @@
       <button class="qc-opt" data-qnew="meeting" type="button"><b>会议报价</b><span>房 / 餐 / 会 自由组合</span></button>
     </div>
     <button class="qc-cancel" data-qact="chooserClose" type="button">取消</button>
+  </div>
+</div>
+
+<div class="q-lock" id="qLock">
+  <div class="ql-mask" data-qact="lockClose"></div>
+  <div class="ql-panel">
+    <div class="ql-title">销售验证</div>
+    <div class="ql-sub">请输入 6 位销售密码</div>
+    <input autocomplete="off" class="ql-input" id="qPass" inputmode="numeric" maxlength="6" placeholder="······" type="password">
+    <div class="ql-err" id="qPassErr"></div>
+    <div class="ql-btns">
+      <button data-qact="lockClose" type="button">取消</button>
+      <button class="is-main" data-qact="lockOk" type="button">进入报价台</button>
+    </div>
+    <div class="ql-tip">长按底部「一键拨打」可再次进入</div>
   </div>
 </div>
 
@@ -1818,13 +1896,8 @@
     { key:'classroom', label:'课桌式', short:'课桌', tip:'有桌有椅，适合培训、考试、需记录' },
     { key:'theatre',   label:'剧院式', short:'剧院', tip:'只摆椅，同面积坐得最多，适合大会 / 论坛' },
     { key:'ushape',    label:'U 型',   short:'U型',  tip:'围合讨论，适合评审、面试、管理层会议' },
-    { key:'vshape',    label:'V 字型', short:'V型',  tip:'斜向对开、面向舞台，适合汇报 / 路演 / 带屏演示；容量按课桌式估算，需现场核定' },
-    { key:'fishbone',  label:'鱼骨式', short:'鱼骨', tip:'分组岛状，适合研讨、团建、沙盘推演' },
-    { key:'boardroom', label:'董事会', short:'董事', tip:'固定长桌围坐，适合高层决策会、签约仪式' },
-    { key:'banquet',   label:'宴会圆桌', short:'圆桌', tip:'圆桌围坐，适合庆典、晚宴、颁奖；容量按课桌式估算，需现场核定' }
+    { key:'fishbone',  label:'鱼骨式', short:'鱼骨', tip:'分组岛状，适合研讨、团建、沙盘推演' }
   ];
-  // 知识库里没有标准容量的台型：按课桌式的 8 折估算，并在结果里标注「需现场核定」
-  var EST_LAYOUT = { vshape:0.8, boardroom:0.5, banquet:0.7 };
   function layoutLabel(k){
     for(var i=0;i<LAYOUTS.length;i++) if(LAYOUTS[i].key === k) return LAYOUTS[i].label;
     return '课桌式';
@@ -1869,12 +1942,20 @@
       layoutExtra:'另可摆 U 型 / 岛台式，容量请致电核定',
       note:'山水厅屏风分隔，最多 9 桌，小型宴席 / 分会场' },
 
-    { id:'heyuanA', name:'合苑A厅', banquetName:'合苑厅', floor:'4F', areaText:'140㎡',
-      banquet:10, mset:{ classroom:90, theatre:100, ushape:60, fishbone:60, board:50 },
+    // 合苑厅：A+B 全厅（5–10 桌）与单开 A 厅（4 桌以内）是两个可选项，分开推
+    { id:'heyuanAll', name:'合苑厅', banquetName:'合苑厅', floor:'4F', areaText:'210㎡（A+B 全厅）',
+      banquet:10, banquetMax:10, mset:{ classroom:120, theatre:150, ushape:80, fishbone:80, board:70 },
+      pillarless:true, led:true, ledText:'4.5米LED', signRoom:false,
+      hallFee:{ one:4300, two:7800 },                    // A 厅 + B 厅标准价相加
+      banPriority:1,
+      note:'合苑厅全厅（A+B，<b>无柱</b>），配 <b>4.5 米 LED 屏</b>；5–10 桌用全厅，可分隔使用' },
+
+    { id:'heyuanA', name:'合苑A厅', banquetName:'合苑A厅', floor:'4F', areaText:'140㎡',
+      banquet:4, mset:{ classroom:90, theatre:100, ushape:60, fishbone:60, board:50 },
       pillarless:true, led:true, ledText:'4.5米LED', signRoom:false,
       hallFee:{ one:2800, two:5000 },
       banPriority:1,
-      note:'合苑主厅（<b>无柱</b>），配 <b>4.5 米 LED 屏</b>；4 桌以内用 A 厅，5–10 桌 A+B 全厅' },
+      note:'合苑A厅（<b>无柱</b>），配 <b>4.5 米 LED 屏</b>；4 桌以内单开 A 厅即可' },
 
     { id:'heyuanB', name:'合苑B厅', floor:'4F', areaText:'70㎡',
       banquet:0, mset:{ classroom:30, theatre:50, ushape:20, fishbone:30, board:20 },
@@ -2087,8 +2168,8 @@
              menuId:'', hallId:'' };
   }
   function defaultMeeting(){
-    return { people:'', needMeal:true, needRoom:false, layout:'classroom', duration:'full',
-             half:'am', mealView:'day', timeS:'09:00', timeE:'12:00',
+    return { people:'', needMeal:false, needRoom:false, layout:'classroom', duration:'full',
+             half:'am', mealView:'day', timeS:'06:00', timeE:'09:00',
              days:'', meals:{}, mealNums:{}, rooms:{}, host:'', company:'', dateS:'', dateE:'',
              menuIds:{ simple:'', yearend:'' }, hallId:'' };
   }
@@ -3008,7 +3089,6 @@
         '<a class="cta-btn" href="' + TEL_HREF + '">' + svgPhone() + '拨打 ' + TEL_TEXT + '</a>' +
         '<button class="cta-btn is-ghost" data-wechat="banquet">' + svgWechat() + '添加微信</button>' +
         '<button class="cta-btn is-ghost" data-export="banquet">' + svgDown() + '导出方案</button>' +
-        '<button class="cta-btn is-ghost" data-quote="banquet">' + svgStar() + '销售开单</button>' +
       '</div>' +
       '<div class="cta-tel">' +
           '<span>「添加微信」<b>复制手机号 + 打开微信</b></span>' +
@@ -3307,10 +3387,11 @@
   function mealSlots(m){
     var out = [];
     if(m.duration === 'custom'){
-      // 自定义时段按结束时间推断当天要记的餐：上午结束→早餐，过午→午餐，傍晚后→午+晚
+      // 自定义时段：只有 7:00 前开场、且上午结束的会才记早餐
+      var startH = clockMin(m.timeS) / 60;
       var endH = clockMin(m.timeE) / 60;
       if(!endH) endH = 12;
-      if(endH <= 10.5){
+      if(startH < 7 && endH <= 10.5){
         out.push({ key:'d1b', meal:'早餐', day:1 });
       }else if(endH <= 15){
         out.push({ key:'d1l', meal:'午餐', day:1 });
@@ -3555,18 +3636,11 @@
     // 年华厅为婚礼堂，不参与会议匹配；合苑只推 A 厅（B 厅无屏无投影，meeting:false）
     var rows = HALLS.filter(function(h){ return !!h.mset && h.meeting !== false; }).map(function(h){
       var cap = h.mset[layout];
-      var est = false;
-      // V 字型 / 董事会 / 宴会圆桌：知识库无标准容量，按课桌式折算并标注「需现场核定」
-      if(cap == null && EST_LAYOUT[layout] && h.mset.classroom){
-        cap = Math.round(h.mset.classroom * EST_LAYOUT[layout]);
-        est = true;
-      }
       var supported = (cap != null);
       return {
         hall:h,
         cap: supported ? cap : null,
         supported: supported,
-        est: est,
         pass: supported && cap >= people,
         diff: supported ? cap - people : -1
       };
@@ -3620,11 +3694,6 @@
 
       // 首选理由（压缩成一句，LED 已在规格里）
       var why = '';
-      // 估算台型：容量来自课桌式折算，必须提示需现场核定
-      var estNote = (r.est && r.supported)
-        ? ('<div class="hall-warn">' + svgAlert() + '<span>' + lLabel +
-           '在知识库无标准容量，按课桌式折算约 <b>' + r.cap + '</b> 人，<b>需现场核定</b></span></div>')
-        : '';
       if(isTop && r.pass){
         var spare = r.cap - people;
         why = '<div class="hall-why">' + svgCheck() + '<span><b>推荐理由</b>：' +
@@ -3655,7 +3724,7 @@
             spec('柱 / 屏', pillarText + ' · ' + screenText) +
             spec('签到区', h.signRoom ? '独立签到区' : '无独立签到区') +
           '</div>' +
-          status + estNote + why +
+          status + why +
         '</div>';
     }
 
@@ -3745,7 +3814,6 @@
         '<a class="cta-btn" href="' + TEL_HREF + '">' + svgPhone() + '拨打 ' + TEL_TEXT + '</a>' +
         '<button class="cta-btn is-ghost" data-wechat="meeting">' + svgWechat() + '添加微信</button>' +
         '<button class="cta-btn is-ghost" data-export="meeting">' + svgDown() + '导出方案</button>' +
-        '<button class="cta-btn is-ghost" data-quote="meeting">' + svgStar() + '销售开单</button>' +
       '</div>' +
       '<div class="cta-tel">' +
           '<span>「添加微信」<b>复制手机号 + 打开微信</b></span>' +
@@ -3777,9 +3845,6 @@
         '<div class="cr-name">用餐' + (parts.length
           ? '<small>' + parts.join('，') + '</small>'
           : '<small>未选择餐次</small>') +
-          (cost.simpleCount
-            ? '<button class="cost-link" data-menu="s1" data-mtype="简餐">' + simpleLabel + ' · 查看菜单' + svgArrow() + '</button>'
-            : '') +
           (cost.tableCount
             ? '<button class="cost-link" data-menu="y1" data-mtype="围餐">围餐 · 查看菜单' + svgArrow() + '</button>'
             : '') + '</div>' +
@@ -4160,12 +4225,7 @@
         var ft = menuById(tid);
         if(ft) menus2.push({ fam:'yearend', cap:'围餐', id:tid, menu:ft.menu });
       }
-      if(c.simpleCount){
-        // 只贴客户真正选中的那一份简餐（v28：不再附赠另一份做对比，客人选哪份就贴哪份）
-        var sid = mids.simple || 's1';
-        var fsi = menuById(sid);
-        if(fsi) menus2.push({ fam:'simple', cap:'简餐', id:sid, menu:fsi.menu });
-      }
+      // date 版：简餐 / 早餐不再贴任何菜单（客人只关心几点吃、多少位、多少钱）
 
       var sub2 = [mt.people + ' 人', mt.duration, mt.layout];
       if(mt.company) sub2.unshift(mt.company);
@@ -5243,16 +5303,17 @@
   });
 
   /* ═══════════════════════════════════════════════
-     D、销售报价（date 测试版）
-     · 工作台：场地 / 菜单 / 餐次 / 住房 / 权益 / 费用 全部可改
-     · 报价单：客人视角，带编号、有效期、「以销售确认为准」
-     · 分享链接：整份报价编码进 URL，客人打开看到的就是销售报的价
+     D、销售报价（date 测试版 v2）
+     · 入口：长按底部「一键拨打」→ 6 位密码，客人看不到任何销售入口
+     · 8 张卡逐块「确认」，确认后收起成一行摘要，改内容再点「修改」
+     · 宴席 / 会议各自独立草稿，字段与展示都不串
      ═══════════════════════════════════════════════ */
 
+  var Q_STORE = { banquet:'ssq_q_banquet_v2', meeting:'ssq_q_meeting_v2' };
   var Q_RIGHTS_KEY = 'ssq_rights_v1';
-  var Q_DRAFT_KEY  = 'ssq_draft_v1';
+  var Q_PASSCODE = '220618';
 
-  // 常驻权益池：每季度在这里改，改完点「存为本季模板」，之后每单自动带出
+  // 常驻权益池：每季度改这里，点「存为本季模板」后每单自动带出
   var RIGHTS_DEFAULT = [
     '免费精美请柬（10 份/席）、嘉宾提名册及签字笔',
     '免费签到台、指引牌、婚礼台号牌',
@@ -5276,7 +5337,7 @@
     return RIGHTS_DEFAULT.slice();
   }
 
-  function qn(v){            // 带符号数字（优惠可负）
+  function qn(v){                       // 带符号数字（加减收可为负）
     var s = String(v == null ? '' : v).replace(/[^0-9.\-]/g, '');
     if(!s) return 0;
     var n = parseFloat(s);
@@ -5285,19 +5346,20 @@
   function qi(v){ return Math.round(qn(v)); }
   function qPad(n){ return ('0' + n).slice(-2); }
   function qToday(){ var d = new Date(); return d.getFullYear() + '-' + qPad(d.getMonth()+1) + '-' + qPad(d.getDate()); }
-  function qPlusDays(n){ var d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + qPad(d.getMonth()+1) + '-' + qPad(d.getDate()); }
   function qNo(){
     var d = new Date();
     return 'SS-' + String(d.getFullYear()).slice(2) + qPad(d.getMonth()+1) + qPad(d.getDate()) +
       '-' + String(Math.floor(Math.random() * 90) + 10);
   }
+  function qHas(v){ return String(v == null ? '' : v).trim() !== ''; }
+  function qClean(v){ return String(v == null ? '' : v).replace(/[|~^]/g, ' ').trim(); }
 
-  /* ── 报价模型 ── */
   var Q = null;
+  var qEditable = false;
 
   function qNew(kind){
     return {
-      v:1, kind:kind, no:qNo(),
+      v:2, kind:kind, no:qNo(),
       host:'', company:'', date:'', period:(kind === 'banquet' ? '晚宴' : ''),
       pax:'', tables:'', sess:'', layout:'',
       hall:{ id:'', name:'', floor:'', stdFee:'', fee:'', note:'' },
@@ -5305,9 +5367,9 @@
       meals:[], rooms:[], extras:[],
       service:{ on:(kind === 'banquet'), rate:10 },
       discount:{ amount:'', note:'' },
-      rights:[], note:'', valid:qPlusDays(15),
+      rights:[], note:'',
       sales:{ name:SALES.name, tel:SALES.telText },
-      updated:''
+      done:{}, edit:{}
     };
   }
 
@@ -5318,7 +5380,6 @@
     });
     return out;
   }
-
   function qSetMenuTpl(id, target){
     var q = target || Q;
     if(!q) return;
@@ -5330,14 +5391,13 @@
     q.menu.override = '';
     q.menu.dishes = qFlattenMenu(hit.menu);
   }
-
   function qSeedRights(target){
     var q = target || Q;
     if(!q) return;
-    q.rights = qRightsPool().map(function(t){ return { t:t, on:true }; });
+    q.rights = qRightsPool().map(function(t){ return { t:t, on:true, special:false }; });
   }
 
-  /* ── 从已填需求带出报价 ── */
+  /* ── 从客人已填需求带出（两种类型各自独立，不串字段） ── */
   function qFromBanquet(){
     var s = state.banquet;
     var q = qNew('banquet');
@@ -5351,18 +5411,15 @@
     if(b.top && b.top.hall){
       var h = b.top.hall;
       q.hall.id = h.id;
-      q.hall.name = h.banquetName || h.name;
+      q.hall.name = h.name;
       q.hall.floor = h.floor || '';
       q.hall.stdFee = h.venueFee || 0;
       q.hall.fee = (b.top.fee && b.top.fee.pay) ? (h.venueFee || 0) : 0;
       if(b.top.fee && b.top.fee.by === 'dinner') q.hall.note = '晚宴免场地费';
       else if(b.top.fee && b.top.fee.waived) q.hall.note = '已按政策免收场地费';
     }
-
     var pkg = (b.pkg) || (s.menuId ? (menuById(s.menuId) || {}).menu : null);
-    if(pkg && pkg.id){ qSetMenuTpl(pkg.id, q); }
-    else { qSetMenuTpl('w1', q); }
-
+    qSetMenuTpl((pkg && pkg.id) ? pkg.id : 'w1', q);
     qSeedRights(q);
     return q;
   }
@@ -5375,8 +5432,7 @@
     q.date = m.dateS || '';
     q.pax = num(m.people);
     q.layout = layoutLabel(m.layout);
-    if(m.duration === 'custom') q.sess = sessionCount(m);
-    else q.sess = sessionCount(m);
+    q.sess = sessionCount(m);
 
     var mt = lastMt || {};
     if(mt.top && mt.top.hall){
@@ -5384,12 +5440,11 @@
       q.hall.id = h.id;
       q.hall.name = h.name;
       q.hall.floor = h.floor || '';
-      var std = hallFeeOf(h, q.sess || 1);
-      q.hall.stdFee = std;
-      q.hall.fee = std;
+      q.hall.stdFee = hallFeeOf(h, q.sess || 1);
+      q.hall.fee = q.hall.stdFee;
     }
 
-    // 餐次：把客人选的餐次折算成行，销售可继续改价 / 加早餐
+    // 客人选的餐次：只带「不是早餐」的常规餐，早餐交给销售在报价台按需加
     var people = num(m.people);
     mealSlots(m).forEach(function(sl){
       var v = m.meals[sl.key];
@@ -5397,21 +5452,21 @@
       var isSimple = (v === 'simple');
       var qty = num(m.mealNums[sl.key]) || (isSimple ? people : Math.ceil(people / 10));
       var rate = isSimple ? SIMPLE_MEAL : TABLE_MEAL_MIN;
-      q.meals.push({
-        label: sl.meal, unit: isSimple ? '位' : '桌', qty: qty, price: rate, std: rate
-      });
+      q.meals.push({ label: sl.meal, unit: isSimple ? '位' : '桌', qty: qty, price: rate, std: rate });
     });
 
     if(m.needRoom){
       roomNights(m).forEach(function(n){
         var o = m.rooms[n.key] || {};
         var k = num(o.k), t = num(o.t);
-        if(k + t <= 0) return;
-        q.rooms.push({ label: n.label + ' 高级大床房', qty:k, nights:1, price:ROOM_RATE, std:ROOM_RATE });
-        if(t) q.rooms.push({ label: n.label + ' 豪华双床房', qty:t, nights:1, price:ROOM_RATE, std:ROOM_RATE });
+        if(k <= 0 && t <= 0) return;
+        if(k > 0) q.rooms.push({ label:n.label + ' 高级大床房', qty:k, nights:1, price:ROOM_RATE, std:ROOM_RATE, free:false });
+        if(t > 0) q.rooms.push({ label:n.label + ' 豪华双床房', qty:t, nights:1, price:ROOM_RATE, std:ROOM_RATE, free:false });
       });
     }
 
+    // 会议只有在客人钉过围餐菜单时才带菜单，否则保持「不指定」
+    if(m.menuIds && m.menuIds.yearend && menuById(m.menuIds.yearend)) qSetMenuTpl(m.menuIds.yearend, q);
     qSeedRights(q);
     return q;
   }
@@ -5429,16 +5484,32 @@
     if(withNights) n *= (qn(r.nights) || 1);
     return Math.round(n);
   }
-  function qMealsTotal(){ var t = 0; (Q.meals || []).forEach(function(r){ t += qRowAmt(r); }); return t; }
-  function qRoomsTotal(){ var t = 0; (Q.rooms || []).forEach(function(r){ t += qRowAmt(r, true); }); return t; }
-  function qExtrasTotal(){ var t = 0; (Q.extras || []).forEach(function(r){ t += qRowAmt(r); }); return t; }
+  function qMealsTotal(){
+    var t = 0;
+    (Q.meals || []).forEach(function(r){ t += qRowAmt(r); });
+    return t;
+  }
+  function qRoomsTotal(){
+    var t = 0;
+    (Q.rooms || []).forEach(function(r){ if(!r.free) t += qRowAmt(r, true); });
+    return t;
+  }
+  function qExtrasTotal(){
+    var t = 0;
+    (Q.extras || []).forEach(function(r){ t += qRowAmt(r); });
+    return t;
+  }
+  function qGiftRooms(){
+    var n = 0;
+    (Q.rooms || []).forEach(function(r){ if(r.free) n += qn(r.qty); });
+    return n;
+  }
 
   function qCalc(){
-    var venue = qi(Q.hall.fee);
     var seat = qSeatPrice();
+    var venue = qi(Q.hall.fee);
     var bqMeal = (Q.kind === 'banquet') ? qi(Q.tables) * seat : 0;
     var rowsMeal = qMealsTotal();
-    // 宴席：席价 × 桌数 + 另外加的餐次（早餐 / 茶歇 / 加菜）
     var mealBase = (Q.kind === 'banquet') ? (bqMeal + rowsMeal) : rowsMeal;
     var svc = Q.service.on ? Math.round(mealBase * qn(Q.service.rate) / 100) : 0;
     var rooms = qRoomsTotal(), extras = qExtrasTotal();
@@ -5446,29 +5517,135 @@
     var disc = Math.max(0, qi(Q.discount.amount));
     var total = Math.max(0, sub - disc);
 
+    // 仅销售可见：标准价参考
     var std = qi(Q.hall.stdFee);
     if(Q.kind === 'banquet') std += qi(Q.tables) * qi(Q.menu.price);
-    // 标准价用「标准单价」算：销售改过价的，靠这个差额显示已优惠
     function stdOf(r){ return (r.std === '' || r.std == null) ? r.price : r.std; }
     (Q.meals || []).forEach(function(r){ std += Math.round(qn(r.qty) * qn(stdOf(r))); });
-    (Q.rooms || []).forEach(function(r){ std += Math.round(qn(r.qty) * qn(r.nights) * qn(stdOf(r))); });
+    (Q.rooms || []).forEach(function(r){ if(r.free) return; std += Math.round(qn(r.qty) * qn(r.nights) * qn(stdOf(r))); });
     if(svc) std += svc;
 
     return {
       venue:venue, seat:seat, bqMeal:bqMeal, rowsMeal:rowsMeal, mealBase:mealBase,
       svc:svc, rooms:rooms, extras:extras, sub:sub, disc:disc, total:total,
-      std:Math.round(std), save:Math.max(0, Math.round(std) - total)
+      std:Math.round(std), save:Math.max(0, Math.round(std) - total),
+      gift:qGiftRooms()
     };
   }
 
-  /* ── 小部件 ── */
-  function qCard(idx, title, hint, body){
-    return '<div class="q-card"><div class="q-head">' +
+  /* ── 卡片框架：open / done / empty 三态 ── */
+  function qOptional(key){
+    if(key === 'meals' || key === 'rooms') return true;
+    if(key === 'menu') return Q.kind === 'meeting';
+    return false;
+  }
+  function qCardEmpty(key){
+    if(key === 'meals') return !(Q.meals || []).length;
+    if(key === 'rooms') return !(Q.rooms || []).length;
+    if(key === 'menu') return !qHas(Q.menu.tpl) && !qHas(Q.menu.override) && !(Q.menu.dishes || []).length;
+    return false;
+  }
+
+  function qCardState(key){
+    if(Q.done[key] && !Q.edit[key]) return 'done';
+    if(!Q.edit[key] && qOptional(key) && qCardEmpty(key)) return 'empty';
+    return 'open';
+  }
+
+  function qHead(idx, title, hint, right){
+    return '<div class="q-head">' +
       (idx ? '<span class="qi">' + idx + '</span>' : '') +
       '<span class="qt">' + title + '</span>' +
       (hint ? '<span class="qh">' + hint + '</span>' : '') +
-      '</div><div class="q-body">' + body + '</div></div>';
+      (right || '') +
+    '</div>';
   }
+
+  function qShell(key, idx, title, hint, body){
+    var st = qCardState(key);
+    if(st === 'done'){
+      return '<div class="q-card is-done" id="qc-' + key + '">' +
+        '<div class="q-head">' +
+          '<span class="qi is-ok">' + svgCheck() + '</span>' +
+          '<span class="qt">' + title + '</span>' +
+          '<button class="q-mod" type="button" data-qact="editCard" data-key="' + key + '">修改</button>' +
+        '</div>' +
+        '<div class="q-sum">' + (qSummary(key) || '未填写') + '</div>' +
+      '</div>';
+    }
+    if(st === 'empty'){
+      return '<div class="q-card is-empty" id="qc-' + key + '">' +
+        qHead(idx, title, '未安排', '<button class="q-mod" type="button" data-qact="editCard" data-key="' + key + '">填写</button>') +
+      '</div>';
+    }
+    return '<div class="q-card" id="qc-' + key + '">' +
+      qHead(idx, title, hint) +
+      '<div class="q-body">' + body + '</div>' +
+      '<div class="q-foot">' +
+        '<button class="q-okbtn" type="button" data-qact="okCard" data-key="' + key + '">' + svgCheck() + '确认此卡已填写</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function qSummary(key){
+    if(key === 'base'){
+      var a = [];
+      if(qHas(Q.host)) a.push(Q.host);
+      if(qHas(Q.company)) a.push(Q.company);
+      if(qHas(Q.date)) a.push(cnDate(Q.date, true));
+      if(Q.kind === 'banquet'){
+        if(qi(Q.tables)) a.push(qi(Q.tables) + ' 席');
+        if(Q.period) a.push(Q.period);
+      }else{
+        if(qi(Q.pax)) a.push(qi(Q.pax) + ' 人');
+        if(Q.layout) a.push(Q.layout);
+        if(qi(Q.sess)) a.push(qi(Q.sess) + ' 节');
+      }
+      return a.length ? a.join(' · ') : '未填写';
+    }
+    if(key === 'hall'){
+      if(!qHas(Q.hall.name)) return '未选场地';
+      return '<b>' + esc(Q.hall.name) + '</b>' + (Q.hall.floor ? '（' + Q.hall.floor + '）' : '') +
+        ' · 场地费 ¥' + money(qi(Q.hall.fee)) +
+        (qi(Q.hall.stdFee) !== qi(Q.hall.fee) ? ' <span class="q-in-tag">标准 ¥' + money(qi(Q.hall.stdFee)) + '</span>' : '');
+    }
+    if(key === 'menu'){
+      if(!qHas(Q.menu.name) && !(Q.menu.dishes || []).length) return '未选菜单';
+      return '<b>' + esc(Q.menu.name || '自定义菜单') + '</b> · 席价 ¥' + money(qSeatPrice()) + '/席 · ' +
+        (Q.menu.dishes || []).length + ' 道菜';
+    }
+    if(key === 'meals'){
+      if(!(Q.meals || []).length) return '未安排餐次';
+      return Q.meals.map(function(r){
+        return esc(r.label) + ' ' + qn(r.qty) + (r.unit || '位') + ' × ¥' + money(qn(r.price));
+      }).join('，');
+    }
+    if(key === 'rooms'){
+      if(!(Q.rooms || []).length) return '未安排住房';
+      return Q.rooms.map(function(r){
+        return esc(r.label) + ' ' + qn(r.qty) + ' 间' + (r.free ? '（赠送）' : '') + ' × ' + (qn(r.nights) || 1) + ' 晚';
+      }).join('，');
+    }
+    if(key === 'rights'){
+      var on = (Q.rights || []).filter(function(r){ return r.on; }).length;
+      var sp = (Q.rights || []).filter(function(r){ return r.on && r.special; }).length;
+      return '已选 <b>' + on + '</b> 条' + (sp ? '，其中特批 ' + sp + ' 条' : '');
+    }
+    if(key === 'fees'){
+      var n = (Q.extras || []).length;
+      return '服务费 ' + (Q.service.on ? qn(Q.service.rate) + '%' : '未加收') +
+        ' · 其他费用 ' + n + ' 项' + (qi(Q.discount.amount) ? ' · 整单优惠 ¥' + money(qi(Q.discount.amount)) : '');
+    }
+    if(key === 'tail'){
+      var b = [];
+      if(qHas(Q.note)) b.push('备注已填');
+      if(qHas(Q.sales.name)) b.push('报价人 ' + esc(Q.sales.name));
+      return b.join(' · ') || '未填写';
+    }
+    return '';
+  }
+
+  /* ── 小部件 ── */
   function qField(path, val, o){
     o = o || {};
     var cls = 'q-fi' + (o.num ? ' is-num' : '');
@@ -5476,9 +5653,7 @@
       (o.ph ? ' placeholder="' + esc(o.ph) + '"' : '') +
       (o.max ? ' maxlength="' + o.max + '"' : '') +
       ' autocomplete="off"';
-    if(o.select){
-      return '<select class="' + cls + '"' + attrs + '>' + o.select + '</select>';
-    }
+    if(o.select) return '<select class="' + cls + '"' + attrs + '>' + o.select + '</select>';
     return '<input class="' + cls + '"' + (o.type ? ' type="' + o.type + '"' : ' type="text"') +
       (o.num ? ' inputmode="decimal"' : '') + attrs + '>';
   }
@@ -5490,68 +5665,16 @@
     return '<svg viewBox="0 0 24 24"><path d="M4 9h11l-3-3M20 15H9l3 3"/></svg>';
   }
 
-  var qPickCtx = null;   // { i, mode:'dish' }
-
-  /* ── 打开工作台 ── */
-  function qOpen(quote){
-    Q = quote;
-    qEditable = true;
-    qRenderEditor();
-    pushPage('page-quote', '销售工作台<span class="sub">报价编辑</span>');
-    $('saleBtn').classList.add('is-on');
-    $('qBar').classList.add('is-on');
-    qPersist();
-  }
-
-  function qStart(kind){
-    if(kind === 'banquet') qOpen(qFromBanquet());
-    else if(kind === 'meeting') qOpen(qFromMeeting());
-    else $('qChooser').classList.add('is-on');
-  }
-
-  function qPersist(){
-    try{ localStorage.setItem(Q_DRAFT_KEY, JSON.stringify(Q)); }catch(e){}
-  }
-
-  /* ── 编辑器 ── */
-  function qRenderEditor(){
-    var c = qCalc();
-    var box = $('quoteBody');
-    box.innerHTML =
-      qTopCard(c) +
-      qCardBase() +
-      qCardHall() +
-      qCardMenu() +
-      qCardMeals() +
-      qCardRooms() +
-      qCardRights() +
-      qCardFees() +
-      qCardTail();
-    qRefresh();
-  }
-
-  function qTopCard(c){
-    var kindText = Q.kind === 'banquet' ? '宴席报价' : '会议报价';
-    return '<div class="q-top">' +
-      '<div class="qt-k">SALES QUOTATION · 销售报价台</div>' +
-      '<div class="qt-no">编号 ' + esc(Q.no) + ' · ' + kindText + ' · 仅本机可见</div>' +
-      '<div class="qt-big"><i>¥</i><b id="qTopTotal">' + money(c.total) + '</b><em>本单报价</em></div>' +
-      '<div class="qt-row">' +
-        '<span>标准价 <b id="qTopStd">¥' + money(c.std) + '</b></span>' +
-        '<span>已优惠 <b id="qTopSave">¥' + money(c.save) + '</b></span>' +
-      '</div>' +
-    '</div>';
-  }
-
+  /* ── 各卡片 ── */
   function qCardBase(){
-    var body = '';
-    body += '<div class="q-row"><span class="ql">客户</span>' +
+    var b = '';
+    b += '<div class="q-row"><span class="ql">客户</span>' +
       qField('host', Q.host, { ph:'如 张先生 / 李小姐', max:16 }) + '</div>';
     if(Q.kind === 'meeting'){
-      body += '<div class="q-row"><span class="ql">公司</span>' +
-        qField('company', Q.company, { ph:'如 惠州市某某科技', max:30 }) + '</div>';
+      b += '<div class="q-row"><span class="ql">公司</span>' +
+        qField('company', Q.company, { ph:'选填', max:30 }) + '</div>';
     }
-    body += '<div class="q-row"><span class="ql">日期</span>' +
+    b += '<div class="q-row"><span class="ql">日期</span>' +
       qField('date', Q.date, { type:'date' }) +
       (Q.kind === 'banquet'
         ? '<select class="q-fi" data-qf="period" style="flex:0 0 92px">' +
@@ -5560,19 +5683,18 @@
             }).join('') + '</select>'
         : '') + '</div>';
     if(Q.kind === 'banquet'){
-      body += '<div class="q-row"><span class="ql">桌数</span>' +
+      b += '<div class="q-row"><span class="ql">桌数</span>' +
         qField('tables', Q.tables, { num:1, ph:'0' }) + '<span class="q-u">席</span></div>';
-      body += '<div class="q-note">1 席 = 10 位，当前约 <b>' + (qi(Q.tables) * 10 || 0) + '</b> 位</div>';
+      b += '<div class="q-note">1 席 = 10 位' + (qi(Q.tables) ? '，当前约 <b>' + qi(Q.tables) * 10 + '</b> 位' : '') + '</div>';
     }else{
-      body += '<div class="q-row"><span class="ql">人数</span>' +
+      b += '<div class="q-row"><span class="ql">人数</span>' +
         qField('pax', Q.pax, { num:1, ph:'0' }) + '<span class="q-u">人</span></div>';
-      body += '<div class="q-row"><span class="ql">台型</span>' +
-        qField('layout', Q.layout, { ph:'如 V 字型 / 董事会' }) + '</div>';
-      body += '<div class="q-row"><span class="ql">节数</span>' +
+      b += '<div class="q-row"><span class="ql">台型</span>' +
+        qField('layout', Q.layout, { ph:'如 课桌式' }) + '</div>';
+      b += '<div class="q-row"><span class="ql">节数</span>' +
         qField('sess', Q.sess, { num:1, ph:'1' }) + '<span class="q-u">节（4 小时/节）</span></div>';
-      body += '<div class="q-note">早上 6:00–9:00 这类时段：台型写 <b>V 字型</b>，节数填 <b>1</b>，早餐在下面「餐次」里加一行</div>';
     }
-    return qCard('01', '基本信息', '客户 / 日期 / 规模', body);
+    return qShell('base', '01', '基本信息', '客户 / 日期 / 规模', b);
   }
 
   function qCardHall(){
@@ -5580,37 +5702,37 @@
       return Q.kind === 'meeting' ? (!!h.mset && h.meeting !== false) : h.banquet > 0;
     });
     var chips = '<div class="q-chips">' + halls.map(function(h){
-      var cap = Q.kind === 'meeting'
-        ? (h.mset[Q.layoutKey || 'classroom'] || h.mset.classroom || 0)
-        : hallCapMax(h);
+      var cap = Q.kind === 'meeting' ? (h.mset.classroom || 0) : hallCapMax(h);
       return '<button class="q-chip' + (Q.hall.id === h.id ? ' is-on' : '') + '" type="button" ' +
-        'data-qact="hall" data-id="' + h.id + '">' + esc(h.banquetName || h.name) +
+        'data-qact="hall" data-id="' + h.id + '">' + esc(h.name) +
         '<small>' + h.floor + ' · ' + cap + (Q.kind === 'meeting' ? ' 人' : ' 席') + '</small></button>';
     }).join('') + '</div>';
 
     var fee = qi(Q.hall.fee), std = qi(Q.hall.stdFee);
-    var body = chips +
-      '<div class="q-row" style="margin-top:12px"><span class="ql">标准</span>' +
-        '<div class="q-fi" style="background:#FAFAFA;color:var(--ink-3);display:flex;align-items:center">¥' +
-        money(std) + '<span style="margin-left:auto;font-size:10.5px">按知识库价格体系</span></div></div>' +
-      '<div class="q-row"><span class="ql">实收</span>' +
-        qField('hall.fee', Q.hall.fee, { num:1, ph:'0' }) + '<span class="q-u">元</span></div>' +
-      '<div class="q-btns">' +
-        '<button class="q-btn is-plain" type="button" data-qact="feeZero">全免</button>' +
-        '<button class="q-btn is-plain" type="button" data-qact="feeHalf">五折</button>' +
-        '<button class="q-btn is-soft" type="button" data-qact="feeStd">按标准</button>' +
-      '</div>' +
-      '<div class="q-row" style="margin-top:10px"><span class="ql">减免说明</span>' +
-        qField('hall.note', Q.hall.note, { ph:'如 满 20 席免场地费 / 季度活动' }) + '</div>' +
-      '<div class="q-note">客人不足 20 席仍想优惠时，直接把「实收」改成谈好的数；说明会印在报价单上' +
-        (fee !== std ? ' · 当前较标准' + (fee < std ? '少收 <b>¥' + money(std - fee) + '</b>' : '多收 ¥' + money(fee - std)) : '') +
-        '</div>';
-    return qCard('02', '场地费', '可手改 · 以销售报价为准', body);
+    var b = chips;
+    b += '<div class="q-row" style="margin-top:12px"><span class="ql">标准<span class="q-in-tag">内部</span></span>' +
+      '<div class="q-fi" style="background:#FAFAFA;color:var(--ink-3);display:flex;align-items:center">¥' +
+      money(std) + '<span style="margin-left:auto;font-size:10.5px">仅销售可见</span></div></div>';
+    b += '<div class="q-row"><span class="ql">实收</span>' +
+      qField('hall.fee', Q.hall.fee, { num:1, ph:'0' }) + '<span class="q-u">元</span></div>';
+    b += '<div class="q-btns">' +
+      '<button class="q-btn is-plain" type="button" data-qact="feeZero">全免</button>' +
+      '<button class="q-btn is-plain" type="button" data-qact="feeHalf">五折</button>' +
+      '<button class="q-btn is-soft" type="button" data-qact="feeStd">按标准</button>' +
+    '</div>';
+    b += '<div class="q-row" style="margin-top:10px"><span class="ql">说明</span>' +
+      qField('hall.note', Q.hall.note, { ph:'如 满 15 席减免（会印在报价单上）' }) + '</div>';
+    if(fee !== std){
+      b += '<div class="q-note">较标准' + (fee < std ? '少收 <b>¥' + money(std - fee) + '</b>' : '多收 ¥' + money(fee - std)) + '</div>';
+    }
+    return qShell('hall', '02', '场地费', '可手改', b);
   }
 
   function qCardMenu(){
+    var isMeeting = (Q.kind === 'meeting');
     var fams = [['wedding','婚宴（含答谢宴）'], ['engagement','订婚宴 / 宝宝宴'], ['yearend','尾牙宴 / 围餐']];
-    var opts = '';
+    var opts = '<option value=""' + (qHas(Q.menu.tpl) ? '' : ' selected') + '>' +
+      (isMeeting ? '不指定菜单（按围餐标准价）' : '— 选择菜单模板 —') + '</option>';
     fams.forEach(function(f){
       var arr = MENUS[f[0]] || [];
       opts += '<optgroup label="' + f[1] + '">' + arr.map(function(m){
@@ -5629,22 +5751,21 @@
       '</div>';
     }).join('');
 
-    var body = '';
-    body += '<div class="q-row"><span class="ql">模板</span>' +
+    var b = '';
+    b += '<div class="q-row"><span class="ql">模板</span>' +
       '<select class="q-fi" data-qf="menu.tpl">' + opts + '</select></div>';
-    body += '<div class="q-row"><span class="ql">一口价</span>' +
-      qField('menu.override', Q.menu.override, { num:1, ph:'留空 = 按模板 + 加减' }) +
+    b += '<div class="q-row"><span class="ql">一口价</span>' +
+      qField('menu.override', Q.menu.override, { num:1, ph:'留空 = 模板价 + 加减' }) +
       '<span class="q-u">元/席</span></div>';
-    body += '<div class="q-note" style="margin-top:2px">当前席价 <b id="qSeatNow">¥' + money(qSeatPrice()) +
+    b += '<div class="q-note" style="margin-top:2px">当前席价 <b id="qSeatNow">¥' + money(qSeatPrice()) +
       '</b> / 席 · <span id="qSeatBase"></span> · 小计 <b id="qMealAmt"></b></div>';
-    body += '<div style="margin-top:8px">' + (rows || '<div class="q-note">还没有菜品，点下面「加一道菜」</div>') + '</div>';
-    body += '<div class="q-btns">' +
+    b += '<div style="margin-top:8px">' + (rows || '<div class="q-note">还没有菜品，点下面「加一道菜」</div>') + '</div>';
+    b += '<div class="q-btns">' +
       '<button class="q-btn is-soft" type="button" data-qact="addDish">+ 加一道菜</button>' +
       '<button class="q-btn" type="button" data-qact="resetMenu">恢复模板菜品</button>' +
-      '</div>';
-    body += '<div class="q-note">加减收填在菜品右侧（<b>元/席</b>，加收正数、减收负数）；' +
-      '「换」从菜品库挑一道替换；整席价格也可用上面的「一口价」直接锁死</div>';
-    return qCard('03', Q.kind === 'banquet' ? '菜单与席价' : '围餐菜单（可选）', '增 / 删 / 换 自由改', body);
+    '</div>';
+    b += '<div class="q-note">菜品右侧填 <b>元/席</b>（加收正、减收负），席价随之变化；展会上给客人的报价单只印席价，不印加减明细</div>';
+    return qShell('menu', '03', isMeeting ? '围餐菜单（可选）' : '菜单与席价', '增 / 删 / 换', b);
   }
 
   function qCardMeals(){
@@ -5668,10 +5789,10 @@
       '</div>';
     }).join('');
 
-    var body = (rows || '<div class="q-note">还没有餐次。会议餐、早餐、茶歇都在这里加</div>') +
+    var b = (rows ? '<div>' + rows + '</div>' : '') +
       '<button class="q-add" type="button" data-qact="addMeal">+ 加一个餐次</button>' +
-      '<div class="q-note">例：早上 6:00–9:00 开会，加一行 <b>早餐 · 30 位 · 38 元</b>，客人会后直接用餐</div>';
-    return qCard('04', '餐次', '早餐 / 简餐 / 围餐 / 茶歇', body);
+      '<div class="q-note">早餐、茶歇、加餐都在这里加；只有数量与单价会印在报价单上</div>';
+    return qShell('meals', '04', '餐次', '早餐 / 简餐 / 围餐 / 茶歇', b);
   }
 
   function qCardRooms(){
@@ -5690,6 +5811,7 @@
       return '<div class="q-mrow">' +
         '<div class="q-mrow-h">' +
           '<select class="q-name" data-qf="rooms.' + i + '.label" data-rate="' + rateOf(r.label) + '">' + typeOpts(r.label) + '</select>' +
+          '<button class="q-flag is-gift' + (r.free ? ' is-on' : '') + '" type="button" data-qact="roomFree" data-i="' + i + '">赠送</button>' +
           '<span class="q-sub" data-sub="rooms.' + i + '">¥0</span>' +
           '<button class="q-ico is-del" type="button" data-qact="delRoom" data-i="' + i + '" aria-label="删除">' + qIcon('del') + '</button>' +
         '</div>' +
@@ -5701,9 +5823,10 @@
       '</div>';
     }).join('');
 
-    var body = (rows || '<div class="q-note">客人不需要住房就留空</div>') +
-      '<button class="q-add" type="button" data-qact="addRoom">+ 加一间房</button>';
-    return qCard('05', '住房', '间数 × 晚数 × 单价', body);
+    var b = (rows ? '<div>' + rows + '</div>' : '') +
+      '<button class="q-add" type="button" data-qact="addRoom">+ 加一间房</button>' +
+      '<div class="q-note">「赠送」的房不计入报价合计，报价单上标 <b>赠送</b> 给客人看；只有销售台能看到原价</div>';
+    return qShell('rooms', '05', '住房', '含赠送房', b);
   }
 
   function qCardRights(){
@@ -5711,21 +5834,24 @@
       return '<div class="q-right">' +
         '<button class="q-cb' + (r.on ? ' is-on' : '') + '" type="button" data-qact="rightToggle" data-i="' + i + '" aria-label="勾选">' + svgCheck() + '</button>' +
         '<input data-qf="rights.' + i + '.t" value="' + esc(r.t) + '" autocomplete="off">' +
+        '<button class="q-flag' + (r.special ? ' is-on' : '') + '" type="button" data-qact="rightSpecial" data-i="' + i + '" title="标记为特批权益">特</button>' +
         '<button class="q-ico is-del" type="button" data-qact="delRight" data-i="' + i + '" aria-label="删除">' + qIcon('del') + '</button>' +
       '</div>';
     }).join('');
 
     var on = (Q.rights || []).filter(function(r){ return r.on; }).length;
-    var body = (rows || '<div class="q-note">还没有权益条目</div>') +
+    var sp = (Q.rights || []).filter(function(r){ return r.on && r.special; }).length;
+
+    var b = (rows || '<div class="q-note">还没有权益条目</div>') +
       '<button class="q-add" type="button" data-qact="addRight">+ 加一条自定义权益</button>' +
       '<div class="q-btns">' +
         '<button class="q-btn is-soft" type="button" data-qact="rightsSave">存为本季模板</button>' +
         '<button class="q-btn" type="button" data-qact="rightsLoad">载入模板</button>' +
         '<button class="q-btn is-plain" type="button" data-qact="rightsReset">恢复默认</button>' +
       '</div>' +
-      '<div class="q-note">已勾选 <b>' + on + '</b> 条会印在报价单上。权益池存在本机，' +
-      '下季度直接改成新活动，点「存为本季模板」即可，之后每单自动带出</div>';
-    return qCard('06', '本单权益', '季度活动在这里换', body);
+      '<div class="q-note">已勾选 <b>' + on + '</b> 条' + (sp ? '，其中 <b>特批 ' + sp + '</b> 条' : '') +
+        '。点「特」标成特批，报价单里会单独一段、带特批标识，和常规权益隔开</div>';
+    return qShell('rights', '06', '本单权益', '季度活动在这里换', b);
   }
 
   function qCardFees(){
@@ -5744,44 +5870,66 @@
       '</div>';
     }).join('');
 
-    var body = '';
-    body += '<div class="q-right" style="border-bottom:1px solid #F4E9E9;padding-bottom:10px">' +
+    var b = '';
+    b += '<div class="q-right" style="border-bottom:1px solid #F4E9E9;padding-bottom:10px">' +
       '<button class="q-cb' + (Q.service.on ? ' is-on' : '') + '" type="button" data-qact="svcToggle" aria-label="服务费">' + svgCheck() + '</button>' +
       '<input value="加收服务费（按餐费计）" readonly style="color:var(--ink)">' +
       '<div class="q-delta-wrap" style="flex:0 0 66px"><input data-qf="service.rate" value="' + esc(Q.service.rate) + '" inputmode="decimal" autocomplete="off"><span>%</span></div>' +
     '</div>';
-    body += extras || '<div class="q-note">需要加收布置、设备、司机餐等费用时在这里加</div>';
-    body += '<button class="q-add" type="button" data-qact="addExtra">+ 加一项其他费用</button>';
-    body += '<div class="q-row" style="margin-top:12px"><span class="ql">整单优惠</span>' +
+    b += extras;
+    b += '<button class="q-add" type="button" data-qact="addExtra">+ 加一项其他费用</button>';
+    b += '<div class="q-row" style="margin-top:12px"><span class="ql">整单优惠</span>' +
       qField('discount.amount', Q.discount.amount, { num:1, ph:'0' }) + '<span class="q-u">元</span></div>';
-    body += '<div class="q-row"><span class="ql">优惠说明</span>' +
-      qField('discount.note', Q.discount.note, { ph:'如 季度活动立减 / 老客户回馈' }) + '</div>';
-    return qCard('07', '其他费用与整单优惠', '服务费 · 加减项', body);
+    b += '<div class="q-row"><span class="ql">优惠说明</span>' +
+      qField('discount.note', Q.discount.note, { ph:'如 季度活动立减' }) + '</div>';
+    b += '<div class="q-note">服务费、其他费用、整单优惠都是<b>内部口径</b>，报价单只体现最终合计</div>';
+    return qShell('fees', '07', '其他费用与优惠', '服务费 · 加减项', b);
   }
 
   function qCardTail(){
-    var body = '';
-    body += '<div class="q-row"><span class="ql">备注</span></div>' +
-      '<textarea class="q-fi" data-qf="note" placeholder="如：菜单已按客人要求调换 1 道热菜；场地含 T 台与音响；报价不含酒水">' + esc(Q.note) + '</textarea>';
-    body += '<div class="q-row" style="margin-top:10px"><span class="ql">有效期</span>' +
-      qField('valid', Q.valid, { type:'date' }) + '</div>';
-    body += '<div class="q-row"><span class="ql">报价人</span>' +
+    var b = '';
+    b += '<div class="q-row"><span class="ql">备注</span></div>' +
+      '<textarea class="q-fi" data-qf="note" placeholder="会印在报价单上，如：菜单已按客人要求调换 1 道热菜；场地含 T 台与音响">' + esc(Q.note) + '</textarea>';
+    b += '<div class="q-row" style="margin-top:10px"><span class="ql">报价人</span>' +
       qField('sales.name', Q.sales.name, { max:12 }) + '</div>';
-    body += '<div class="q-row"><span class="ql">电话</span>' +
+    b += '<div class="q-row"><span class="ql">电话</span>' +
       qField('sales.tel', Q.sales.tel, { max:20 }) + '</div>';
-    body += '<div class="q-btns" style="margin-top:14px">' +
+    b += '<div class="q-btns" style="margin-top:14px">' +
       '<button class="q-btn is-plain" type="button" data-qact="newQuote">＋ 新建另一份报价</button>' +
-      '</div>';
-    return qCard('08', '备注与有效期', '会印在报价单上', body);
+    '</div>';
+    return qShell('tail', '08', '备注与报价人', '会印在报价单上', b);
   }
 
-  /* ── 数字联动（不重绘，避免输入时丢焦点） ── */
+  function qRenderEditor(){
+    var c = qCalc();
+    var box = $('quoteBody');
+    box.innerHTML = qTopCard(c) +
+      qCardBase() + qCardHall() + qCardMenu() + qCardMeals() +
+      qCardRooms() + qCardRights() + qCardFees() + qCardTail();
+    qRefresh();
+  }
+
+  function qTopCard(c){
+    var kindText = Q.kind === 'banquet' ? '宴席报价' : '会议报价';
+    return '<div class="q-top">' +
+      '<div class="qt-k">SALES QUOTATION · ' + kindText + '</div>' +
+      '<div class="qt-no">编号 ' + esc(Q.no) + ' · 仅本机可见</div>' +
+      '<div class="qt-big"><i>¥</i><b id="qTopTotal">' + money(c.total) + '</b><em>本单报价</em></div>' +
+      '<div class="qt-row">' +
+        '<span>标准价 <b id="qTopStd">¥' + money(c.std) + '</b></span>' +
+        '<span>已优惠 <b id="qTopSave">¥' + money(c.save) + '</b></span>' +
+        (c.gift ? '<span>赠送房 <b>' + c.gift + ' 间</b></span>' : '') +
+      '</div>' +
+    '</div>';
+  }
+
   function qRefresh(){
+    if(!Q) return;
     var c = qCalc();
     function put(id, v){ var el = $(id); if(el) el.textContent = v; }
     var seat = qSeatPrice(), base = qn(Q.menu.price);
     put('qSeatNow', '¥' + money(seat));
-    put('qSeatBase', '模板 ¥' + money(base) + ' + 加减 ' + (seat - base >= 0 ? '+' : '-') + '¥' + money(Math.abs(seat - base)));
+    put('qSeatBase', '模板 ¥' + money(base) + ' ' + (seat - base >= 0 ? '+ 加收' : '- 减收') + ' ¥' + money(Math.abs(seat - base)));
     put('qMealAmt', '¥' + money(Q.kind === 'banquet' ? c.bqMeal : c.rowsMeal));
     put('qTopTotal', money(c.total));
     put('qTopStd', '¥' + money(c.std));
@@ -5793,6 +5941,7 @@
       var arr = Q[p[0]] || [];
       var row = arr[+p[1]];
       if(!row) continue;
+      if(p[0] === 'rooms' && row.free){ subs[i].textContent = '¥0'; continue; }
       subs[i].textContent = '¥' + money(qRowAmt(row, p[0] === 'rooms'));
     }
 
@@ -5803,6 +5952,7 @@
   }
 
   /* ── 换菜面板 ── */
+  var qPickCtx = null;
   function qOpenPick(i){
     qPickCtx = { i:i };
     var html = '';
@@ -5826,36 +5976,40 @@
 
   /* ══════ 报价单（客人视角） ══════ */
 
-  var qEditable = false;
-
-  function qSheetLines(){
-    var c = qCalc(), out = [];
-    if(qi(Q.hall.fee) > 0 || qi(Q.hall.stdFee) > 0){
-      var sub = (Q.hall.name || '') + (Q.hall.floor ? '（' + Q.hall.floor + '）' : '');
+  function qSheetLines(calc){
+    var c = calc || qCalc();
+    var out = [];
+    if(qHas(Q.hall.name) && (qi(Q.hall.fee) > 0 || qi(Q.hall.stdFee) > 0)){
+      var sub = Q.hall.name + (Q.hall.floor ? '（' + Q.hall.floor + '）' : '');
       var tail = (Q.kind === 'banquet') ? (Q.period || '') : (qi(Q.sess) ? qi(Q.sess) + ' 节' : '');
       if(tail) sub += ' · ' + tail;
-      if(Q.hall.note) sub += ' · ' + Q.hall.note;
+      if(qHas(Q.hall.note)) sub += ' · ' + Q.hall.note;
       out.push({ k:'场地费', sub:sub, amt:qi(Q.hall.fee), std:qi(Q.hall.stdFee) });
     }
     if(Q.kind === 'banquet'){
       var t = qi(Q.tables), seat = qSeatPrice();
-      if(t && seat){
-        out.push({ k:'餐标（含菜单）', sub:t + ' 席 × ¥' + money(seat) + '/席 · 每席 10 位', amt:t * seat });
-      }
+      if(t && seat) out.push({ k:'餐标（含菜单）', sub:t + ' 席 × ¥' + money(seat) + '/席 · 每席 10 位', amt:t * seat });
     }
     (Q.meals || []).forEach(function(r){
       if(!qn(r.qty) || !qn(r.price)) return;
       var u = r.unit || '位';
       out.push({ k:(r.label || '用餐'), sub:qn(r.qty) + ' ' + u + ' × ¥' + money(qn(r.price)) + '/' + u, amt:qRowAmt(r) });
     });
-    if(c.svc) out.push({ k:'服务费', sub:'按餐费 ' + qn(Q.service.rate) + '%', amt:c.svc });
+    if(c.svc > 0){
+      out.push({ k:'服务费', sub:'按餐费 ' + qn(Q.service.rate) + '%', amt:c.svc });
+    }
     (Q.rooms || []).forEach(function(r){
       if(!qn(r.qty)) return;
-      out.push({
-        k:(r.label || '住房'),
-        sub:qn(r.qty) + ' 间 × ' + (qn(r.nights) || 1) + ' 晚 × ¥' + money(qn(r.price)) + '/间/晚（含双早）',
-        amt:qRowAmt(r, true)
-      });
+      var nights = (qn(r.nights) || 1);
+      if(r.free){
+        out.push({ k:(r.label || '住房'), sub:qn(r.qty) + ' 间 × ' + nights + ' 晚 · 赠送', amt:0, gift:true });
+      }else{
+        out.push({
+          k:(r.label || '住房'),
+          sub:qn(r.qty) + ' 间 × ' + nights + ' 晚 × ¥' + money(qn(r.price)) + '/间/晚（含双早）',
+          amt:qRowAmt(r, true)
+        });
+      }
     });
     (Q.extras || []).forEach(function(r){
       if(!qn(r.qty) && !qn(r.price)) return;
@@ -5864,53 +6018,58 @@
     return out;
   }
 
+  function qSheetMeta(){
+    var meta = [];
+    if(qHas(Q.host)) meta.push(['客户', Q.host]);
+    if(qHas(Q.company)) meta.push(['公司', Q.company]);
+    if(qHas(Q.date)) meta.push(['日期', cnDate(Q.date, true)]);
+    if(Q.kind === 'banquet'){
+      if(qi(Q.tables)) meta.push(['规模', qi(Q.tables) + ' 席 · 约 ' + qi(Q.tables) * 10 + ' 位']);
+      if(qHas(Q.period)) meta.push(['时段', Q.period]);
+    }else{
+      if(qi(Q.pax)) meta.push(['规模', qi(Q.pax) + ' 人']);
+      if(qHas(Q.layout)) meta.push(['台型', Q.layout]);
+    }
+    return meta;
+  }
+
   function qRenderSheet(){
     var c = qCalc();
-    var lines = qSheetLines();
-    var rights = (Q.rights || []).filter(function(r){ return r.on && String(r.t || '').trim(); });
+    var lines = qSheetLines(c);
+    var meta = qSheetMeta();
+    var rights = (Q.rights || []).filter(function(r){ return r.on && !r.special && qHas(r.t); });
+    var specials = (Q.rights || []).filter(function(r){ return r.on && r.special && qHas(r.t); });
     var kindText = Q.kind === 'banquet' ? '宴席报价单' : '会议报价单';
-
-    var meta = [];
-    meta.push(['客户', Q.host || '—']);
-    if(Q.company) meta.push(['公司', Q.company]);
-    meta.push(['日期', Q.date ? cnDate(Q.date, true) : '待定']);
-    if(Q.kind === 'banquet') meta.push(['规模', qi(Q.tables) + ' 席 · 约 ' + qi(Q.tables) * 10 + ' 位']);
-    else meta.push(['规模', qi(Q.pax) + ' 人' + (Q.layout ? ' · ' + Q.layout : '')]);
 
     var html = '<div class="sheet">' +
       '<div class="sh-top">' +
         '<div class="sh-kicker">SHANSHUI S HOTEL · QUOTATION</div>' +
         '<div class="sh-hotel">山水S酒店</div>' +
         '<div class="sh-kind">' + kindText + ' · 专属定制</div>' +
-        '<div class="sh-no">编号 ' + esc(Q.no) + ' · 报价日期 ' + cnDate(qToday(), true) +
-          (Q.valid ? ' · 有效期至 ' + cnDate(Q.valid, false) : '') + '</div>' +
-      '</div>' +
-      '<div class="sh-meta">' + meta.map(function(m){
-        return '<div><span>' + m[0] + '</span><b>' + esc(m[1]) + '</b></div>';
-      }).join('') + (meta.length % 2 ? '<div></div>' : '') + '</div>' +
-      '<div class="sh-sec">费用明细</div>';
+        '<div class="sh-no">编号 ' + esc(Q.no) + ' · 报价日期 ' + cnDate(qToday(), true) + '</div>' +
+      '</div>';
 
-    if(lines.length){
-      html += lines.map(function(l){
-        return '<div class="sh-line">' +
-          '<div class="sl"><b>' + esc(l.k) + '</b>' + (l.sub ? '<small>' + esc(l.sub) + '</small>' : '') + '</div>' +
-          '<div class="sr"><b>' + (l.amt ? '¥' + money(l.amt) : '免收') + '</b>' +
-            (l.std && l.amt && l.std > l.amt ? '<em>原价 ¥' + money(l.std) + '</em>' : '') + '</div>' +
-        '</div>';
-      }).join('');
-    }else{
-      html += '<div class="sh-line"><div class="sl"><b>待销售确认</b><small>价格项目由销售在报价台填写</small></div></div>';
+    if(meta.length){
+      html += '<div class="sh-meta">' + meta.map(function(m){
+        return '<div><span>' + m[0] + '</span><b>' + esc(m[1]) + '</b></div>';
+      }).join('') + (meta.length % 2 ? '<div></div>' : '') + '</div>';
     }
+
+    html += '<div class="sh-sec">费用明细</div>';
+    html += lines.map(function(l){
+      return '<div class="sh-line' + (l.gift ? ' is-off' : '') + '">' +
+        '<div class="sl"><b>' + esc(l.k) + '</b>' + (l.sub ? '<small>' + esc(l.sub) + '</small>' : '') + '</div>' +
+        '<div class="sr"><b>' + (l.gift ? '赠送' : (l.amt ? '¥' + money(l.amt) : '免收')) + '</b>' +
+          (!l.gift && l.std && l.amt && l.std > l.amt ? '<em>原价 ¥' + money(l.std) + '</em>' : '') + '</div>' +
+      '</div>';
+    }).join('');
 
     html += '<div class="sh-sum">';
-    if(c.std && c.std > c.total){
-      html += '<div class="ssr"><span>标准价参考</span><s>¥' + money(c.std) + '</s></div>';
-    }
     if(c.disc){
-      html += '<div class="ssr"><span>整单优惠' + (Q.discount.note ? '（' + esc(Q.discount.note) + '）' : '') + '</span><s>-¥' + money(c.disc) + '</s></div>';
+      html += '<div class="ssr"><span>整单优惠' + (qHas(Q.discount.note) ? '（' + esc(Q.discount.note) + '）' : '') + '</span><s>-¥' + money(c.disc) + '</s></div>';
     }
     html += '<div class="ssr is-total"><span>本单报价</span><b><i>¥</i>' + money(c.total) + '</b></div>';
-    if(c.save) html += '<div class="ssr is-save">已为您优惠 ¥' + money(c.save) + '</div>';
+    if(c.gift) html += '<div class="ssr"><span>另赠客房</span><span>' + c.gift + ' 间</span></div>';
     html += '</div>';
 
     if(rights.length){
@@ -5919,8 +6078,14 @@
           return '<li><i>' + (i + 1) + '</i><span>' + esc(r.t) + '</span></li>';
         }).join('') + '</ul>';
     }
+    if(specials.length){
+      html += '<div class="sh-sec-sub">特批权益（销售专项申请）</div><ul class="sh-rights">' +
+        specials.map(function(r, i){
+          return '<li class="is-special"><i>特</i><span>' + esc(r.t) + '</span></li>';
+        }).join('') + '</ul>';
+    }
 
-    if(String(Q.note || '').trim()){
+    if(qHas(Q.note)){
       html += '<div class="sh-note"><b>备注</b>　' + esc(Q.note).replace(/\n/g, '<br>') + '</div>';
     }
 
@@ -5928,13 +6093,12 @@
       '<div class="sf-l">' +
         '<b>' + esc(Q.sales.name || SALES.name) + '</b>' +
         '<span>' + esc(Q.sales.tel || SALES.telText) + '</span>' +
-        '<em>报价、菜单、场地均可按您的需求再调<br>扫码或来电，销售为您锁档</em>' +
+        '<em>菜单、场地、房餐会均可按您的需求再调<br>扫码或来电，销售为您锁档</em>' +
       '</div>' +
       '<canvas class="sh-qr" height="160" id="shQr" width="160"></canvas>' +
     '</div>' +
     '<div class="sh-disc">' +
-      '<b>本报价以销售最终确认为准。</b>以上价格为含税价，菜单与场地以签约当日档期为准；' +
-      '报价有效期至 ' + (Q.valid ? cnDate(Q.valid, true) : '签约前') + '，逾期需重新确认。' +
+      '<b>本报价以销售最终确认为准。</b>以上价格为含税价，菜单与场地以签约当日档期为准。' +
       '酒店地址：惠州市惠城区仲恺大道惠环段 175 号（惠环站 D 口 20 米）。' +
     '</div>' +
     '</div>';
@@ -5946,7 +6110,7 @@
     '</div>' +
     '<div class="sh-hint">' +
       (qEditable ? '<a href="javascript:;" data-qact="backEdit" style="color:var(--wine);text-decoration:none">← 返回报价台继续改</a><br>' : '') +
-      '「复制链接」发给客人，对方打开看到的就是这份报价（价格以你填的为准）' +
+      '「复制链接」发给客人，对方打开看到的就是这份报价' +
     '</div>';
 
     $('sheetBody').innerHTML = html;
@@ -5960,14 +6124,11 @@
     ctx.clearRect(0, 0, cv.width, cv.height);
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, cv.width, cv.height);
-    if(QR_READY()){
-      ctx.drawImage(QR_IMG, 6, 6, cv.width - 12, cv.height - 12);
-    }else{
-      drawQR(ctx, 4, 4, cv.width - 8, '#2B0B0B');
-    }
+    if(QR_READY()) ctx.drawImage(QR_IMG, 6, 6, cv.width - 12, cv.height - 12);
+    else drawQR(ctx, 4, 4, cv.width - 8, '#2B0B0B');
   }
 
-  /* ══════ 复制文本 / 分享链接 ══════ */
+  /* ══════ 复制文本 / 链接编码 ══════ */
 
   function qCopy(str, okMsg){
     var done = function(){ toast(okMsg || '已复制', 2200); };
@@ -5989,33 +6150,32 @@
   }
 
   function qText(){
-    var c = qCalc(), lines = qSheetLines();
-    var rights = (Q.rights || []).filter(function(r){ return r.on && String(r.t || '').trim(); });
+    var c = qCalc(), lines = qSheetLines(c);
+    var rights = (Q.rights || []).filter(function(r){ return r.on && !r.special && qHas(r.t); });
+    var specials = (Q.rights || []).filter(function(r){ return r.on && r.special && qHas(r.t); });
     var out = [];
     out.push('【山水S酒店 · ' + (Q.kind === 'banquet' ? '宴席报价单' : '会议报价单') + '】');
-    out.push('编号 ' + Q.no + ' · ' + (Q.valid ? '有效期至 ' + cnDate(Q.valid, true) : ''));
-    if(Q.host) out.push('客户：' + Q.host + (Q.company ? '（' + Q.company + '）' : ''));
-    out.push('日期：' + (Q.date ? cnDate(Q.date, true) : '待定'));
-    out.push(Q.kind === 'banquet'
-      ? ('规模：' + qi(Q.tables) + ' 席（约 ' + qi(Q.tables) * 10 + ' 位）· ' + (Q.period || ''))
-      : ('规模：' + qi(Q.pax) + ' 人' + (Q.layout ? ' · ' + Q.layout : '')));
+    out.push('编号 ' + Q.no);
+    qSheetMeta().forEach(function(m){ out.push(m[0] + '：' + m[1]); });
     out.push('');
     out.push('— 费用明细 —');
     lines.forEach(function(l){
-      out.push(l.k + (l.sub ? '（' + l.sub + '）' : '') + '  ¥' + money(l.amt || 0));
+      out.push(l.k + (l.sub ? '（' + l.sub + '）' : '') + '  ' + (l.gift ? '赠送' : '¥' + money(l.amt || 0)));
     });
-    if(c.disc) out.push('整单优惠' + (Q.discount.note ? '（' + Q.discount.note + '）' : '') + '  -¥' + money(c.disc));
+    if(c.disc) out.push('整单优惠' + (qHas(Q.discount.note) ? '（' + Q.discount.note + '）' : '') + '  -¥' + money(c.disc));
     out.push('合计（本单报价）  ¥' + money(c.total));
-    if(c.save) out.push('标准价 ¥' + money(c.std) + '，已优惠 ¥' + money(c.save));
+    if(c.gift) out.push('另赠客房  ' + c.gift + ' 间');
     if(rights.length){
       out.push('');
       out.push('— 本单权益 —');
       rights.forEach(function(r, i){ out.push((i + 1) + '. ' + r.t); });
     }
-    if(String(Q.note || '').trim()){
+    if(specials.length){
       out.push('');
-      out.push('备注：' + Q.note);
+      out.push('— 特批权益 —');
+      specials.forEach(function(r, i){ out.push('特' + (i + 1) + '. ' + r.t); });
     }
+    if(qHas(Q.note)){ out.push(''); out.push('备注：' + Q.note); }
     out.push('');
     out.push('报价人：' + (Q.sales.name || SALES.name) + ' ' + (Q.sales.tel || SALES.telText));
     out.push('本报价以销售最终确认为准。');
@@ -6023,36 +6183,36 @@
   }
 
   function qB64(str){
-    var s = btoa(unescape(encodeURIComponent(str)));
-    return s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
   function qUnB64(b){
     var s = String(b).replace(/-/g, '+').replace(/_/g, '/');
     while(s.length % 4) s += '=';
     return decodeURIComponent(escape(atob(s)));
   }
-  function qClean(v){ return String(v == null ? '' : v).replace(/[|~^]/g, ' ').trim(); }
 
   function qEncode(){
     var d = Q, f = [];
-    f.push('1', d.kind, qClean(d.no), qClean(d.host), qClean(d.company));
+    f.push('2', d.kind, qClean(d.no), qClean(d.host), qClean(d.company));
     f.push(d.date || '', qClean(d.period), d.pax || '', d.tables || '', d.sess || '', qClean(d.layout));
     f.push(d.hall.id || '', qClean(d.hall.name), qClean(d.hall.floor), d.hall.stdFee || '', d.hall.fee || '', qClean(d.hall.note));
     f.push(d.menu.tpl || '', qClean(d.menu.name), d.menu.price || '', d.menu.override || '');
     f.push((d.menu.dishes || []).map(function(x){ return [qClean(x.g), qClean(x.n), x.d || ''].join('^'); }).join('~'));
     f.push((d.meals || []).map(function(x){ return [qClean(x.label), qClean(x.unit), x.qty || '', x.price || '', x.std || ''].join('^'); }).join('~'));
-    f.push((d.rooms || []).map(function(x){ return [qClean(x.label), x.qty || '', x.nights || '', x.price || '', x.std || ''].join('^'); }).join('~'));
+    f.push((d.rooms || []).map(function(x){ return [qClean(x.label), x.qty || '', x.nights || '', x.price || '', x.std || '', x.free ? 1 : 0].join('^'); }).join('~'));
     f.push((d.extras || []).map(function(x){ return [qClean(x.label), x.qty || '', x.price || ''].join('^'); }).join('~'));
     f.push([d.service.on ? 1 : 0, d.service.rate || ''].join('^'));
     f.push([d.discount.amount || '', qClean(d.discount.note)].join('^'));
-    f.push((d.rights || []).filter(function(r){ return r.on; }).map(function(r){ return qClean(r.t); }).join('~'));
-    f.push(qClean(d.note), d.valid || '', qClean(d.sales.name), qClean(d.sales.tel));
+    f.push((d.rights || []).filter(function(r){ return r.on; })
+      .map(function(r){ return (r.special ? '#' : '') + qClean(r.t); }).join('~'));
+    f.push(qClean(d.note), qClean(d.sales.name), qClean(d.sales.tel));
     return qB64(f.join('|'));
   }
 
   function qDecode(code){
     var f = qUnB64(code).split('|');
-    var q = qNew(f[1] || 'banquet');
+    var ver = f[0] || '2';
+    var q = qNew(f[1] === 'meeting' ? 'meeting' : 'banquet');
     q.no = f[2] || q.no;
     q.host = f[3] || ''; q.company = f[4] || '';
     q.date = f[5] || ''; q.period = f[6] || ''; q.pax = f[7] || ''; q.tables = f[8] || '';
@@ -6060,28 +6220,32 @@
     q.hall = { id:f[11] || '', name:f[12] || '', floor:f[13] || '', stdFee:f[14] || '', fee:f[15] || '', note:f[16] || '' };
     q.menu = { tpl:f[17] || '', name:f[18] || '', price:f[19] || '', override:f[20] || '', dishes:[] };
     q.menu.dishes = (f[21] || '').split('~').filter(Boolean).map(function(s){
-      var a = s.split('^');
-      return { g:a[0], n:a[1], d:a[2] };
+      var a = s.split('^'); return { g:a[0], n:a[1], d:a[2] };
     });
     q.meals = (f[22] || '').split('~').filter(Boolean).map(function(s){
-      var a = s.split('^');
-      return { label:a[0], unit:a[1], qty:a[2], price:a[3], std:a[4] };
+      var a = s.split('^'); return { label:a[0], unit:a[1], qty:a[2], price:a[3], std:a[4] };
     });
     q.rooms = (f[23] || '').split('~').filter(Boolean).map(function(s){
-      var a = s.split('^');
-      return { label:a[0], qty:a[1], nights:a[2], price:a[3], std:a[4] };
+      var a = s.split('^'); return { label:a[0], qty:a[1], nights:a[2], price:a[3], std:a[4], free:a[5] === '1' };
     });
     q.extras = (f[24] || '').split('~').filter(Boolean).map(function(s){
-      var a = s.split('^');
-      return { label:a[0], qty:a[1], price:a[2] };
+      var a = s.split('^'); return { label:a[0], qty:a[1], price:a[2] };
     });
     var sv = (f[25] || '').split('^');
     q.service = { on:sv[0] === '1', rate:sv[1] || 10 };
     var ds = (f[26] || '').split('^');
     q.discount = { amount:ds[0] || '', note:ds[1] || '' };
-    q.rights = (f[27] || '').split('~').filter(Boolean).map(function(s){ return { t:s, on:true }; });
-    q.note = f[28] || ''; q.valid = f[29] || '';
-    q.sales = { name:f[30] || SALES.name, tel:f[31] || SALES.telText };
+    q.rights = (f[27] || '').split('~').filter(Boolean).map(function(s){
+      var sp = s.charAt(0) === '#';
+      return { t:(sp ? s.slice(1) : s), on:true, special:sp };
+    });
+    q.note = f[28] || '';
+    // v1 旧链接在 29 位是有效期，多占一格
+    if(ver === '1'){
+      q.sales = { name:f[30] || SALES.name, tel:f[31] || SALES.telText };
+    }else{
+      q.sales = { name:f[29] || SALES.name, tel:f[30] || SALES.telText };
+    }
     return q;
   }
 
@@ -6090,7 +6254,7 @@
     qCopy(url, '专属报价链接已复制，可直接发给客人');
   }
 
-  /* ══════ 报价单长图（750 宽，纯 Canvas 绘制） ══════ */
+  /* ══════ 报价单长图 ══════ */
 
   function qWrap(ctx, text, maxW, size, weight){
     ctx.font = (weight || '400') + ' ' + size + 'px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
@@ -6099,11 +6263,8 @@
     for(var i = 0; i < s.length; i++){
       var ch = s.charAt(i);
       if(ch === '\n'){ out.push(cur); cur = ''; continue; }
-      if(ctx.measureText(cur + ch).width > maxW && cur){
-        out.push(cur); cur = ch;
-      }else{
-        cur += ch;
-      }
+      if(ctx.measureText(cur + ch).width > maxW && cur){ out.push(cur); cur = ch; }
+      else cur += ch;
     }
     if(cur) out.push(cur);
     return out.length ? out : [''];
@@ -6111,32 +6272,26 @@
 
   function qShot(){
     var W = 750, M = 44, IW = W - M * 2;
-    var c = qCalc(), lines = qSheetLines();
-    var rights = (Q.rights || []).filter(function(r){ return r.on && String(r.t || '').trim(); });
+    var c = qCalc(), lines = qSheetLines(c);
+    var meta = qSheetMeta();
+    var rights = (Q.rights || []).filter(function(r){ return r.on && !r.special && qHas(r.t); });
+    var specials = (Q.rights || []).filter(function(r){ return r.on && r.special && qHas(r.t); });
     var mc = document.createElement('canvas').getContext('2d');
 
-    var meta = [];
-    meta.push(['客户', Q.host || '—']);
-    if(Q.company) meta.push(['公司', Q.company]);
-    meta.push(['日期', Q.date ? cnDate(Q.date, true) : '待定']);
-    meta.push(Q.kind === 'banquet'
-      ? ['规模', qi(Q.tables) + ' 席 · 约 ' + qi(Q.tables) * 10 + ' 位']
-      : ['规模', qi(Q.pax) + ' 人' + (Q.layout ? ' · ' + Q.layout : '')]);
-
     var rLines = rights.map(function(r){ return qWrap(mc, r.t, IW - 46, 21); });
-    var noteTxt = String(Q.note || '').trim();
+    var sLines = specials.map(function(r){ return qWrap(mc, r.t, IW - 46, 21); });
+    var noteTxt = qHas(Q.note) ? Q.note : '';
     var nLines = noteTxt ? qWrap(mc, noteTxt, IW - 40, 20) : [];
-    var discTxt = '本报价以销售最终确认为准。以上价格为含税价，菜单与场地以签约当日档期为准；报价有效期至 ' +
-      (Q.valid ? cnDate(Q.valid, true) : '签约前') + '。酒店地址：惠州市惠城区仲恺大道惠环段 175 号（惠环站 D 口 20 米）。';
+    var discTxt = '本报价以销售最终确认为准。以上价格为含税价，菜单与场地以签约当日档期为准。酒店地址：惠州市惠城区仲恺大道惠环段 175 号（惠环站 D 口 20 米）。';
     var dLines = qWrap(mc, discTxt, IW, 18);
 
-    var metaH = Math.ceil(meta.length / 2) * 92;
-    var sumH = (c.std && c.std > c.total) ? 200 : 156;
+    var metaH = meta.length ? Math.ceil(meta.length / 2) * 92 : 0;
+    var sumH = (c.disc || c.gift) ? 190 : 150;
     var rH = rights.length ? 56 + rLines.reduce(function(a, l){ return a + l.length * 32 + 16; }, 0) : 0;
+    var spH = specials.length ? 60 + sLines.reduce(function(a, l){ return a + l.length * 32 + 16; }, 0) : 0;
     var nH = nLines.length ? 44 + nLines.length * 30 + 16 : 0;
 
-    // 高度按各段落实际占位累加，末尾留 48 安全边（防止声明文字被裁）
-    var H = 240 + metaH + 56 + lines.length * 84 + 16 + sumH + 44 + rH + nH + 220 + dLines.length * 28 + 48;
+    var H = 236 + metaH + 56 + Math.max(1, lines.length) * 84 + 16 + sumH + rH + spH + nH + 220 + dLines.length * 28 + 48;
 
     var cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
@@ -6144,32 +6299,30 @@
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, W, H);
 
-    // 抬头
-    var g = ctx.createLinearGradient(0, 0, W, 240);
+    var g = ctx.createLinearGradient(0, 0, W, 236);
     g.addColorStop(0, '#9A2222'); g.addColorStop(.45, '#8B1A1A'); g.addColorStop(1, '#5E0F0F');
     ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, 240);
+    ctx.fillRect(0, 0, W, 236);
     ctx.fillStyle = 'rgba(214,178,110,.75)';
-    ctx.fillRect(M, 182, 230, 2);
-    tx(ctx, 'SHANSHUI S HOTEL · QUOTATION', M, 62, 20, '600', '#D6B26E', 'left');
-    tx(ctx, '山水S酒店', M, 126, 46, '600', '#FFFFFF', 'left');
-    tx(ctx, (Q.kind === 'banquet' ? '宴席报价单' : '会议报价单') + ' · 专属定制', M, 162, 24, '400', 'rgba(255,255,255,.84)', 'left');
-    tx(ctx, '编号 ' + Q.no + ' · 报价日期 ' + cnDate(qToday(), true), M, 216, 19, '400', 'rgba(255,255,255,.62)', 'left');
+    ctx.fillRect(M, 178, 230, 2);
+    tx(ctx, 'SHANSHUI S HOTEL · QUOTATION', M, 60, 20, '600', '#D6B26E', 'left');
+    tx(ctx, '山水S酒店', M, 124, 46, '600', '#FFFFFF', 'left');
+    tx(ctx, (Q.kind === 'banquet' ? '宴席报价单' : '会议报价单') + ' · 专属定制', M, 160, 24, '400', 'rgba(255,255,255,.84)', 'left');
+    tx(ctx, '编号 ' + Q.no + ' · 报价日期 ' + cnDate(qToday(), true), M, 212, 19, '400', 'rgba(255,255,255,.62)', 'left');
 
-    // 客户信息
-    var y = 240;
-    meta.forEach(function(m, i){
-      var col = i % 2, row = Math.floor(i / 2);
-      var x = M + col * (IW / 2);
-      var yy = y + row * 92;
-      tx(ctx, m[0], x, yy + 34, 19, '400', '#A08C8C', 'left');
-      fitTx(ctx, m[1], x, yy + 68, 25, '600', '#2A1B1B', 'left', IW / 2 - 24);
-    });
-    y += metaH;
-    ctx.fillStyle = '#F4E9E9';
-    ctx.fillRect(0, y, W, 1);
+    var y = 236;
+    if(meta.length){
+      meta.forEach(function(m, i){
+        var x = M + (i % 2) * (IW / 2);
+        var yy = y + Math.floor(i / 2) * 92;
+        tx(ctx, m[0], x, yy + 34, 19, '400', '#A08C8C', 'left');
+        fitTx(ctx, m[1], x, yy + 68, 25, '600', '#2A1B1B', 'left', IW / 2 - 24);
+      });
+      y += metaH;
+      ctx.fillStyle = '#F4E9E9';
+      ctx.fillRect(0, y, W, 1);
+    }
 
-    // 费用明细
     y += 50;
     ctx.fillStyle = '#8B1A1A';
     ctx.fillRect(M, y - 20, 4, 22);
@@ -6182,13 +6335,12 @@
     lines.forEach(function(l){
       fitTx(ctx, l.k, M, y + 34, 26, '600', '#2A1B1B', 'left', IW - 230);
       if(l.sub) fitTx(ctx, l.sub, M, y + 62, 19, '400', '#A08C8C', 'left', IW - 230);
-      tx(ctx, (l.amt ? '¥' + money(l.amt) : '免收'), W - M, y + 42, 27, '700', '#2A1B1B', 'right');
+      tx(ctx, l.gift ? '赠送' : (l.amt ? '¥' + money(l.amt) : '免收'), W - M, y + 42, 27, '700', l.gift ? '#8A5A18' : '#2A1B1B', 'right');
       y += 84;
       ctx.fillStyle = '#F7EEEE';
       ctx.fillRect(M, y - 20, IW, 1);
     });
 
-    // 合计
     y += 12;
     rr(ctx, M, y, IW, sumH, 16);
     ctx.fillStyle = '#FFF7F7';
@@ -6197,33 +6349,33 @@
     ctx.lineWidth = 1;
     ctx.stroke();
     var sy = y + 44;
-    if(c.std && c.std > c.total){
-      tx(ctx, '标准价参考', M + 26, sy, 21, '400', '#A08C8C', 'left');
-      tx(ctx, '¥' + money(c.std), W - M - 26, sy, 21, '400', '#A08C8C', 'right');
+    if(c.disc){
+      tx(ctx, '整单优惠' + (qHas(Q.discount.note) ? '（' + Q.discount.note + '）' : ''), M + 26, sy, 21, '400', '#A08C8C', 'left');
+      tx(ctx, '-¥' + money(c.disc), W - M - 26, sy, 21, '400', '#A08C8C', 'right');
       sy += 48;
     }
     tx(ctx, '本单报价', M + 26, sy + 18, 22, '600', '#6B5353', 'left');
     tx(ctx, '¥' + money(c.total), W - M - 26, sy + 54, 52, '700', '#8B1A1A', 'right');
-    if(c.save) tx(ctx, '已为您优惠 ¥' + money(c.save), M + 26, sy + 88, 21, '600', '#2E7D32', 'left');
+    if(c.gift) tx(ctx, '另赠客房 ' + c.gift + ' 间', M + 26, sy + 88, 21, '600', '#16558F', 'left');
     y += sumH + 44;
 
-    // 权益
-    if(rights.length){
-      ctx.fillStyle = '#8B1A1A';
+    function block(title, list, isSpecial){
+      ctx.fillStyle = isSpecial ? '#8A5A18' : '#8B1A1A';
       ctx.fillRect(M, y - 20, 4, 22);
-      tx(ctx, '本单权益', M + 14, y, 24, '600', '#8B1A1A', 'left');
+      tx(ctx, title, M + 14, y, 24, '600', isSpecial ? '#8A5A18' : '#8B1A1A', 'left');
       y += 38;
-      rLines.forEach(function(ls, i){
-        tx(ctx, (i + 1) + '.', M, y + 22, 20, '600', '#8B1A1A', 'left');
+      list.forEach(function(ls, i){
+        tx(ctx, isSpecial ? '特' : (i + 1) + '.', M, y + 22, 20, '600', isSpecial ? '#8A5A18' : '#8B1A1A', 'left');
         ls.forEach(function(s, j){
           tx(ctx, s, M + 36, y + 22 + j * 32, 21, '400', '#4A3636', 'left');
         });
         y += ls.length * 32 + 16;
       });
-      y += 38;
+      y += 26;
     }
+    if(rights.length) block('本单权益', rLines);
+    if(specials.length) block('特批权益', sLines, true);
 
-    // 备注
     if(nLines.length){
       ctx.fillStyle = '#8B1A1A';
       ctx.fillRect(M, y - 20, 4, 22);
@@ -6235,7 +6387,6 @@
       y += nLines.length * 30 + 16;
     }
 
-    // 落款
     ctx.fillStyle = '#F4E9E9';
     ctx.fillRect(0, y, W, 1);
     y += 32;
@@ -6249,7 +6400,7 @@
     else drawQR(ctx, qrX, qrY, qrSize, '#2B0B0B');
     tx(ctx, (Q.sales.name || SALES.name), M, y + 38, 27, '600', '#2A1B1B', 'left');
     tx(ctx, (Q.sales.tel || SALES.telText), M, y + 76, 22, '400', '#6B5353', 'left');
-    tx(ctx, '报价、菜单、场地均可按需求再调', M, y + 112, 19, '400', '#A08C8C', 'left');
+    tx(ctx, '菜单、场地、房餐会均可按需求再调', M, y + 112, 19, '400', '#A08C8C', 'left');
     tx(ctx, '扫码或来电，销售为您锁档', M, y + 140, 19, '400', '#A08C8C', 'left');
     y += 186;
     ctx.fillStyle = '#F4E9E9';
@@ -6264,7 +6415,38 @@
     return url;
   }
 
-  /* ══════ 事件 ══════ */
+  /* ══════ 打开 / 持久化 ══════ */
+
+  function qOpen(quote){
+    Q = quote;
+    qEditable = true;
+    qRenderEditor();
+    pushPage('page-quote', '销售报价台<span class="sub">' + (Q.kind === 'banquet' ? '宴席' : '会议') + '</span>');
+    $('qBar').classList.add('is-on');
+    qPersist();
+  }
+  function qStart(kind){
+    if(kind === 'banquet') qOpen(qFromBanquet());
+    else if(kind === 'meeting') qOpen(qFromMeeting());
+    else $('qChooser').classList.add('is-on');
+  }
+  function qPersist(){
+    if(!Q) return;
+    try{ localStorage.setItem(Q_STORE[Q.kind], JSON.stringify(Q)); }catch(e){}
+  }
+  function qDraft(kind){
+    try{
+      var raw = localStorage.getItem(Q_STORE[kind]);
+      if(!raw) return null;
+      var d = JSON.parse(raw);
+      return (d && d.kind) ? d : null;
+    }catch(e){ return null; }
+  }
+  function qOpenSheet(){
+    qRenderSheet();
+    pushPage('page-sheet', '报价单<span class="sub">发给客人看这页</span>');
+    $('qBar').classList.remove('is-on');
+  }
 
   function qSetPath(path, val){
     var p = path.split('.'), o = Q;
@@ -6275,21 +6457,37 @@
     if(o) o[p[p.length - 1]] = val;
   }
 
-  function qOpenSheet(){
-    qRenderSheet();
-    pushPage('page-sheet', '报价单<span class="sub">发给客人看这页</span>');
-    $('qBar').classList.remove('is-on');
-  }
+  /* ══════ 动作 ══════ */
 
   function qAction(act, el){
     var i = el ? +el.getAttribute('data-i') : -1;
+    var key = el ? el.getAttribute('data-key') : '';
+
+    if(act === 'okCard'){
+      if(!key) return;
+      Q.done[key] = 1;
+      Q.edit[key] = 0;
+      qRenderEditor();
+      var card = $('qc-' + key);
+      if(card){
+        var top = card.getBoundingClientRect().top + (window.pageYOffset || 0) - 60;
+        window.scrollTo(0, Math.max(0, top));
+      }
+      toast('已确认：' + keyNameOf(key), 1800);
+      return;
+    }
+    if(act === 'editCard'){
+      Q.edit[key] = 1;
+      qRenderEditor();
+      return;
+    }
 
     if(act === 'hall'){
       var id = el.getAttribute('data-id');
       for(var hi = 0; hi < HALLS.length; hi++) if(HALLS[hi].id === id){
         var h = HALLS[hi];
         Q.hall.id = h.id;
-        Q.hall.name = h.banquetName || h.name;
+        Q.hall.name = h.name;
         Q.hall.floor = h.floor || '';
         Q.hall.stdFee = (Q.kind === 'meeting') ? hallFeeOf(h, qi(Q.sess) || 1) : (h.venueFee || 0);
         Q.hall.fee = Q.hall.stdFee;
@@ -6311,7 +6509,12 @@
     }
     if(act === 'delDish'){ Q.menu.dishes.splice(i, 1); qRenderEditor(); return; }
     if(act === 'swapDish'){ qOpenPick(i); return; }
-    if(act === 'resetMenu'){ if(Q.menu.tpl) qSetMenuTpl(Q.menu.tpl); qRenderEditor(); toast('已恢复模板菜品'); return; }
+    if(act === 'resetMenu'){
+      if(Q.menu.tpl) qSetMenuTpl(Q.menu.tpl);
+      qRenderEditor();
+      toast('已恢复模板菜品');
+      return;
+    }
     if(act === 'pickClose'){ qClosePick(); return; }
     if(act === 'pickDish' || act === 'pickFree'){
       if(!qPickCtx) return;
@@ -6328,18 +6531,28 @@
 
     if(act === 'addMeal'){ Q.meals.push({ label:'早餐', unit:'位', qty:'', price:'', std:'' }); qRenderEditor(); return; }
     if(act === 'delMeal'){ Q.meals.splice(i, 1); qRenderEditor(); return; }
-    if(act === 'addRoom'){ Q.rooms.push({ label:ROOM_TYPES[0].name, qty:'', nights:1, price:ROOM_TYPES[0].rate || ROOM_RATE, std:ROOM_RATE }); qRenderEditor(); return; }
+    if(act === 'addRoom'){
+      Q.rooms.push({ label:ROOM_TYPES[0].name, qty:'', nights:1, price:ROOM_TYPES[0].rate || ROOM_RATE, std:ROOM_RATE, free:false });
+      qRenderEditor();
+      return;
+    }
     if(act === 'delRoom'){ Q.rooms.splice(i, 1); qRenderEditor(); return; }
+    if(act === 'roomFree'){
+      Q.rooms[i].free = !Q.rooms[i].free;
+      qRenderEditor();
+      return;
+    }
     if(act === 'addExtra'){ Q.extras.push({ label:'', qty:1, price:'' }); qRenderEditor(); return; }
     if(act === 'delExtra'){ Q.extras.splice(i, 1); qRenderEditor(); return; }
 
     if(act === 'rightToggle'){ Q.rights[i].on = !Q.rights[i].on; qRenderEditor(); return; }
+    if(act === 'rightSpecial'){ Q.rights[i].special = !Q.rights[i].special; qRenderEditor(); return; }
     if(act === 'delRight'){ Q.rights.splice(i, 1); qRenderEditor(); return; }
-    if(act === 'addRight'){ Q.rights.push({ t:'', on:true }); qRenderEditor(); return; }
+    if(act === 'addRight'){ Q.rights.push({ t:'', on:true, special:false }); qRenderEditor(); return; }
     if(act === 'rightsSave'){
       try{
         localStorage.setItem(Q_RIGHTS_KEY, JSON.stringify(
-          Q.rights.filter(function(r){ return String(r.t || '').trim(); }).map(function(r){ return r.t; })
+          Q.rights.filter(function(r){ return qHas(r.t); }).map(function(r){ return r.t; })
         ));
         toast('已存为本季权益模板');
       }catch(e){ toast('保存失败，请检查浏览器存储'); }
@@ -6349,22 +6562,21 @@
       var pool = qRightsPool();
       var cur = {};
       Q.rights.forEach(function(r){ if(r.on) cur[r.t] = 1; });
-      Q.rights = pool.map(function(t){ return { t:t, on:!!cur[t] }; });
-      Q.rights.forEach(function(r){ if(!(r.t in cur)) r.on = true; });
+      Q.rights = pool.map(function(t){ return { t:t, on:true, special:false }; });
       qRenderEditor();
       toast('已载入权益模板');
       return;
     }
     if(act === 'rightsReset'){
-      Q.rights = RIGHTS_DEFAULT.map(function(t){ return { t:t, on:true }; });
+      Q.rights = RIGHTS_DEFAULT.map(function(t){ return { t:t, on:true, special:false }; });
       qRenderEditor();
       toast('已恢复默认权益');
       return;
     }
     if(act === 'svcToggle'){ Q.service.on = !Q.service.on; qRenderEditor(); return; }
 
-    if(act === 'copyText'){ qCopy(qText(), '报价文字已复制，可直接粘贴发客人'); return; }
     if(act === 'preview'){ qOpenSheet(); return; }
+    if(act === 'copyText'){ qCopy(qText(), '报价文字已复制，可直接粘贴发客人'); return; }
     if(act === 'share'){ qShare(); return; }
     if(act === 'shot'){
       var url = qShot();
@@ -6374,17 +6586,81 @@
       return;
     }
     if(act === 'backEdit'){
-      if(!qEditable){ return; }
+      if(!qEditable) return;
       showOnly('page-quote');
-      $('topTitle').innerHTML = '销售工作台<span class="sub">报价编辑</span>';
+      $('topTitle').innerHTML = '销售报价台<span class="sub">' + (Q.kind === 'banquet' ? '宴席' : '会议') + '</span>';
       $('backBtn').style.visibility = 'visible';
       $('qBar').classList.add('is-on');
       return;
     }
     if(act === 'chooserClose'){ $('qChooser').classList.remove('is-on'); return; }
     if(act === 'newQuote'){ $('qChooser').classList.add('is-on'); return; }
+
+    if(act === 'lockClose'){ qLockClose(); return; }
+    if(act === 'lockOk'){ qLockCheck(); return; }
   }
 
+  function keyNameOf(k){
+    return ({ base:'基本信息', hall:'场地费', menu:'菜单', meals:'餐次', rooms:'住房',
+              rights:'权益', fees:'费用', tail:'备注' })[k] || '本卡';
+  }
+
+  /* ── 密码锁 ── */
+  function qLockOpen(){
+    var el = $('qLock');
+    if(!el) return;
+    $('qPass').value = '';
+    $('qPassErr').textContent = '';
+    el.classList.add('is-on');
+    setTimeout(function(){ try{ $('qPass').focus(); }catch(e){} }, 120);
+  }
+  function qLockClose(){ $('qLock').classList.remove('is-on'); }
+  function qLockCheck(){
+    var v = String($('qPass').value || '').replace(/[^0-9]/g, '');
+    if(v !== Q_PASSCODE){
+      $('qPassErr').textContent = '密码不对，请再试一次';
+      $('qPass').value = '';
+      return;
+    }
+    qLockClose();
+    var b = state.board;
+    var d = b ? qDraft(b) : null;
+    if(d){ qOpen(d); toast('已恢复上次的报价单', 2000); return; }
+    $('qChooser').classList.add('is-on');
+  }
+
+  /* ── 长按底部「一键拨打」进入销售台 ── */
+  (function saleGate(){
+    var timer = 0, fired = false;
+    function hit(el){
+      return el && el.closest ? el.closest('a[href^="tel:"]') : null;
+    }
+    function down(e){
+      var t = hit(e.target);
+      if(!t) return;
+      fired = false;
+      if(timer) clearTimeout(timer);
+      timer = setTimeout(function(){ fired = true; qLockOpen(); }, 1100);
+    }
+    function up(){
+      if(timer){ clearTimeout(timer); timer = 0; }
+    }
+    document.addEventListener('touchstart', down, { passive:true });
+    document.addEventListener('mousedown', down);
+    document.addEventListener('touchend', up, { passive:true });
+    document.addEventListener('mouseup', up);
+    document.addEventListener('touchmove', up, { passive:true });
+    document.addEventListener('click', function(e){
+      var t = hit(e.target);
+      if(t && fired){
+        e.preventDefault();
+        e.stopPropagation();
+        fired = false;
+      }
+    }, true);
+  })();
+
+  /* ── 事件 ── */
   document.addEventListener('click', function(e){
     var t = e.target;
     if(!t || !t.closest) return;
@@ -6398,31 +6674,16 @@
       qStart(nw.getAttribute('data-qnew'));
       return;
     }
+  });
 
-    var qb = t.closest('[data-quote]');
-    if(qb){
-      var k = qb.getAttribute('data-quote');
-      qOpen(k === 'banquet' ? qFromBanquet() : qFromMeeting());
-      return;
-    }
-
-    if(t.closest('#saleBtn') || t.closest('#entrySale')){
-      if(Q){ qOpen(Q); return; }
-      try{
-        var raw = localStorage.getItem(Q_DRAFT_KEY);
-        if(raw){
-          var d = JSON.parse(raw);
-          if(d && d.kind){ qOpen(d); return; }
-        }
-      }catch(err){}
-      $('qChooser').classList.add('is-on');
-      return;
-    }
+  document.addEventListener('keydown', function(e){
+    if(e.target && e.target.id === 'qPass' && e.key === 'Enter'){ qLockCheck(); }
   });
 
   document.addEventListener('input', function(e){
     var el = e.target;
     if(!el || !el.getAttribute) return;
+    if(el.id === 'qPass') return;
     var path = el.getAttribute('data-qf');
     if(!path) return;
     qSetPath(path, el.value);
@@ -6435,7 +6696,12 @@
     var path = el.getAttribute('data-qf');
     if(!path) return;
     qSetPath(path, el.value);
-    if(path === 'menu.tpl'){ qSetMenuTpl(el.value); qRenderEditor(); return; }
+    if(path === 'menu.tpl'){
+      if(qHas(el.value)) qSetMenuTpl(el.value);
+      else { Q.menu.tpl = ''; Q.menu.name = ''; Q.menu.price = ''; Q.menu.override = ''; Q.menu.dishes = []; }
+      qRenderEditor();
+      return;
+    }
     if(el.getAttribute('data-rate') !== null && path.indexOf('rooms.') === 0){
       var idx = +path.split('.')[1];
       if(Q.rooms[idx]) Q.rooms[idx].price = el.getAttribute('data-rate');
@@ -6445,7 +6711,7 @@
     qRefresh();
   }, true);
 
-  // 带 ?q= 打开：直接给客人看报价单（销售专属链接）
+  // 带 ?q= 打开：直接给客人看报价单
   function qBoot(){
     var m = location.search.match(/[?&]q=([^&]+)/);
     if(!m) return false;
@@ -6456,8 +6722,6 @@
       showOnly('page-sheet');
       $('topTitle').innerHTML = '我的报价<span class="sub">山水S酒店</span>';
       $('backBtn').style.visibility = 'hidden';
-      if($('saleBtn')) $('saleBtn').style.display = 'none';   // 客人视角不给编辑入口
-      if($('entrySale')) $('entrySale').style.display = 'none';
       return true;
     }catch(e){ return false; }
   }
